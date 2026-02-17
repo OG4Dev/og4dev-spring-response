@@ -5,7 +5,7 @@
 
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <name>OG4Dev Spring API Response</name>
     <description>A lightweight, zero-configuration REST API Response wrapper and Global Exception Handler (RFC 9457) for Spring Boot applications, maintained by OG4Dev.</description>

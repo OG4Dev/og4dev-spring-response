@@ -38,7 +38,7 @@ import org.springframework.http.HttpStatus;
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  * @see io.github.og4dev.exception.GlobalExceptionHandler
  * @see org.springframework.http.HttpStatus
