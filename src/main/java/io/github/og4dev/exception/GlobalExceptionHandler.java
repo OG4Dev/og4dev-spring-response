@@ -75,7 +75,7 @@ import java.util.UUID;
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  * @see org.springframework.web.bind.annotation.RestControllerAdvice
  * @see org.springframework.http.ProblemDetail
@@ -171,7 +171,7 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         String traceId = getOrGenerateTraceId();
         String errorMessage = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s.",
-                ex.getValue(), ex.getName(), ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown");
+                ex.getValue(), ex.getName(), ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "Unknown");
         log.warn("[TraceID: {}] Type mismatch error: {}", traceId, errorMessage);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
         problemDetail.setProperty("traceId", traceId);
