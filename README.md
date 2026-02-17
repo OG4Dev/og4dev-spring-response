@@ -24,7 +24,7 @@
     <img src="https://img.shields.io/badge/Spring%20Boot-4.0.2-brightgreen.svg" alt="Spring Boot">
   </a>
   <a href="https://github.com/OG4Dev/og4dev-spring-response">
-    <img src="https://img.shields.io/badge/Version-1.0.0-brightgreen.svg" alt="Version">
+    <img src="https://img.shields.io/badge/Version-1.1.0-brightgreen.svg" alt="Version">
   </a>
 </p>
 
@@ -46,7 +46,6 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 ## 📑 Table of Contents
 
 - [Quick Links](#-quick-links)
-
 - [Key Highlights](#-key-highlights)
 - [Features](#-features)
 - [Requirements](#-requirements)
@@ -54,8 +53,9 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 - [Installation](#-installation)
 - [Project Structure](#-project-structure)
 - [Quick Start](#-quick-start)
-- [Auto-Configuration](#️-auto-configuration-new-in-v130)
-- [Built-in Exception Handling](#️-built-in-exception-handling-enhanced-in-v120)
+- [Auto-Configuration](#️-auto-configuration)
+- [Built-in Security Features](#-built-in-security-features)
+- [Built-in Exception Handling](#️-built-in-exception-handling)
 - [Usage](#-usage)
 - [Real-World Examples](#-real-world-examples)
 - [API Reference](#-api-reference)
@@ -86,7 +86,8 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 - 📦 **Ultra-Lightweight** - Only ~10KB JAR size with provided dependencies
 - 🔍 **Microservices-Ready** - Built-in trace IDs for distributed tracing
 - ✅ **Battle-Tested** - Used in production Spring Boot applications
-- 📋 **Clean Javadoc** - Zero warnings with explicit constructor documentation **
+- 📋 **Professional-Grade Javadoc** - 100% coverage with comprehensive method documentation including security features **
+- 🔐 **Built-in Security** - Automatic XSS prevention with HTML escaping and strict JSON validation **
 - 🚫 **Zero External Dependencies** - Pure Java, no Lombok required **
 
 ## ✨ Features
@@ -101,7 +102,12 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 - 📦 **Immutable** - Thread-safe with final fields
 - 🔌 **Spring Native** - Built on `ResponseEntity` and `HttpStatus`
 - 📋 **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807) **
-- 📚 **Complete JavaDoc** - Every class fully documented with explicit constructor documentation **
+- 📚 **Complete JavaDoc** - Every class and method fully documented with comprehensive examples **
+- 🔐 **Automatic Security Features** - Built-in JSON request protection **
+  - ✅ **Strict JSON Validation** - Rejects unknown properties to prevent mass assignment attacks
+  - ✅ **XSS Prevention** - Automatic HTML escaping for all string inputs
+  - ✅ **String Sanitization** - Automatic whitespace trimming on deserialization
+  - ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability
 - 🛡️ **Comprehensive Exception Handling** - 10 built-in handlers covering all common scenarios **
   - ✅ Validation errors (`@Valid` annotations)
   - ✅ Type mismatches (wrong parameter types)
@@ -128,33 +134,39 @@ Unlike other response wrapper libraries, this one offers:
 
 - ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
 - ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
+- ✅ **Built-in Security Features** - Automatic XSS prevention, strict JSON validation, and HTML escaping
 - ✅ **Zero External Dependencies** - Pure Java implementation, won't conflict with your application
 - ✅ **Extensible Exception Handling** - Create custom business exceptions easily
 - ✅ **Trace ID Support** - Built-in distributed tracing capabilities
-- ✅ **Comprehensive JavaDoc** - Every class fully documented with explicit constructor documentation and zero warnings
+- ✅ **Professional-Grade Documentation** - 100% Javadoc coverage with comprehensive method documentation including:
+  - Detailed security feature explanations
+  - Code examples for all major features
+  - Complete @param, @return, @see, and @since tags
+  - Method-level documentation explaining design decisions
+  - Zero Javadoc warnings on build
 - ✅ **Production-Grade Quality** - Clean builds, proper documentation, and battle-tested code
 ## 🚀 Installation
 
-### Maven (Latest - v1.0.0)
+### Maven (Latest - v1.1.0)
 
 ```xml
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
-### Gradle (Latest - v1.0.0)
+### Gradle (Latest - v1.1.0)
 
 ```gradle
-implementation 'io.github.og4dev:og4dev-spring-response:1.0.0'
+implementation 'io.github.og4dev:og4dev-spring-response:1.1.0'
 ```
 
-### Gradle Kotlin DSL (Latest - v1.0.0)
+### Gradle Kotlin DSL (Latest - v1.1.0)
 
 ```kotlin
-implementation("io.github.og4dev:og4dev-spring-response:1.0.0")
+implementation("io.github.og4dev:og4dev-spring-response:1.1.0")
 ```
 
 ---
@@ -249,7 +261,7 @@ The library includes `META-INF/spring/org.springframework.boot.autoconfigure.Aut
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -271,7 +283,151 @@ Or in `application.properties`:
 spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguration
 ```
 
-## 🛡️ Built-in Exception Handling 
+## 🔐 Built-in Security Features
+
+The library automatically configures Jackson with three critical security and data quality features through the `strictJsonCustomizer()` bean. These protections are applied to **all API endpoints** with zero configuration required.
+
+### 1. Strict Property Validation 🛡️
+
+**Prevents mass assignment vulnerabilities and data injection attacks**
+
+Automatically rejects JSON payloads containing unexpected fields:
+
+```java
+// Your DTO
+public class UserDto {
+    private String name;
+    private String email;
+    // getters and setters
+}
+
+// ✅ Valid request
+{
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+
+// ❌ Rejected with 400 Bad Request
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "isAdmin": true  // Unknown field - potential mass assignment attack
+}
+```
+
+**Benefits:**
+- Prevents privilege escalation attempts
+- Catches client-side typos early
+- Enforces strict API contracts
+- Improves API security posture
+
+### 2. Automatic XSS Prevention 🔒
+
+**HTML escaping for all string inputs**
+
+All string values are automatically sanitized to prevent cross-site scripting (XSS) attacks:
+
+```java
+// Input request
+{
+  "name": "  <script>alert('XSS')</script>  ",
+  "comment": "<img src=x onerror=alert(1)>"
+}
+
+// After automatic sanitization
+{
+  "name": "&lt;script&gt;alert('XSS')&lt;/script&gt;",
+  "comment": "&lt;img src=x onerror=alert(1)&gt;"
+}
+```
+
+**Features:**
+- ✅ Automatic HTML entity encoding
+- ✅ Trims leading/trailing whitespace
+- ✅ Preserves null values (doesn't convert to empty strings)
+- ✅ Works on all `@RequestBody` deserializations
+
+**Security Benefit:**  
+Provides defense-in-depth even if output encoding is missed in views. The data is safe at the persistence layer.
+
+### 3. Case-Insensitive Enum Handling 🎯
+
+**Better API usability without compromising type safety**
+
+Allows flexible enum value formats from clients:
+
+```java
+public enum Status {
+    ACTIVE, INACTIVE, PENDING
+}
+
+// All of these work ✅
+{ "status": "ACTIVE" }
+{ "status": "active" }
+{ "status": "Active" }
+{ "status": "AcTiVe" }
+```
+
+### How It Works
+
+These features are automatically applied via the `strictJsonCustomizer()` method in `ApiResponseAutoConfiguration`:
+
+```java
+@Bean
+public JsonMapperBuilderCustomizer strictJsonCustomizer() {
+    return builder -> {
+        // 1. Reject unknown properties
+        builder.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        
+        // 2. Allow case-insensitive enums
+        builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+        
+        // 3. Sanitize all strings
+        SimpleModule stringTrimModule = new SimpleModule();
+        stringTrimModule.addDeserializer(String.class, new StdDeserializer<>(String.class) {
+            @Override
+            public String deserialize(JsonParser p, DeserializationContext ctxt) {
+                String value = p.getValueAsString();
+                if (value == null) return null;
+                return HtmlUtils.htmlEscape(value.trim());
+            }
+        });
+        builder.addModules(stringTrimModule);
+    };
+}
+```
+
+### Disabling Security Features (Not Recommended)
+
+If you need to disable these features for specific use cases:
+
+```java
+@Configuration
+public class CustomJacksonConfig {
+    
+    @Bean
+    @Primary  // Takes precedence over library's bean
+    public JsonMapperBuilderCustomizer myCustomizer() {
+        return builder -> {
+            // Your custom configuration
+            builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        };
+    }
+}
+```
+
+Or disable the entire auto-configuration:
+
+```properties
+spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguration
+```
+
+### Documentation
+
+For complete technical details, see the comprehensive Javadoc documentation:
+- 📚 [ApiResponseAutoConfiguration.strictJsonCustomizer()](https://javadoc.io/doc/io.github.og4dev/og4dev-spring-response/latest/io/github/og4dev/config/ApiResponseAutoConfiguration.html#strictJsonCustomizer())
+
+## 🛡️ Built-in Exception Handling
 
 The library includes a **production-ready `GlobalExceptionHandler`** that automatically handles common exceptions using Spring Boot's **ProblemDetail (RFC 9457)** standard.
 
@@ -2017,7 +2173,6 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 **Problem:** Exceptions are not being caught by the GlobalExceptionHandler.
 
 **Solution:**
-- Ensure you're using version 1.3.0+ with auto-configuration
 - Check that auto-configuration is not excluded
 - Verify Spring Boot version is 3.2.0+
 
@@ -2059,7 +2214,7 @@ public class Application {
     .build());
 ```
 
-- For **error responses**, trace IDs are **automatically generated** by GlobalExceptionHandler *(v2.0.0+)*
+- For **error responses**, trace IDs are **automatically generated** by GlobalExceptionHandler
 - All error logs and responses have matching trace IDs for easy correlation
 
 #### 4. Dependency Conflicts
@@ -2123,7 +2278,7 @@ public class JacksonConfig {
 
 #### 7. Auto-Configuration Not Loading
 
-**Problem:** Auto-configuration doesn't work after upgrading to 1.3.0.
+**Problem:** Auto-configuration doesn't work.
 
 **Solution:**
 - Verify you're using Spring Boot 3.x (not 2.x)
@@ -2186,7 +2341,7 @@ If you encounter issues not covered here:
 2. **Review JavaDocs:** All classes are fully documented
 3. **Enable Debug Logging:**
    ```properties
-   logging.level.io.github.pasinduog=DEBUG
+   logging.level.io.github.og4dev=DEBUG
    ```
 4. **Open an Issue:** Provide minimal reproducible example
 
@@ -2291,21 +2446,9 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 
 ### How do I use the built-in GlobalExceptionHandler?
 
-**As of v1.3.0**, the `GlobalExceptionHandler` is **automatically configured** via Spring Boot Auto-Configuration. No manual setup is required!
+The `GlobalExceptionHandler` is **automatically configured** via Spring Boot Auto-Configuration. No manual setup is required!
 
 Simply add the library dependency, and the exception handler will be active immediately. The auto-configuration mechanism automatically registers the handler when the library is detected on the classpath.
-
-**For versions prior to 1.3.0**, you needed to ensure component scanning:
-
-```java
-@SpringBootApplication
-@ComponentScan(basePackages = {"com.yourapp", "io.github.og4dev.exception"})
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
-```
 
 ### Can I customize or extend the GlobalExceptionHandler?
 
@@ -2333,7 +2476,7 @@ public class CustomExceptionHandler {
 
 ### How do I disable the GlobalExceptionHandler?
 
-**As of v1.3.0**, you can disable it by excluding the auto-configuration:
+You can disable it by excluding the auto-configuration:
 
 ```java
 @SpringBootApplication(exclude = ApiResponseAutoConfiguration.class)
@@ -2347,20 +2490,6 @@ public class Application {
 Or in `application.properties`:
 ```properties
 spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguration
-```
-
-**For versions prior to 1.3.0**, you needed to use component scanning filters:
-
-```java
-@SpringBootApplication
-@ComponentScan(basePackages = "com.yourapp",
-    excludeFilters = @ComponentScan.Filter(
-        type = FilterType.ASSIGNABLE_TYPE,
-        classes = GlobalExceptionHandler.class
-    ))
-public class Application {
-    // ...
-}
 ```
 
 ### How do I customize the timestamp format?
@@ -2559,9 +2688,39 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 
 ## 📋 Migration Guide
 
-This is the initial release (v1.0.0) of the OG4Dev Spring API Response library. No migration is required.
+### From v1.0.0 to v1.1.0
 
-### Getting Started
+This is a minor release with **new security features** and documentation fixes:
+
+#### ✨ New Features:
+- ✅ **Strict JSON Validation** - New `strictJsonCustomizer()` method that adds:
+  - `FAIL_ON_UNKNOWN_PROPERTIES` - Rejects JSON with unexpected fields (prevents mass assignment attacks)
+  - `ACCEPT_CASE_INSENSITIVE_ENUMS` - Flexible enum handling (e.g., "ACTIVE", "active", "Active")
+  - **Automatic XSS Prevention** - Detects and rejects HTML tags in string inputs
+  - **Automatic String Trimming** - Removes leading/trailing whitespace
+  - Throws `IllegalArgumentException` with message: "Security Error: HTML tags or XSS payloads are not allowed in the request."
+
+#### 📝 Documentation Fixes:
+- ✅ Fixed incorrect package name references in README (`io.github.pasinduog` → `io.github.og4dev`)
+
+#### 🔄 Migration Steps:
+**No code changes required!** The new security features are automatically applied.
+
+If you need to disable strict validation (e.g., to accept HTML content):
+```java
+@Configuration
+public class CustomConfig {
+    @Bean
+    @Primary  // Override the default
+    public JsonMapperBuilderCustomizer myCustomizer() {
+        return builder -> {
+            // Your custom configuration
+        };
+    }
+}
+```
+
+### Getting Started (New Users)
 
 Simply add the dependency to your project:
 
@@ -2569,13 +2728,84 @@ Simply add the dependency to your project:
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
 All features are automatically enabled through Spring Boot auto-configuration. No manual configuration needed!
 
 ## 🔒 Security Considerations
+
+### 🛡️ Built-in Security Features (Automatic)
+
+The library includes **three automatic security protections** that are enabled by default:
+
+#### 1. ✅ Strict JSON Property Validation (Mass Assignment Prevention)
+
+**Automatically enabled** - Rejects unknown properties to prevent mass assignment attacks:
+
+```java
+// Your DTO
+public class UserUpdateDto {
+    private String name;
+    private String email;
+}
+
+// ✅ Valid request
+{"name": "John", "email": "john@example.com"}
+
+// ❌ Automatically rejected with 400 Bad Request
+{"name": "John", "email": "john@example.com", "isAdmin": true}
+```
+
+**What it prevents:**
+- Privilege escalation attempts
+- Data injection attacks
+- Unauthorized field modifications
+
+#### 2. ✅ Automatic XSS Prevention (HTML Tag Rejection)
+
+**Automatically enabled** - All string inputs are validated for HTML tags, and requests with HTML content are rejected:
+
+```java
+// ✅ Valid input - Clean text
+{"comment": "This is a safe comment"}
+
+// ❌ Rejected with 400 Bad Request
+{"comment": "<script>alert('XSS')</script>"}
+
+// Error response:
+{
+  "status": 400,
+  "detail": "Security Error: HTML tags or XSS payloads are not allowed in the request.",
+  "traceId": "550e8400-e29b-41d4-a716-446655440000",
+  "timestamp": "2026-02-16T10:30:45.123Z"
+}
+```
+
+**What it prevents:**
+- Cross-Site Scripting (XSS) attacks
+- HTML injection
+- JavaScript injection
+- XML/XHTML injection attempts
+
+**Note:** Fail-fast approach - malicious content never enters your system.
+
+#### 3. ✅ Automatic String Sanitization
+
+**Automatically enabled** - Trims whitespace and preserves null values:
+
+```java
+// Input
+{"name": "  John Doe  ", "middleName": null}
+
+// Automatically processed to
+{"name": "John Doe", "middleName": null}
+```
+
+**See also:** [Built-in Security Features](#-built-in-security-features) for detailed documentation.
+
+---
 
 ### 1. Exception Message Sanitization
 
@@ -2672,7 +2902,7 @@ The library uses **provided scope** dependencies:
 
 **Verify with:**
 ```bash
-mvn dependency:tree -Dincludes=io.github.pasinduog:api-response
+mvn dependency:tree -Dincludes=io.github.og4dev:og4dev-spring-response
 ```
 
 ### 7. ProblemDetail Information Disclosure
@@ -2985,75 +3215,68 @@ Monthly sponsors receive:
 
 ## 📈 Version History
 
+### 1.1.0 (February 2026) - Current Release
+
+✅ **New Features:**
+- **Built-in Security Features** - Added `strictJsonCustomizer()` method with comprehensive JSON security
+  - ✅ **Strict Property Validation** - Rejects unknown properties to prevent mass assignment attacks
+  - ✅ **XSS Prevention** - Automatic HTML tag detection and rejection using regex pattern `.*<\s*[a-zA-Z/!].*`
+  - ✅ **String Sanitization** - Automatic whitespace trimming on deserialization
+  - ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability
+- **Comprehensive Exception Handling** - GlobalExceptionHandler with 10 built-in exception handlers
+  - General exceptions (HTTP 500)
+  - Validation errors with field-level details (HTTP 400)
+  - Type mismatch errors (HTTP 400)
+  - Malformed JSON requests (HTTP 400)
+  - Missing required parameters (HTTP 400)
+  - 404 Not Found errors
+  - 405 Method Not Allowed
+  - 415 Unsupported Media Type
+  - Null pointer exceptions (HTTP 500)
+  - Custom ApiException instances (custom status codes)
+- **Distributed Tracing Support** - Trace IDs in error responses for debugging
+- **RFC 9457 Compliance** - Standard ProblemDetail format for error responses
+- **Spring Boot Auto-Configuration** - Zero-configuration setup via META-INF imports
+- **TraceIdFilter** - Optional servlet filter for trace ID generation and MDC integration
+- **Custom Business Exceptions** - Abstract ApiException class for domain-specific errors
+
+🔧 **Improvements:**
+- **Complete Javadoc Coverage** - 100% documentation with zero warnings
+  - Comprehensive documentation for all classes and methods
+  - Detailed security feature explanations
+  - Code examples for all major features
+  - Complete @param, @return, @see, and @since tags
+- **Enhanced Security** - Fail-fast approach with HTML tag rejection instead of escaping
+- **Better Error Messages** - Clear, actionable error messages for all scenarios
+- **Improved Logging** - Consistent trace IDs between logs and error responses
+- **Production-Ready Quality** - Clean Maven builds, proper documentation, battle-tested code
+
+📚 **Documentation:**
+- Added dedicated "Built-in Security Features" section in README
+- Enhanced JavaDoc for `strictJsonCustomizer()` method with detailed examples
+- Added comprehensive exception handling documentation
+- Added distributed tracing examples and best practices
+- Complete package-info.java files for all packages
+
+🔧 **Technical Updates:**
+- Java 17+ support (Java 21 LTS recommended)
+- Spring Boot 3.2.0 - 4.0.2 compatibility (tested with 4.0.2)
+- Jackson 3.x compatibility (tools.jackson packages)
+- Pure Java implementation - No Lombok dependency
+- Zero external runtime dependencies
+- Ultra-lightweight: ~10KB JAR size
+
 ### 1.0.0 (February 2026) - Initial Release
 
-✅ **Now Available on Maven Central!**
+✅ **Core Features:**
+- Standard API Response wrapper with generic type support
+- Factory methods: `success()`, `created()`, `status()`
+- Automatic RFC 3339 UTC timestamp generation
+- Thread-safe & immutable design
+- Full Spring Boot 3.2.0+ integration
+- Comprehensive JavaDoc documentation
 
-#### ✅ **Core Features:**
-- **Standard API Response Wrapper** - Type-safe generic response wrapper with consistent structure
-  - HTTP status code in response body
-  - Human-readable messages
-  - Generic content payload (supports any Java type)
-  - Automatic RFC 3339 UTC timestamp generation
-- **Factory Methods** - Clean static methods for common use cases:
-  - `success()` - HTTP 200 OK responses
-  - `created()` - HTTP 201 CREATED responses  
-  - `status()` - Custom HTTP status responses
-- **Thread-Safe & Immutable** - Final fields and builder pattern for safe concurrent use
-- **Spring Boot Integration** - Full Spring Boot 3.2.0 - 4.0.2 support with provided dependencies
-
-#### 🛡️ **Comprehensive Exception Handling (10 Handlers):**
-- **General Exception Handler** - Catches all unhandled exceptions (HTTP 500)
-- **Validation Error Handler** - `@Valid` annotation failures with field-level details (HTTP 400)
-- **Type Mismatch Handler** - Method argument type conversion errors (HTTP 400)
-- **Malformed JSON Handler** - Invalid JSON request bodies (HTTP 400)
-- **Missing Parameter Handler** - Required `@RequestParam` missing (HTTP 400)
-- **404 Not Found Handler** - Missing endpoints and resources (HTTP 404)
-- **Method Not Allowed Handler** - Unsupported HTTP methods (HTTP 405)
-- **Unsupported Media Type Handler** - Invalid Content-Type headers (HTTP 415)
-- **Null Pointer Handler** - NullPointerException handling (HTTP 500)
-- **Custom ApiException Handler** - Domain-specific business logic errors (custom status)
-
-#### 🚀 **Zero Configuration:**
-- **Spring Boot Auto-Configuration** - Automatic component registration via META-INF
-- **GlobalExceptionHandler** - Automatically registered via `ApiResponseAutoConfiguration`
-- **No Manual Setup** - No @ComponentScan or @Import needed
-
-#### 🔍 **Distributed Tracing:**
-- **TraceIdFilter** - Optional servlet filter for trace ID generation and MDC integration
-- **Automatic Trace IDs** - All error responses include unique UUIDs for request correlation
-- **MDC Integration** - Trace IDs automatically available in all log statements
-- **SLF4J Logging** - Comprehensive logging with consistent trace IDs
-
-#### 📋 **RFC 9457 Compliance:**
-- **ProblemDetail Format** - Industry-standard error responses (latest RFC, supersedes RFC 7807)
-- **Structured Error Responses** - type, title, status, detail, traceId, timestamp fields
-- **Validation Error Aggregation** - Field-level error details for validation failures
-
-#### 📚 **Complete Documentation:**
-- **Zero Javadoc Warnings** - 100% documented codebase
-- **Package-Level Documentation** - package-info.java for all 5 packages
-- **Constructor Documentation** - Explicit documentation for all constructors
-- **Comprehensive JavaDoc** - @param, @return, @throws tags for all public APIs
-- **Usage Examples** - Code examples in JavaDoc and README
-
-#### 🔧 **Build & Quality:**
-- **Pure Java Implementation** - No Lombok or external dependencies
-- **Custom Builder Pattern** - Manual builder implementation for flexibility
-- **Maven Javadoc Plugin** - Optimized configuration for zero-warning builds
-- **Production-Ready Artifacts** - Clean Maven builds with complete documentation
-- **Apache 2.0 License** - Comprehensive license with contributor protections
-
-#### 📦 **Technical Specifications:**
-- **Java Version:** 17+ (Java 21 LTS recommended)
-- **Spring Boot Version:** 3.2.0 - 4.0.2 (fully tested)
-- **JAR Size:** ~10KB (ultra-lightweight)
-- **Dependencies:** Zero external runtime dependencies (Spring Web provided scope)
-- **Memory Footprint:** ~200 bytes per response object
-- **Response Time:** < 1ms overhead
-- **Thread Safety:** 100% immutable design
-
-#### 🎯 **Roadmap:**
+🎯 **Roadmap:**
 - Spring WebFlux support (reactive)
 - Pagination metadata support
 - OpenAPI schema generation
@@ -3077,258 +3300,6 @@ The **OG4Dev Spring API Response** library is a production-ready, zero-configura
 ✅ **Lightweight** - Only ~10KB, zero runtime dependencies  
 ✅ **Type Safe** - Full generic support with compile-time checking  
 ✅ **Pure Java** - No Lombok or external dependencies required  
-
-### 📊 Quick Stats
-
-| Metric | Value |
-|--------|-------|
-| JAR Size | ~10KB |
-| Response Time | < 1ms |
-| Memory per Response | ~200 bytes |
-| Thread Safety | 100% |
-| Spring Boot Support | 3.2.0 - 4.0.2 |
-| Java Version | 17+ |
-
-### 🔗 Quick Access
-
-- 📦 **[Maven Central](https://central.sonatype.com/artifact/io.github.og4dev/og4dev-spring-response)** - Download & integration
-- 📚 **[JavaDoc](https://javadoc.io/doc/io.github.og4dev/og4dev-spring-response)** - Complete API documentation  
-- 🐛 **[Issues](https://github.com/OG4Dev/og4dev-spring-response/issues)** - Report bugs or request features
-- 💬 **[Discussions](https://github.com/OG4Dev/og4dev-spring-response/discussions)** - Ask questions & share ideas
-
----
-
-**⭐ If you find this library helpful, please give it a star on GitHub!**
-
-Made with ❤️ by [Pasindu OG](https://github.com/pasinduog)
-
-
-This is a **MAJOR version** release with breaking changes. Please review carefully before upgrading from v2.0.0.
-
-### 🚨 Breaking Changes:
-
-1. **❌ Removed Lombok Dependency** - BREAKING CHANGE
-   - v2.0.0 used Lombok with `@Builder` annotation
-   - v3.0.0 uses pure Java with manual builder pattern
-   - **Impact:** If your code depends on Lombok-generated methods, you must update
-   - **Migration:** Use the new `ApiResponse.ApiResponseBuilder<T>()` constructor
-
-2. **❌ Removed `traceId` Field from ApiResponse** - BREAKING CHANGE
-   - v2.0.0 included `traceId` in success responses (ApiResponse)
-   - v3.0.0 removes `traceId` from success responses entirely
-   - **Impact:** Success response JSON no longer includes `traceId` field
-   - **Migration:** Trace IDs are now only in error responses (ProblemDetail)
-   - Use MDC or response headers for trace ID propagation instead
-
-3. **✅ Updated RFC Standard** - Non-Breaking
-   - Upgraded from RFC 7807 to RFC 9457 (latest ProblemDetail standard)
-   - Same structure, just updated specification
-
-### ✅ **New Features:**
-- **Enhanced Exception Handling** - Added 6 new exception handlers for comprehensive error coverage (total: 10 handlers)
-  - `HttpMessageNotReadableException` - Malformed JSON body handling (HTTP 400)
-  - `MissingServletRequestParameterException` - Missing required parameters (HTTP 400)
-  - `NoResourceFoundException` - 404 Not Found for endpoints/resources (HTTP 404)
-  - `HttpRequestMethodNotSupportedException` - Invalid HTTP method (HTTP 405)
-  - `HttpMediaTypeNotSupportedException` - Unsupported Content-Type (HTTP 415)
-  - `NullPointerException` - Null pointer handling with detailed stack traces (HTTP 500)
-- **TraceIdFilter** - Automatic trace ID generation and MDC integration for distributed tracing
-- **RFC 9457 Compliance** - Updated to latest RFC 9457 (supersedes RFC 7807) for ProblemDetail format
-- **Production-Ready Error Responses** - Clear, actionable error messages for all common scenarios
-- **Zero External Dependencies** - Removed Lombok dependency, now pure Java implementation
-  - Custom builder pattern implementation (no annotation processing required)
-  - Simpler setup - no IDE plugins needed
-  - Faster compilation - no annotation processing overhead
-- **Complete Javadoc Coverage** - Zero warnings with comprehensive documentation
-  - Added package-info.java for all 5 packages
-  - Full @param, @return, @throws documentation
-  - Constructor documentation for all classes
-  - Enhanced class and method descriptions
-- **Apache 2.0 License** - Comprehensive license documentation with contributor protections
-- **Maven Javadoc Plugin Configuration** - Optimized settings for zero-warning builds
-- Major version bump to 3.0.0 due to breaking changes
-- Exception handling and auto-configuration features from v2.0.0 and v1.3.0 maintained
-
-🔧 **Improvements:**
-- **Stabilized API** for long-term support (LTS) with semantic versioning
-- **Enhanced Documentation Quality:**
-  - Zero Javadoc warnings during build process
-  - Complete API documentation with all @param, @return, @throws tags
-  - Explicit constructor documentation for all classes
-  - Package-level documentation for better organization
-- **Better Error Messages** with specific, actionable details for all 10 exception types
-- **Improved Logging** with consistent trace IDs across all exception handlers
-- **Performance Optimizations:**
-  - Immutable response objects for thread safety
-  - Efficient builder pattern implementation
-  - Minimal memory footprint (~200 bytes per response)
-  - Fast response time (<1ms overhead)
-- **Build Quality Improvements:**
-  - Clean Maven builds with zero warnings
-  - Optimized javadoc plugin configuration
-  - Production-ready artifact generation
-  - Enhanced CI/CD compatibility
-
-📝 **Documentation:**
-- **Complete Javadoc Coverage** - 100% documentation across all classes with zero warnings
-  - `ApiResponse` - Full documentation including builder pattern with @param and @return tags
-  - `ApiException` - Abstract base class with comprehensive documentation
-  - `GlobalExceptionHandler` - All 10 exception handlers fully documented
-  - `TraceIdFilter` - Filter implementation with @throws documentation
-  - `ApiResponseAutoConfiguration` - Auto-configuration with detailed setup guide
-- **Package Documentation** - Added package-info.java files for all 5 packages:
-  - `io.github.pasinduog` - Root package overview
-  - `io.github.pasinduog.config` - Configuration classes documentation
-  - `io.github.pasinduog.dto` - Data transfer objects documentation
-  - `io.github.pasinduog.exception` - Exception handling documentation
-  - `io.github.pasinduog.filter` - Servlet filters documentation
-- **Enhanced JavaDoc Quality:**
-  - Added explicit constructor documentation for all classes
-  - Added comprehensive @param, @return, @throws tags
-  - Added @author, @version, @since tags to all classes
-  - Field-level documentation for all public/protected fields
-  - Detailed class-level descriptions with usage examples
-- Updated all code examples and guides
-- Added documentation for all 6 new exception handlers
-
-🔧 **Technical Updates:**
-- **Maven Javadoc Plugin** - Optimized configuration for zero-warning builds
-  - Configured `doclint:none` for flexible documentation standards
-  - Added `failOnError:false` and `failOnWarnings:false` for robust builds
-  - Set `detectJavaApiLink:false` to avoid external API link issues
-  - Optimized for Java 17+ with source level configuration
-- **Removed Lombok Dependency** - Pure Java implementation for better compatibility
-  - No IDE plugin requirements
-  - No annotation processing overhead
-  - Simpler build process
-  - Better IDE support out of the box
-- Maintained full compatibility with Spring Boot 3.2.0 - 4.0.2
-- Continued support for Java 17+ (Java 21 LTS recommended)
-- All Maven plugins updated to latest stable versions
-- Updated GlobalExceptionHandler with 10 comprehensive exception handlers
-- **Clean Build Process** - Zero Javadoc warnings during `mvn javadoc:jar`
-- Production-ready artifacts with complete documentation
-
-### 2.0.0 (February 2026) - Deprecated - Use v3.0.0 Instead
-
-⚠️ **This version has been superseded by v3.0.0**
-
-This version included Lombok dependency and traceId in success responses, which have been removed in v3.0.0 for better compatibility and simpler implementation.
-
-✅ **Features (Now in v3.0.0 with improvements):**
-- Exception handling with ProblemDetail (RFC 7807)
-- Auto-configuration support
-- Trace ID support (with traceId in ApiResponse - removed in v3.0.0)
-- Lombok-based builder pattern (changed to manual builder in v3.0.0)
-
-**Recommendation:** Upgrade to v3.0.0 for pure Java implementation without Lombok dependency.
-
-### 1.3.0 (February 4, 2026) - Auto-Configuration & Stability Release
-
-✅ **New Features:**
-- **Spring Boot Auto-Configuration** - Added `ApiResponseAutoConfiguration` with automatic component registration
-- **META-INF Auto-Configuration File** - Included `org.springframework.boot.autoconfigure.AutoConfiguration.imports` for Spring Boot 3.x
-- **Zero Manual Configuration** - No more need for @ComponentScan or @Import annotations
-- **Type Mismatch Error Handler** - Added MethodArgumentTypeMismatchException handling for better error messages
-- **Spring Boot 4.0.2 Support** - Verified compatibility with the latest Spring Boot 4.x release
-
-🔧 **Improvements:**
-- Updated Spring Boot version support to 4.0.2 for latest features and security
-- Enhanced project stability and dependency management
-- Improved JavaDoc documentation across all classes with comprehensive examples
-- Added @since tags to all classes for better version tracking
-- Refined build process and artifact generation
-- Enhanced exception handling with more descriptive type conversion error messages
-- Updated Maven plugins: maven-source-plugin (3.3.0), maven-javadoc-plugin (3.6.3), maven-gpg-plugin (3.1.0)
-
-📝 **Documentation:**
-- Added comprehensive auto-configuration documentation
-- Updated FAQ section with auto-configuration details
-- Enhanced all JavaDoc comments with detailed descriptions and examples
-- Added migration notes for users upgrading from previous versions
-- Added type mismatch error handling documentation
-- Added performance benchmarks and characteristics
-- Added JSON serialization behavior documentation
-- Added Quick Links section for easy navigation
-- Added Before/After comparison examples
-- Added IDE setup instructions for contributors
-
-🔧 **Technical Updates:**
-- Maintained compatibility with Java 17+ and Spring Boot 3.2.0 - 4.0.2
-- Tested and verified full compatibility with Spring Boot 4.0.2
-- Enhanced Maven Central publishing workflow with updated plugin versions
-- Improved package structure and organization
-- Updated build plugins: maven-source-plugin (3.3.0), maven-javadoc-plugin (3.6.3), maven-gpg-plugin (3.1.0)
-
-### 1.2.0 (February 2026) - Enhanced Response & Custom Exceptions
-
-✅ **New Features:**
-- **Custom ApiException Support** - Abstract base class for creating domain-specific business exceptions
-- **Automatic ApiException Handling** - GlobalExceptionHandler now catches and formats custom ApiException instances
-- **Response Status Field** - Added `status` field to ApiResponse for explicit HTTP status code in response body
-- **Trace ID Support** - GlobalExceptionHandler adds `traceId` (UUID) to error responses for distributed tracing and log correlation
-- **Improved Timestamp Format** - Changed from `LocalDateTime` to `Instant` (UTC) for consistent timezone handling
-
-🔧 **Improvements:**
-- Better support for microservices architecture with trace IDs in error responses
-- Enhanced debugging capabilities with status codes in response body
-- Cleaner exception handling pattern for business logic errors
-- More consistent timestamp format across all responses
-
-📝 **Documentation:**
-- Added comprehensive examples for custom ApiException usage
-- Updated all response examples to include new fields
-- Enhanced best practices section
-
-### 1.1.0 (February 2026) - Exception Handling Update
-
-✅ **New Features:**
-- Built-in `GlobalExceptionHandler` with ProblemDetail (RFC 7807) support
-- Automatic validation error handling for `@Valid` annotations
-- Comprehensive exception logging with SLF4J
-- Null pointer exception handling
-- Standardized error response format with timestamps
-
-🔧 **Improvements:**
-- Enhanced error responses with structured format
-- Better integration with Spring Boot validation
-- Automatic error field aggregation for validation failures
-
-### 1.0.0 (February 2026) - Initial Release
-
-✅ **Core Features:**
-- Standard API Response wrapper with generic type support
-- Five static factory methods: `success()`, `created()`, `status()`
-- Automatic ISO-8601 timestamp generation
-- Full Spring Boot 3.2.0+ integration
-- Immutable, thread-safe design
-- Comprehensive JavaDoc documentation
-
-🎯 **Roadmap:**
-- Spring WebFlux support (reactive)
-- Pagination metadata support
-- OpenAPI schema generation
-- Additional exception handlers
-- Internationalization (i18n) support
-- Response compression support
-- Custom serialization options
-- Metrics and monitoring integration
-
----
-
-## 📋 Summary
-
-The **API Response Library** is a production-ready, zero-configuration solution for standardizing REST API responses in Spring Boot applications.
-
-### 🎯 Why Choose This Library?
-
-✅ **Instant Setup** - Add dependency, start using. No configuration needed.  
-✅ **Battle-Tested** - Used in production Spring Boot applications  
-✅ **Modern Standards** - RFC 9457 ProblemDetail (v3.0.0+), Spring Boot 4.x support  
-✅ **Developer Friendly** - Comprehensive docs, clear examples, active maintenance  
-✅ **Lightweight** - Only ~10KB, zero runtime dependencies  
-✅ **Type Safe** - Full generic support with compile-time checking  
-✅ **Pure Java** - No Lombok or external dependencies (v3.0.0+)  
 
 ### 📊 Quick Stats
 
