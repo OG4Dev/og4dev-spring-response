@@ -1,6 +1,7 @@
 package io.github.og4dev.config;
 
-import io.github.og4dev.annotation.NoTrim;
+import io.github.og4dev.annotation.AutoTrim;
+import io.github.og4dev.annotation.XssCheck;
 import io.github.og4dev.exception.GlobalExceptionHandler;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -64,7 +65,7 @@ import tools.jackson.databind.module.SimpleModule;
  * </pre>
  *
  * @author Pasindu OG
- * @version 1.2.0
+ * @version 1.3.0
  * @see GlobalExceptionHandler
  * @see org.springframework.boot.autoconfigure.AutoConfiguration
  * @since 1.0.0
@@ -125,11 +126,12 @@ public class ApiResponseAutoConfiguration {
     }
 
     /**
-     * Configures strict JSON deserialization with comprehensive security features and flexible string handling.
+     * Configures strict JSON deserialization with opt-in security features via field-level annotations.
      * <p>
      * This bean customizer enhances Jackson's JSON processing with production-ready security and data quality
-     * features that are automatically applied to all API endpoints without requiring any code changes.
-     * All features work seamlessly with Spring Boot 3.x and 4.x autoconfiguration.
+     * features that can be selectively applied to specific fields using the {@link AutoTrim @AutoTrim} and
+     * {@link XssCheck @XssCheck} annotations. By default, fields are NOT trimmed or XSS-validated unless
+     * explicitly annotated.
      * </p>
      *
      * <h2>Overview of Features</h2>
@@ -137,10 +139,10 @@ public class ApiResponseAutoConfiguration {
      * This configuration provides four critical layers of protection and data processing:
      * </p>
      * <ol>
-     *   <li><b>Strict Property Validation</b> - Prevents mass assignment attacks</li>
-     *   <li><b>Case-Insensitive Enum Handling</b> - Improves API usability</li>
-     *   <li><b>Automatic XSS Prevention</b> - Blocks HTML/XML injection attacks</li>
-     *   <li><b>Smart String Trimming</b> - Removes whitespace with opt-out capability</li>
+     *   <li><b>Strict Property Validation</b> - Prevents mass assignment attacks (automatic)</li>
+     *   <li><b>Case-Insensitive Enum Handling</b> - Improves API usability (automatic)</li>
+     *   <li><b>Opt-in XSS Prevention</b> - Blocks HTML/XML injection attacks (requires {@code @XssCheck})</li>
+     *   <li><b>Opt-in String Trimming</b> - Removes whitespace (requires {@code @AutoTrim})</li>
      * </ol>
      *
      * <h2>Feature 1: Strict Property Validation</h2>
@@ -189,11 +191,18 @@ public class ApiResponseAutoConfiguration {
      * {"status": "AcTiVe"}   // ✓ Mixed case
      * }</pre>
      *
-     * <h2>Feature 3: Automatic XSS Prevention</h2>
+     * <h2>Feature 3: Opt-in XSS Prevention with @XssCheck</h2>
      * <p>
      * Registers a custom {@link StdScalarDeserializer} ({@code AdvancedStringDeserializer})
-     * that performs automatic HTML/XML tag detection and rejection at the deserialization layer.
-     * This provides fail-fast security that prevents malicious content from ever entering your system.
+     * that performs automatic HTML/XML tag detection and rejection at the deserialization layer
+     * for fields annotated with {@link XssCheck @XssCheck}. This provides fail-fast security
+     * that prevents malicious content from ever entering your system.
+     * </p>
+     * <p>
+     * <b>Default Behavior (No Annotation):</b> Fields are NOT validated for HTML tags
+     * </p>
+     * <p>
+     * <b>With @XssCheck Annotation:</b> HTML tags are detected and rejected
      * </p>
      * <p>
      * <b>Detection Mechanism:</b>
@@ -219,110 +228,114 @@ public class ApiResponseAutoConfiguration {
      * <b>Example:</b>
      * </p>
      * <pre>{@code
-     * // Valid Requests
-     * {"comment": "Hello World"}                     // ✓ Plain text
-     * {"comment": "Price: $100 < $200"}              // ✓ Comparison operators (no tag)
-     * {"comment": "2 + 2 = 4"}                       // ✓ Math expressions
+     * public class CommentDTO {
+     *     @XssCheck
+     *     private String content;        // XSS validated
+     *
+     *     private String commentId;      // NOT validated (no annotation)
+     * }
+     *
+     * // Valid Requests (for content field with @XssCheck)
+     * {"content": "Hello World"}                     // ✓ Plain text
+     * {"content": "Price: $100 < $200"}              // ✓ Comparison operators (no tag)
+     * {"content": "2 + 2 = 4"}                       // ✓ Math expressions
      *
      * // Invalid Requests (throws IllegalArgumentException)
-     * {"comment": "<script>alert('XSS')</script>"}   // ✗ Script injection
-     * {"comment": "<img src=x onerror=alert(1)>"}    // ✗ Image XSS
-     * {"comment": "Hello<br>World"}                  // ✗ HTML tags
-     * {"comment": "<!--comment-->"}                  // ✗ HTML comments
-     * {"comment": "<!DOCTYPE html>"}                 // ✗ DOCTYPE declaration
+     * {"content": "<script>alert('XSS')</script>"}   // ✗ Script injection
+     * {"content": "<img src=x onerror=alert(1)>"}    // ✗ Image XSS
+     * {"content": "Hello<br>World"}                  // ✗ HTML tags
+     * {"content": "<!--comment-->"}                  // ✗ HTML comments
+     * {"content": "<!DOCTYPE html>"}                 // ✗ DOCTYPE declaration
      * }</pre>
      *
-     * <h2>Feature 4: Smart String Trimming with @NoTrim Support</h2>
+     * <h2>Feature 4: Opt-in String Trimming with @AutoTrim</h2>
      * <p>
-     * Automatically removes leading and trailing whitespace from all string fields by default,
-     * improving data quality and preventing common user input errors. Fields can opt-out using
-     * the {@link io.github.og4dev.annotation.NoTrim @NoTrim} annotation when whitespace preservation
-     * is required.
+     * Automatically removes leading and trailing whitespace from string fields annotated with
+     * {@link AutoTrim @AutoTrim}, improving data quality and preventing common user input errors.
+     * Fields without the annotation preserve their original whitespace.
      * </p>
      *
-     * <h3>Default Trimming Behavior</h3>
+     * <h3>Default Behavior (No Annotation)</h3>
      * <p>
-     * All string fields are automatically trimmed during deserialization:
+     * By default, string fields preserve all whitespace:
      * </p>
      * <pre>{@code
      * public class UserDTO {
-     *     private String username;  // Auto-trimmed
-     *     private String email;     // Auto-trimmed
+     *     private String username;  // NOT trimmed (no annotation)
+     *     private String email;     // NOT trimmed (no annotation)
      * }
      *
      * // Input                            → Output
-     * {"username": "  john  "}            → {"username": "john"}
-     * {"email": " test@example.com   "}   → {"email": "test@example.com"}
-     * {"username": "\n\tjohn\t\n"}        → {"username": "john"}
+     * {"username": "  john  "}            → {"username": "  john  "}
+     * {"email": " test@example.com   "}   → {"email": " test@example.com   "}
      * }</pre>
      *
-     * <h3>Opt-Out with @NoTrim Annotation</h3>
+     * <h3>Opt-in with @AutoTrim Annotation</h3>
      * <p>
      * The {@code AdvancedStringDeserializer} implements context-aware deserialization using
      * {@link ValueDeserializer#createContextual(DeserializationContext, BeanProperty)}.
-     * When it detects the {@code @NoTrim} annotation on a field, it creates a specialized
-     * deserializer instance with trimming disabled while maintaining XSS validation.
+     * When it detects the {@code @AutoTrim} annotation on a field, it creates a specialized
+     * deserializer instance with trimming enabled.
      * </p>
      * <p>
-     * <b>Use Cases for @NoTrim:</b>
+     * <b>Use Cases for @AutoTrim:</b>
      * </p>
      * <ul>
-     *   <li><b>Password Fields:</b> Users may intentionally include spaces in passwords</li>
-     *   <li><b>Code Snippets:</b> Programming code requiring exact indentation</li>
-     *   <li><b>Base64 Data:</b> Encoded strings that must not be modified</li>
-     *   <li><b>Pre-formatted Text:</b> Poetry, ASCII art, or formatted documents</li>
-     *   <li><b>API Keys/Tokens:</b> Credentials that must be processed exactly as provided</li>
+     *   <li><b>User Input Fields:</b> Names, emails, addresses where whitespace is unwanted</li>
+     *   <li><b>Search Queries:</b> Remove accidental spaces from user inputs</li>
+     *   <li><b>Usernames:</b> Ensure consistent formatting without extra spaces</li>
+     *   <li><b>Reference Numbers:</b> IDs, codes that should not have whitespace</li>
      * </ul>
      * <p>
      * <b>Example:</b>
      * </p>
      * <pre>{@code
-     * import io.github.og4dev.annotation.NoTrim;
-     *
      * public class LoginDTO {
+     *     @AutoTrim
      *     private String username;       // Trimmed: "  admin  " → "admin"
      *
-     *     @NoTrim
      *     private String password;       // NOT trimmed: "  pass123  " → "  pass123  "
      * }
      *
-     * public class CodeSubmissionDTO {
-     *     private String title;          // Trimmed
+     * public class ProductDTO {
+     *     @AutoTrim
+     *     private String name;           // Trimmed
      *
-     *     @NoTrim
-     *     private String sourceCode;     // NOT trimmed: preserves indentation
+     *     private String description;    // NOT trimmed: preserves formatting
      * }
      * }</pre>
      *
-     * <h3>Important: XSS Validation Always Active</h3>
+     * <h3>Combining Both Annotations</h3>
      * <p>
-     * Even when {@code @NoTrim} is used, HTML tag detection is still performed for security.
-     * This ensures that opting out of trimming does not create security vulnerabilities.
+     * You can use both annotations together for fields that need both trimming and XSS validation:
      * </p>
      * <pre>{@code
      * public class SecureDTO {
-     *     @NoTrim
-     *     private String sensitiveData;
+     *     @AutoTrim
+     *     @XssCheck
+     *     private String cleanInput;  // First trimmed, then XSS-validated
      * }
      *
-     * // These will STILL be rejected even with @NoTrim:
-     * {"sensitiveData": "  <script>alert(1)</script>  "}  // ✗ XSS attempt blocked
-     * {"sensitiveData": "  <img src=x>  "}               // ✗ HTML tag blocked
+     * // These will be rejected (after trimming):
+     * {"cleanInput": "  <script>alert(1)</script>  "}  // ✗ XSS attempt blocked
+     * {"cleanInput": "  <img src=x>  "}               // ✗ HTML tag blocked
      * }</pre>
      *
      * <h2>Implementation Details</h2>
      * <p>
      * This method registers an inner class {@code AdvancedStringDeserializer} that extends
-     * {@link StdScalarDeserializer}{@code <String>}. The deserializer has two modes:
+     * {@link StdScalarDeserializer}{@code <String>}. The deserializer operates in different modes
+     * based on field annotations:
      * </p>
      * <ul>
-     *   <li><b>Default Mode:</b> {@code shouldTrim = true} - Trims and validates strings</li>
-     *   <li><b>NoTrim Mode:</b> {@code shouldTrim = false} - Only validates (no trimming)</li>
+     *   <li><b>Default Mode:</b> No processing (preserves original value)</li>
+     *   <li><b>Trim Mode:</b> {@code shouldTrim = true} when {@code @AutoTrim} is present</li>
+     *   <li><b>XSS Mode:</b> {@code shouldXssCheck = true} when {@code @XssCheck} is present</li>
+     *   <li><b>Combined Mode:</b> Both trimming and validation when both annotations present</li>
      * </ul>
      * <p>
      * The {@code createContextual()} method inspects each field's annotations during
-     * deserialization context creation. If {@code @NoTrim} is found, it returns a new
-     * instance configured for no-trim mode.
+     * deserialization context creation and returns an appropriately configured deserializer instance.
      * </p>
      *
      * <h2>Global Application Scope</h2>
@@ -346,12 +359,12 @@ public class ApiResponseAutoConfiguration {
      * <pre>{@code
      * {"name": null}      → name = null (not "")
      * {"name": ""}        → name = ""
-     * {"name": "  "}      → name = ""   (trimmed to empty)
+     * {"name": "  "}      → name = "  " (unchanged unless @AutoTrim is used)
      * }</pre>
      *
      * <h2>Disabling These Features</h2>
      * <p>
-     * If you need to accept HTML content or disable any of these features, you have three options:
+     * If you need to disable any of these features, you have three options:
      * </p>
      * <ol>
      *   <li><b>Exclude Auto-Configuration:</b>
@@ -383,17 +396,18 @@ public class ApiResponseAutoConfiguration {
      *
      * <h2>Performance Considerations</h2>
      * <p>
-     * The regex validation is highly optimized and adds negligible overhead (typically {@code <1ms}
-     * per request). The contextual deserializer is created once per field during mapper initialization,
-     * not on every request, ensuring optimal runtime performance.
+     * The regex validation and trimming operations are highly optimized and add negligible overhead
+     * (typically {@code <1ms} per request). The contextual deserializer is created once per field
+     * during mapper initialization, not on every request, ensuring optimal runtime performance.
      * </p>
      *
      * @return A {@link JsonMapperBuilderCustomizer} that configures strict JSON processing
-     *         with automatic string validation, context-aware trimming, HTML tag rejection,
+     *         with opt-in string validation via {@code @XssCheck}, opt-in trimming via {@code @AutoTrim},
      *         unknown property rejection, and case-insensitive enum handling.
      * @see DeserializationFeature#FAIL_ON_UNKNOWN_PROPERTIES
      * @see MapperFeature#ACCEPT_CASE_INSENSITIVE_ENUMS
-     * @see io.github.og4dev.annotation.NoTrim
+     * @see io.github.og4dev.annotation.AutoTrim
+     * @see io.github.og4dev.annotation.XssCheck
      * @see JsonMapperBuilderCustomizer
      * @see StdScalarDeserializer
      * @see ValueDeserializer#createContextual(DeserializationContext, BeanProperty)
@@ -408,15 +422,18 @@ public class ApiResponseAutoConfiguration {
 
             class AdvancedStringDeserializer extends StdScalarDeserializer<String> {
                 private final boolean shouldTrim;
+                private final boolean shouldXssCheck;
 
                 public AdvancedStringDeserializer() {
                     super(String.class);
-                    this.shouldTrim = true;
+                    this.shouldTrim = false;
+                    this.shouldXssCheck = false;
                 }
 
-                public AdvancedStringDeserializer(boolean shouldTrim) {
+                public AdvancedStringDeserializer(boolean shouldTrim, boolean shouldXssCheck) {
                     super(String.class);
                     this.shouldTrim = shouldTrim;
+                    this.shouldXssCheck = shouldXssCheck;
                 }
 
                 @Override
@@ -424,7 +441,7 @@ public class ApiResponseAutoConfiguration {
                     String value = p.getValueAsString();
                     if (value == null) return null;
                     String processedValue = shouldTrim ? value.trim() : value;
-                    if (processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
+                    if (shouldXssCheck && processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
                         throw new IllegalArgumentException("Security Error: HTML tags or XSS payloads are not allowed in the request.");
                     }
                     return processedValue;
@@ -433,10 +450,9 @@ public class ApiResponseAutoConfiguration {
                 @Override
                 public ValueDeserializer<?> createContextual(DeserializationContext ct, BeanProperty property) throws JacksonException {
                     if (property != null) {
-                        NoTrim noTrimAnnotation = property.getAnnotation(NoTrim.class);
-                        if (noTrimAnnotation != null) {
-                            return new AdvancedStringDeserializer(false);
-                        }
+                        boolean trim = property.getAnnotation(AutoTrim.class) != null;
+                        boolean xss = property.getAnnotation(XssCheck.class) != null;
+                        return new AdvancedStringDeserializer(trim, xss);
                     }
                     return this;
                 }
