@@ -75,7 +75,7 @@ import java.util.UUID;
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  * @see org.springframework.web.bind.annotation.RestControllerAdvice
  * @see org.springframework.http.ProblemDetail
