@@ -20,6 +20,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Build with Maven
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B clean install --file pom.xml
