@@ -32,14 +32,13 @@ jobs:
 
   publish:
     needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -52,39 +51,9 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Get Project Version
-        id: get_version
-        run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "VERSION is $VERSION"
-
-      - name: Check if Tag Exists
-        id: check_tag
-        run: |
-          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
-            echo "EXISTS=true" >> $GITHUB_ENV
-            echo "Tag v${{ env.VERSION }} already exists. Skipping release."
-          else
-            echo "EXISTS=false" >> $GITHUB_ENV
-            echo "New version detected: v${{ env.VERSION }}"
-          fi
-
-      - name: Create GitHub Release
-        if: env.EXISTS == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ env.VERSION }}
-          name: Release v${{ env.VERSION }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Deploy to Maven Central
-        if: env.EXISTS == 'false'
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
+          echo "Deploying to Maven Central..."
           mvn deploy -Dgpg.passphrase=$MAVEN_GPG_PASSPHRASE
-          echo "Deploying version ${{ env.VERSION }}..."
