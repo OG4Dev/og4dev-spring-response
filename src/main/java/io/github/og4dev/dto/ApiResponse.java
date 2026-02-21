@@ -49,7 +49,7 @@ import java.time.Instant;
  *
  * @param <T> the type of the response content (can be any Java type or Void for no content)
  * @author Pasindu OG
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  * @see org.springframework.http.ResponseEntity
  * @see org.springframework.http.HttpStatus

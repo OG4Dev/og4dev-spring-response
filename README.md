@@ -24,7 +24,7 @@
     <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
   </a>
   <a href="https://github.com/OG4Dev/og4dev-spring-response">
-    <img src="https://img.shields.io/badge/Version-1.2.0-brightgreen.svg" alt="Version">
+    <img src="https://img.shields.io/badge/Version-1.3.0-brightgreen.svg" alt="Version">
   </a>
 </p>
 
@@ -87,7 +87,7 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 - 🔍 **Microservices-Ready** - Built-in trace IDs for distributed tracing
 - ✅ **Battle-Tested** - Used in production Spring Boot applications
 - 📋 **Professional-Grade Javadoc** - 100% coverage with comprehensive method documentation
-- 🔐 **Built-in Security** - Automatic XSS prevention with fail-fast HTML tag rejection
+- 🔐 **Opt-in Security Features** - Fine-grained control with field-level annotations
 - 🚫 **Zero External Dependencies** - Pure Java, no Lombok required
 
 ## ✨ Features
@@ -103,11 +103,11 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 - 🔌 **Spring Native** - Built on `ResponseEntity` and `HttpStatus`
 - 📋 **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807)
 - 📚 **Complete JavaDoc** - Every class and method fully documented with comprehensive examples
-- 🔐 **Automatic Security Features** - Built-in JSON request protection
-  - ✅ **Strict JSON Validation** - Rejects unknown properties to prevent mass assignment attacks
-  - ✅ **XSS Prevention** - Automatic HTML tag detection and rejection (fail-fast approach)
-  - ✅ **Smart String Trimming** - Automatic whitespace trimming with `@NoTrim` opt-out support
-  - ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability
+- 🔐 **Opt-in Security Features** - Fine-grained JSON request protection via field annotations
+  - ✅ **Strict JSON Validation** - Rejects unknown properties to prevent mass assignment attacks (automatic)
+  - ✅ **XSS Prevention** - HTML tag detection and rejection via `@XssCheck` annotation (opt-in)
+  - ✅ **Smart String Trimming** - Whitespace trimming via `@AutoTrim` annotation (opt-in)
+  - ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability (automatic)
 - 🛡️ **Comprehensive Exception Handling** - 10 built-in handlers covering all common scenarios
   - ✅ Validation errors (`@Valid` annotations)
   - ✅ Type mismatches (wrong parameter types)
@@ -119,8 +119,7 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
   - ✅ Null pointer exceptions
   - ✅ Custom business exceptions (`ApiException`)
   - ✅ General unexpected errors
-  - ✅ General unexpected errors
-- 🎭 **Custom Business Exceptions** - Abstract `ApiException` class for domain-specific errors **
+- 🎭 **Custom Business Exceptions** - Abstract `ApiException` class for domain-specific errors
 - ✅ **Validation Support** - Automatic `@Valid` annotation error handling
 
 ## 📦 Requirements
@@ -135,10 +134,11 @@ Unlike other response wrapper libraries, this one offers:
 
 - ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
 - ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
-- ✅ **Built-in Security Features** - Fail-fast XSS prevention, strict JSON validation, and smart string trimming
-  - HTML tag detection and rejection (not escaping)
-  - `@NoTrim` annotation for fields requiring whitespace preservation
+- ✅ **Opt-in Security Features** - Fine-grained control via field-level annotations
+  - `@XssCheck` - HTML tag detection and rejection (fail-fast approach)
+  - `@AutoTrim` - Whitespace trimming for specific fields
   - Regex-based validation: `(?s).*<\s*[a-zA-Z/!].*`
+  - Default: Fields are NOT modified unless explicitly annotated
 - ✅ **Zero External Dependencies** - Pure Java implementation, won't conflict with your application
 - ✅ **Extensible Exception Handling** - Create custom business exceptions easily
 - ✅ **Trace ID Support** - Built-in distributed tracing capabilities
@@ -151,30 +151,26 @@ Unlike other response wrapper libraries, this one offers:
 - ✅ **Production-Grade Quality** - Clean builds, proper documentation, and battle-tested code
 ## 🚀 Installation
 
-### Maven (Latest - v1.2.0)
+### Maven (Latest - v1.3.0)
 
 ```xml
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
-### Gradle (Latest - v1.2.0)
+### Gradle (Latest - v1.3.0)
 
 ```gradle
-implementation 'io.github.og4dev:og4dev-spring-response:1.2.0'
+implementation 'io.github.og4dev:og4dev-spring-response:1.3.0'
 ```
 
-### Gradle Kotlin DSL (Latest - v1.2.0)
+### Gradle Kotlin DSL (Latest - v1.3.0)
 
 ```kotlin
-implementation("io.github.og4dev:og4dev-spring-response:1.2.0")
-```
-
-```kotlin
-implementation("io.github.og4dev:og4dev-spring-response:1.1.1")
+implementation("io.github.og4dev:og4dev-spring-response:1.3.0")
 ```
 
 ---
@@ -187,7 +183,8 @@ The library is organized into five main packages:
 ```
 io.github.og4dev
 ├── annotation/
-│   └── NoTrim.java                          # Annotation for trimming control
+│   ├── AutoTrim.java                        # Opt-in annotation for string trimming
+│   └── XssCheck.java                        # Opt-in annotation for XSS validation
 ├── config/
 │   └── ApiResponseAutoConfiguration.java    # Spring Boot auto-configuration
 ├── dto/
@@ -203,7 +200,7 @@ io.github.og4dev
 
 | Package | Description |
 |---------|-------------|
-| `annotation` | Custom annotations for controlling JSON deserialization behavior |
+| `annotation` | Field-level annotations for opt-in security and data processing features |
 | `config` | Spring Boot auto-configuration classes for zero-config setup |
 | `dto` | Data Transfer Objects - main `ApiResponse<T>` wrapper class |
 | `exception` | Exception handling infrastructure with ProblemDetail support |
@@ -215,7 +212,8 @@ io.github.og4dev
 - **ApiResponseAutoConfiguration** - Automatic Spring Boot integration
 - **GlobalExceptionHandler** - Centralized exception handling with RFC 9457
 - **ApiException** - Base class for domain-specific exceptions
-- **@NoTrim** - Annotation to disable automatic string trimming for specific fields
+- **@AutoTrim** - Annotation to opt-in to automatic string trimming for specific fields
+- **@XssCheck** - Annotation to opt-in to XSS validation for specific fields
 - **TraceIdFilter** - Automatic trace ID generation for distributed tracing
 
 ## 🎯 Quick Start
@@ -297,9 +295,17 @@ spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguratio
 
 ## 🔐 Built-in Security Features
 
-The library automatically configures Jackson with three critical security and data quality features through the `strictJsonCustomizer()` bean. These protections are applied to **all API endpoints** with zero configuration required.
+The library provides fine-grained security and data processing features through field-level annotations. By default, **fields are NOT modified** unless explicitly annotated, giving you complete control over which fields receive special treatment.
 
-### 1. Strict Property Validation 🛡️
+### Security Philosophy: Opt-in by Default
+
+**Version 1.3.0** introduces an opt-in approach:
+- ✅ **Default Behavior**: String fields are preserved as-is (no trimming, no XSS validation)
+- ✅ **Explicit Control**: Use `@AutoTrim` and `@XssCheck` annotations to enable features per field
+- ✅ **No Surprises**: Your data is not modified unless you explicitly request it
+- ✅ **Production-Ready**: Enable security only where needed
+
+### 1. Strict Property Validation 🛡️ (Automatic)
 
 **Prevents mass assignment vulnerabilities and data injection attacks**
 
@@ -333,25 +339,46 @@ public class UserDto {
 - Enforces strict API contracts
 - Improves API security posture
 
-### 2. Automatic XSS Prevention 🔒
+### 2. Opt-in XSS Prevention with @XssCheck 🔒
 
-**Fail-fast HTML tag detection and rejection**
+**Fail-fast HTML tag detection and rejection (opt-in per field)**
 
-All string values are automatically validated to detect and reject HTML/XML tags, preventing cross-site scripting (XSS) attacks at the deserialization layer:
+Use the `@XssCheck` annotation to enable XSS validation on specific string fields:
 
 ```java
-// ✅ Valid requests (accepted)
+import io.github.og4dev.annotation.XssCheck;
+
+public class CommentDTO {
+    @XssCheck
+    private String content;        // XSS validated
+    
+    @XssCheck
+    private String authorName;     // XSS validated
+    
+    private String commentId;      // NOT validated (no annotation)
+}
+```
+
+**What happens:**
+
+```java
+// ✅ Valid requests (accepted for @XssCheck fields)
 {
-  "name": "  John Doe  ",           // Trimmed to: "John Doe"
-  "comment": "Price: $100 < $200",  // Comparison operators are OK
-  "math": "2 + 2 = 4"              // Math expressions are OK
+  "content": "Hello World",              // Plain text
+  "authorName": "John Doe",              // Plain text
+  "commentId": "<id-123>"                // No validation (no @XssCheck)
 }
 
-// ❌ Invalid requests (rejected with 400 Bad Request)
 {
-  "name": "<script>alert('XSS')</script>",  // Script injection
-  "comment": "<img src=x onerror=alert(1)>", // Image XSS
-  "bio": "Hello<br>World"                    // HTML tags
+  "content": "Price: $100 < $200",       // Comparison operators OK
+  "authorName": "User@2024"              // Special characters OK
+}
+
+// ❌ Invalid requests (rejected with 400 Bad Request for @XssCheck fields)
+{
+  "content": "<script>alert('XSS')</script>",  // Script injection
+  "authorName": "<b>John</b>",                 // HTML tags
+  "commentId": "<script>test</script>"         // NOT rejected (no @XssCheck)
 }
 ```
 
@@ -370,9 +397,8 @@ All string values are automatically validated to detect and reject HTML/XML tags
 **Features:**
 - ✅ Detects HTML tags using regex: `(?s).*<\s*[a-zA-Z/!].*`
 - ✅ Rejects requests entirely (fail-fast approach)
-- ✅ Trims leading/trailing whitespace automatically
+- ✅ Works only on annotated fields
 - ✅ Preserves null values (doesn't convert to empty strings)
-- ✅ Works on all `@RequestBody` deserializations
 - ✅ Supports multiline content (DOTALL mode)
 
 **Security Advantage:**  
@@ -382,52 +408,102 @@ Unlike HTML escaping (which transforms `<` to `&lt;`), this fail-fast approach *
 - Second-order injection vulnerabilities
 - Encoding bypass attempts
 
-### 3. Smart String Trimming with @NoTrim Support ✂️
+### 3. Opt-in String Trimming with @AutoTrim ✂️
 
-**Automatic whitespace trimming with opt-out capability**
+**Whitespace removal for specific fields (opt-in per field)**
 
-By default, all string fields are automatically trimmed. Fields that require whitespace preservation can use the `@NoTrim` annotation:
+Use the `@AutoTrim` annotation to enable automatic whitespace trimming on specific string fields:
 
 ```java
-import io.github.og4dev.annotation.NoTrim;
+import io.github.og4dev.annotation.AutoTrim;
 
-public class LoginDTO {
-    private String username;       // Trimmed: "  admin  " → "admin"
+public class UserRegistrationDTO {
+    @AutoTrim
+    private String username;       // Trimmed: "  john_doe  " → "john_doe"
+    
+    @AutoTrim
     private String email;          // Trimmed: " user@example.com " → "user@example.com"
     
-    @NoTrim
     private String password;       // NOT trimmed: "  pass123  " → "  pass123  "
-}
-
-public class CodeSubmissionDTO {
-    private String title;          // Trimmed automatically
-    
-    @NoTrim
-    private String sourceCode;     // NOT trimmed: preserves indentation
+    private String bio;            // NOT trimmed: preserves formatting
 }
 ```
 
-**Use Cases for @NoTrim:**
+**What happens:**
+
+```java
+// Input JSON
+{
+  "username": "  john_doe  ",
+  "email": " user@example.com ",
+  "password": "  myPass123  ",
+  "bio": "  Software Developer  "
+}
+
+// After Deserialization
+username = "john_doe"              // ✓ Trimmed (has @AutoTrim)
+email    = "user@example.com"      // ✓ Trimmed (has @AutoTrim)
+password = "  myPass123  "         // ✗ NOT trimmed (no annotation)
+bio      = "  Software Developer  " // ✗ NOT trimmed (no annotation)
+```
+
+**Use Cases for @AutoTrim:**
+- User input fields: names, emails, addresses where whitespace is unwanted
+- Search queries: remove accidental spaces from user inputs
+- Usernames: ensure consistent formatting without extra spaces
+- Reference numbers: IDs, codes that should not have whitespace
+- Categories/Tags: taxonomy values that need consistent formatting
+
+**When NOT to use @AutoTrim:**
 - Password fields where whitespace may be intentional
 - Code snippets or formatted text requiring exact spacing
 - Base64-encoded data that should not be modified
 - Poetry, ASCII art, or pre-formatted documents
 - API keys/tokens that must be processed exactly as provided
 
-**Important:** Even with `@NoTrim`, XSS validation is still performed:
+### 4. Combining Annotations for Maximum Security
+
+You can use both `@AutoTrim` and `@XssCheck` together for fields that need both behaviors:
 
 ```java
-public class SecureDTO {
-    @NoTrim
-    private String sensitiveData;
-}
+import io.github.og4dev.annotation.AutoTrim;
+import io.github.og4dev.annotation.XssCheck;
 
-// These will STILL be rejected even with @NoTrim:
-{"sensitiveData": "  <script>alert(1)</script>  "}  // ✗ XSS blocked
-{"sensitiveData": "  <img src=x>  "}               // ✗ HTML blocked
+public class SecureInputDTO {
+    @AutoTrim
+    @XssCheck
+    private String username;  // First trimmed, then XSS-validated
+    
+    @XssCheck
+    private String comment;   // Only XSS-validated (not trimmed)
+    
+    @AutoTrim
+    private String email;     // Only trimmed (not XSS-validated)
+    
+    private String bio;       // Neither (preserved as-is)
+}
 ```
 
-### 4. Case-Insensitive Enum Handling 🎯
+**Processing order:**
+1. String is trimmed (if `@AutoTrim` is present)
+2. Trimmed string is checked for HTML tags (if `@XssCheck` is present)
+3. If HTML tags found, `IllegalArgumentException` is thrown
+
+**Example:**
+
+```java
+// These will be rejected (after trimming):
+{"username": "  <script>alert(1)</script>  "}  // ✗ XSS attempt blocked
+{"username": "  <img src=x>  "}               // ✗ HTML tag blocked
+
+// These are accepted:
+{"username": "  john_doe  "}  // ✓ Trimmed to "john_doe"
+{"comment": "<comparison> 5 < 10"}  // ✗ Rejected (has HTML tag)
+{"email": "  user@example.com  "}  // ✓ Trimmed to "user@example.com"
+{"bio": "  <emphasis on quality>  "}  // ✓ Preserved as-is (no annotations)
+```
+
+### 5. Case-Insensitive Enum Handling 🎯 (Automatic)
 
 **Better API usability without compromising type safety**
 
@@ -447,32 +523,36 @@ public enum Status {
 
 ### How It Works
 
-These features are automatically applied via the `strictJsonCustomizer()` method in `ApiResponseAutoConfiguration`:
+These features are automatically configured via the `strictJsonCustomizer()` method in `ApiResponseAutoConfiguration`:
 
 ```java
 @Bean
 public JsonMapperBuilderCustomizer strictJsonCustomizer() {
     return builder -> {
-        // 1. Reject unknown properties
+        // 1. Reject unknown properties (automatic)
         builder.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         
-        // 2. Allow case-insensitive enums
+        // 2. Allow case-insensitive enums (automatic)
         builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         
-        // 3. Register AdvancedStringDeserializer for XSS prevention and smart trimming
-        SimpleModule stringTrimModule = new SimpleModule();
+        
+        // 3. Register AdvancedStringDeserializer for opt-in features
+        SimpleModule stringModule = new SimpleModule();
         
         class AdvancedStringDeserializer extends StdScalarDeserializer<String> {
             private final boolean shouldTrim;
+            private final boolean shouldXssCheck;
             
             public AdvancedStringDeserializer() {
                 super(String.class);
-                this.shouldTrim = true;  // Default: trim enabled
+                this.shouldTrim = false;      // Default: NO trimming
+                this.shouldXssCheck = false;  // Default: NO XSS checking
             }
             
-            public AdvancedStringDeserializer(boolean shouldTrim) {
+            public AdvancedStringDeserializer(boolean shouldTrim, boolean shouldXssCheck) {
                 super(String.class);
                 this.shouldTrim = shouldTrim;
+                this.shouldXssCheck = shouldXssCheck;
             }
             
             @Override
@@ -480,11 +560,11 @@ public JsonMapperBuilderCustomizer strictJsonCustomizer() {
                 String value = p.getValueAsString();
                 if (value == null) return null;
                 
-                // Apply trimming based on configuration
+                // Apply trimming only if @AutoTrim is present
                 String processedValue = shouldTrim ? value.trim() : value;
                 
-                // Always validate for HTML tags (security check)
-                if (processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
+                // Validate for HTML tags only if @XssCheck is present
+                if (shouldXssCheck && processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
                     throw new IllegalArgumentException(
                         "Security Error: HTML tags or XSS payloads are not allowed in the request."
                     );
@@ -496,27 +576,31 @@ public JsonMapperBuilderCustomizer strictJsonCustomizer() {
             @Override
             public ValueDeserializer<?> createContextual(
                     DeserializationContext ct, BeanProperty property) {
-                // Check for @NoTrim annotation on field
+                // Check for @AutoTrim and @XssCheck annotations on field
                 if (property != null) {
-                    NoTrim noTrimAnnotation = property.getAnnotation(NoTrim.class);
-                    if (noTrimAnnotation != null) {
-                        return new AdvancedStringDeserializer(false);  // Disable trimming
-                    }
+                    boolean trim = property.getAnnotation(AutoTrim.class) != null;
+                    boolean xss = property.getAnnotation(XssCheck.class) != null;
+                    return new AdvancedStringDeserializer(trim, xss);
                 }
                 return this;
             }
         }
         
-        stringTrimModule.addDeserializer(String.class, new AdvancedStringDeserializer());
-        builder.addModules(stringTrimModule);
+        stringModule.addDeserializer(String.class, new AdvancedStringDeserializer());
+        builder.addModules(stringModule);
     };
 }
 ```
 
 **Key Features:**
-- **Context-Aware:** Uses `createContextual()` to detect `@NoTrim` annotation
-- **Two Modes:** Default mode (trim enabled) and NoTrim mode (trim disabled)
-- **Security First:** HTML tag validation is always performed, regardless of trim mode
+- **Opt-in by Default:** Fields are NOT modified unless explicitly annotated
+- **Fine-grained Control:** Each field can have different behavior via annotations
+- **Context-Aware:** Uses `createContextual()` to detect field annotations
+- **Four Modes:**
+  - No annotations: String preserved as-is
+  - `@AutoTrim` only: String is trimmed
+  - `@XssCheck` only: String is XSS-validated
+  - Both annotations: String is trimmed then XSS-validated
 - **Performance:** Deserializer created once per field at initialization, not per request
 
 ### Disabling Security Features (Not Recommended)
@@ -1886,7 +1970,7 @@ ResponseEntity<ApiResponse<Void>> deleteResource();
 
 ### 4. Custom Business Exceptions 
 
-**Version 1.2.0+ includes an abstract `ApiException` class** for creating domain-specific exceptions. The built-in `GlobalExceptionHandler` automatically handles them with the correct HTTP status:
+**Version 1.3.0 includes an abstract `ApiException` class** for creating domain-specific exceptions. The built-in `GlobalExceptionHandler` automatically handles them with the correct HTTP status:
 
 ```java
 // Define custom exceptions
@@ -2241,6 +2325,7 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 
 | Library Version | Java Version | Spring Boot Version | Status |
 |----------------|--------------|---------------------|--------|
+| 1.3.0 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
 | 1.2.0 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
 | 1.1.1 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
 | 1.1.0 | 17, 21+ | 3.2.0 - 4.0.2 | ✅ Tested |
@@ -2849,7 +2934,7 @@ Simply add the dependency to your project:
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -3336,55 +3421,110 @@ Monthly sponsors receive:
 
 ## 📈 Version History
 
-### 1.2.0 (February 2026) - Current Release
+### 1.3.0 (February 2026) - Current Release
+
+✨ **Major Breaking Change: Opt-in Security Model**
+- **Security Philosophy Change** - Complete redesign from automatic to opt-in approach
+  - **Before (v1.2.0):** All strings automatically trimmed and XSS-validated
+  - **After (v1.3.0):** Fields preserved as-is by default; features enabled via annotations
+  - **Reason:** Gives developers full control over which fields need processing
+  - **Migration:** Add `@AutoTrim` and/or `@XssCheck` to fields that need them
+
+✨ **New Features:**
+- **@AutoTrim Annotation** - Opt-in automatic string trimming
+  - Replaces default trimming behavior from v1.2.0
+  - Apply to individual fields that should have whitespace removed
+  - Examples: usernames, emails, search queries, reference numbers
+  - Comprehensive Javadoc with 100+ lines of documentation
+  - Null-safe processing with proper empty string handling
+- **@XssCheck Annotation** - Opt-in XSS validation
+  - Replaces automatic XSS validation from v1.2.0
+  - Apply to individual fields that should reject HTML tags
+  - Examples: comments, user-generated content, profile fields
+  - Fail-fast regex pattern: `(?s).*<\s*[a-zA-Z/!].*`
+  - Comprehensive Javadoc with 150+ lines of documentation
+- **Fine-Grained Control** - Four processing modes per field
+  - No annotations: String preserved as-is (default)
+  - `@AutoTrim` only: String is trimmed
+  - `@XssCheck` only: String is XSS-validated
+  - Both annotations: String is trimmed then XSS-validated
+
+📚 **Documentation Overhaul:**
+- **Complete README Rewrite** - Entirely new documentation structure
+  - Updated all code examples to show annotation-based approach
+  - Added "Security Philosophy: Opt-in by Default" section
+  - Expanded annotation usage examples with 20+ code samples
+  - Clear migration guide from v1.2.0
+  - Updated "How It Works" section with new implementation
+- **Comprehensive JavaDoc Updates**
+  - `@AutoTrim`: 100+ lines of detailed documentation
+  - `@XssCheck`: 150+ lines of detailed documentation
+  - Updated `ApiResponseAutoConfiguration` to reflect opt-in model
+  - All examples updated to show annotation usage
+  - Zero Javadoc warnings
+
+🔧 **Technical Updates:**
+- Spring Boot 4.0.3 compatibility maintained
+- Jackson 3.x with tools.jackson packages
+- Enhanced `AdvancedStringDeserializer` with four-mode operation
+- Context-aware deserialization via `createContextual()`
+- Performance optimized: deserializer created once per field at initialization
+- Removed `@NoTrim` annotation (no longer needed with opt-in approach)
+
+🔄 **Breaking Changes:**
+- **⚠️ IMPORTANT:** Default behavior changed from v1.2.0
+  - **v1.2.0:** All strings automatically trimmed and XSS-validated
+  - **v1.3.0:** Strings preserved as-is unless annotated
+  - **Migration Required:** Add `@AutoTrim` and/or `@XssCheck` to fields that need processing
+  - **Example Migration:**
+    ```java
+    // v1.2.0 (automatic processing)
+    public class UserDTO {
+        private String username;  // Was automatically trimmed
+        private String comment;   // Was automatically XSS-validated
+    }
+    
+    // v1.3.0 (opt-in with annotations)
+    public class UserDTO {
+        @AutoTrim
+        private String username;  // Now explicitly trimmed
+        
+        @XssCheck
+        private String comment;   // Now explicitly XSS-validated
+    }
+    ```
+
+### 1.2.0 (February 2026) - Previous Release
 
 ✨ **New Features:**
 - **@NoTrim Annotation** - Fine-grained control over string trimming behavior
   - Opt-out of automatic whitespace trimming for specific fields
-  - Preserves whitespace for passwords, code snippets, Base64 data, API tokens, pre-formatted text
+  - Preserves whitespace for passwords, code snippets, Base64 data, API tokens
   - XSS validation still applies even with `@NoTrim` for security
   - Context-aware deserialization using `createContextual()` method
-  - Supports use cases: passwords, source code, Base64, API tokens, formatted documents
 - **Enhanced Security Model** - Improved XSS prevention approach
   - Changed from HTML escaping to fail-fast tag rejection
   - Regex pattern: `(?s).*<\s*[a-zA-Z/!].*` with DOTALL mode support
   - Prevents stored XSS, DOM-based XSS, and second-order injections
-  - Rejects requests entirely instead of escaping (stronger security)
 - **Advanced String Deserializer** - Context-aware string processing
   - Two-mode operation: Default Mode (trim enabled) and NoTrim Mode (preserve whitespace)
   - Field-level annotation detection via `createContextual()`
-  - Performance optimized: deserializer created once at initialization, not per request
-  - Null-safe processing with proper empty string handling
+  - Performance optimized: deserializer created once at initialization
 
 📚 **Documentation Enhancements:**
-- **Comprehensive JavaDoc** - Massive documentation improvements
-  - Updated `strictJsonCustomizer()` with ~280 lines of detailed documentation
-  - Added `@NoTrim` annotation documentation with complete examples
-  - Created annotation package-info.java with package-level overview
-  - 15+ code examples showing real-world usage scenarios
-  - Detailed security considerations and performance notes
-  - Implementation details explaining two-mode operation
-  - Global application scope documentation
-  - Three methods to disable features with code examples
-- **README Updates** - Complete documentation refresh
-  - Corrected XSS prevention description (rejection vs escaping)
-  - Added @NoTrim annotation documentation with examples
-  - Updated "How It Works" with actual implementation code
-  - Enhanced security features explanations
-  - Added annotation package to project structure
-  - Updated all code examples to reflect actual behavior
+- Comprehensive JavaDoc improvements
+- Updated `strictJsonCustomizer()` with ~280 lines of detailed documentation
+- Added `@NoTrim` annotation documentation with complete examples
+- Complete README refresh with corrected XSS prevention descriptions
 
 🔧 **Technical Updates:**
 - Spring Boot 4.0.3 compatibility (tested and verified)
 - Jackson 3.x with tools.jackson packages
 - Added annotation package: `io.github.og4dev.annotation`
 - Enhanced StdScalarDeserializer implementation
-- Improved error messages for security violations
 
 🔄 **Breaking Changes:**
 - None - Fully backward compatible with v1.1.0 and v1.1.1
-- Default behavior unchanged (automatic trimming still applies)
-- `@NoTrim` is opt-in, requiring explicit annotation
 
 ### 1.1.1 (February 2026)
 

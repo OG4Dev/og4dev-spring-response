@@ -26,7 +26,7 @@
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 package io.github.og4dev.exception;
