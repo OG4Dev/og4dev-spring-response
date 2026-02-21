@@ -86,5 +86,5 @@ jobs:
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn deploy
+          mvn deploy -Dgpg.passphrase=$MAVEN_GPG_PASSPHRASE
           echo "Deploying version ${{ env.VERSION }}..."
