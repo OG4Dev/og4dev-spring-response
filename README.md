@@ -24,7 +24,7 @@
     <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
   </a>
   <a href="https://github.com/OG4Dev/og4dev-spring-response">
-    <img src="https://img.shields.io/badge/Version-1.1.1-brightgreen.svg" alt="Version">
+    <img src="https://img.shields.io/badge/Version-1.2.0-brightgreen.svg" alt="Version">
   </a>
 </p>
 
@@ -2241,6 +2241,7 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 
 | Library Version | Java Version | Spring Boot Version | Status |
 |----------------|--------------|---------------------|--------|
+| 1.2.0 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
 | 1.1.1 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
 | 1.1.0 | 17, 21+ | 3.2.0 - 4.0.2 | ✅ Tested |
 | 1.0.0 | 17, 21+ | 3.2.0+ | ✅ Tested |
@@ -3335,7 +3336,57 @@ Monthly sponsors receive:
 
 ## 📈 Version History
 
-### 1.1.1 (February 2026) - Current Release
+### 1.2.0 (February 2026) - Current Release
+
+✨ **New Features:**
+- **@NoTrim Annotation** - Fine-grained control over string trimming behavior
+  - Opt-out of automatic whitespace trimming for specific fields
+  - Preserves whitespace for passwords, code snippets, Base64 data, API tokens, pre-formatted text
+  - XSS validation still applies even with `@NoTrim` for security
+  - Context-aware deserialization using `createContextual()` method
+  - Supports use cases: passwords, source code, Base64, API tokens, formatted documents
+- **Enhanced Security Model** - Improved XSS prevention approach
+  - Changed from HTML escaping to fail-fast tag rejection
+  - Regex pattern: `(?s).*<\s*[a-zA-Z/!].*` with DOTALL mode support
+  - Prevents stored XSS, DOM-based XSS, and second-order injections
+  - Rejects requests entirely instead of escaping (stronger security)
+- **Advanced String Deserializer** - Context-aware string processing
+  - Two-mode operation: Default Mode (trim enabled) and NoTrim Mode (preserve whitespace)
+  - Field-level annotation detection via `createContextual()`
+  - Performance optimized: deserializer created once at initialization, not per request
+  - Null-safe processing with proper empty string handling
+
+📚 **Documentation Enhancements:**
+- **Comprehensive JavaDoc** - Massive documentation improvements
+  - Updated `strictJsonCustomizer()` with ~280 lines of detailed documentation
+  - Added `@NoTrim` annotation documentation with complete examples
+  - Created annotation package-info.java with package-level overview
+  - 15+ code examples showing real-world usage scenarios
+  - Detailed security considerations and performance notes
+  - Implementation details explaining two-mode operation
+  - Global application scope documentation
+  - Three methods to disable features with code examples
+- **README Updates** - Complete documentation refresh
+  - Corrected XSS prevention description (rejection vs escaping)
+  - Added @NoTrim annotation documentation with examples
+  - Updated "How It Works" with actual implementation code
+  - Enhanced security features explanations
+  - Added annotation package to project structure
+  - Updated all code examples to reflect actual behavior
+
+🔧 **Technical Updates:**
+- Spring Boot 4.0.3 compatibility (tested and verified)
+- Jackson 3.x with tools.jackson packages
+- Added annotation package: `io.github.og4dev.annotation`
+- Enhanced StdScalarDeserializer implementation
+- Improved error messages for security violations
+
+🔄 **Breaking Changes:**
+- None - Fully backward compatible with v1.1.0 and v1.1.1
+- Default behavior unchanged (automatic trimming still applies)
+- `@NoTrim` is opt-in, requiring explicit annotation
+
+### 1.1.1 (February 2026)
 
 🔧 **Maintenance Release:**
 - **Spring Boot 4.0.3 Support** - Updated compatibility to Spring Boot 4.0.3
@@ -3344,33 +3395,7 @@ Monthly sponsors receive:
   - Seamless upgrade from Spring Boot 4.0.2
 - **Enhanced Stability** - Benefits from Spring Boot 4.0.3 bug fixes and improvements
 
-✨ **New Features:**
-- **@NoTrim Annotation** - Fine-grained control over string trimming behavior
-  - Opt-out of automatic whitespace trimming for specific fields
-  - Preserves whitespace for passwords, code snippets, Base64 data, etc.
-  - XSS validation still applies even with `@NoTrim`
-  - Context-aware deserialization using `createContextual()`
-- **Enhanced JavaDoc** - Comprehensive documentation improvements
-  - Updated `strictJsonCustomizer()` method with ~280 lines of documentation
-  - Added `@NoTrim` annotation documentation with complete examples
-  - Created annotation package-info.java with package-level overview
-  - 15+ code examples showing real-world usage scenarios
-  - Detailed security considerations and performance notes
-
-🔧 **Implementation Updates:**
-- **AdvancedStringDeserializer** - Enhanced string deserializer with two modes
-  - Default Mode: Trimming enabled (backward compatible)
-  - NoTrim Mode: Trimming disabled (activated by `@NoTrim` annotation)
-  - Regex pattern updated to `(?s).*<\s*[a-zA-Z/!].*` with DOTALL mode
-  - Fail-fast approach: rejects HTML tags instead of escaping
-
-✅ **All Features from 1.1.0 Included:**
-- Built-in Security Features with `strictJsonCustomizer()` method
-- Comprehensive Exception Handling (10 built-in handlers)
-- Distributed Tracing Support with trace IDs
-- RFC 9457 Compliance for error responses
-- Complete Javadoc Coverage (100%)
-- Ultra-lightweight: ~10KB JAR size
+*Note: Version 1.1.1 was a Spring Boot patch compatibility update. New features were added in v1.2.0.*
 
 ### 1.1.0 (February 2026)
 
