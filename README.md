@@ -21,10 +21,10 @@
     <img src="https://img.shields.io/badge/Java-17+-orange.svg" alt="Java">
   </a>
   <a href="https://spring.io/projects/spring-boot">
-    <img src="https://img.shields.io/badge/Spring%20Boot-4.0.2-brightgreen.svg" alt="Spring Boot">
+    <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
   </a>
   <a href="https://github.com/OG4Dev/og4dev-spring-response">
-    <img src="https://img.shields.io/badge/Version-1.1.0-brightgreen.svg" alt="Version">
+    <img src="https://img.shields.io/badge/Version-1.1.1-brightgreen.svg" alt="Version">
   </a>
 </p>
 
@@ -80,35 +80,35 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 
 - 🚀 **Truly Zero Configuration** - Spring Boot 3.x/4.x auto-configuration with META-INF imports
 - 🎯 **Production-Ready** - Built-in RFC 9457 ProblemDetail with 10 comprehensive exception handlers
-- 🛡️ **Complete Error Coverage** - Handles validation, JSON parsing, 404s, method mismatches, media types, and more **
-- 🔍 **Trace IDs in Errors Only** - Error responses include traceId for debugging **
+- 🛡️ **Complete Error Coverage** - Handles validation, JSON parsing, 404s, method mismatches, media types, and more
+- 🔍 **Trace IDs in Errors** - Error responses include traceId for debugging
 - 🔒 **Type-Safe & Immutable** - Thread-safe design with generic type support
 - 📦 **Ultra-Lightweight** - Only ~10KB JAR size with provided dependencies
 - 🔍 **Microservices-Ready** - Built-in trace IDs for distributed tracing
 - ✅ **Battle-Tested** - Used in production Spring Boot applications
-- 📋 **Professional-Grade Javadoc** - 100% coverage with comprehensive method documentation including security features **
-- 🔐 **Built-in Security** - Automatic XSS prevention with HTML escaping and strict JSON validation **
-- 🚫 **Zero External Dependencies** - Pure Java, no Lombok required **
+- 📋 **Professional-Grade Javadoc** - 100% coverage with comprehensive method documentation
+- 🔐 **Built-in Security** - Automatic XSS prevention with fail-fast HTML tag rejection
+- 🚫 **Zero External Dependencies** - Pure Java, no Lombok required
 
 ## ✨ Features
 
 - 🎯 **Consistent Structure** - All responses follow the same format: `status`, `message`, `content`, `timestamp`
 - 🔒 **Type-Safe** - Full generic type support with compile-time type checking
-- 🔍 **Distributed Tracing** - Trace IDs in error responses with MDC integration for request tracking **
+- 🔍 **Distributed Tracing** - Trace IDs in error responses with MDC integration for request tracking
 - ⏰ **Auto Timestamps** - Automatic RFC 3339 UTC formatted timestamps on every response
 - 🏭 **Factory Methods** - Clean static methods: `success()`, `created()`, `status()`
-- 🚀 **Zero Config** - Spring Boot Auto-Configuration for instant setup **
+- 🚀 **Zero Config** - Spring Boot Auto-Configuration for instant setup
 - 🪶 **Lightweight** - Only ~10KB JAR with single provided dependency (Spring Web)
 - 📦 **Immutable** - Thread-safe with final fields
 - 🔌 **Spring Native** - Built on `ResponseEntity` and `HttpStatus`
-- 📋 **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807) **
-- 📚 **Complete JavaDoc** - Every class and method fully documented with comprehensive examples **
-- 🔐 **Automatic Security Features** - Built-in JSON request protection **
+- 📋 **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807)
+- 📚 **Complete JavaDoc** - Every class and method fully documented with comprehensive examples
+- 🔐 **Automatic Security Features** - Built-in JSON request protection
   - ✅ **Strict JSON Validation** - Rejects unknown properties to prevent mass assignment attacks
-  - ✅ **XSS Prevention** - Automatic HTML escaping for all string inputs
-  - ✅ **String Sanitization** - Automatic whitespace trimming on deserialization
+  - ✅ **XSS Prevention** - Automatic HTML tag detection and rejection (fail-fast approach)
+  - ✅ **Smart String Trimming** - Automatic whitespace trimming with `@NoTrim` opt-out support
   - ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability
-- 🛡️ **Comprehensive Exception Handling** - 10 built-in handlers covering all common scenarios **
+- 🛡️ **Comprehensive Exception Handling** - 10 built-in handlers covering all common scenarios
   - ✅ Validation errors (`@Valid` annotations)
   - ✅ Type mismatches (wrong parameter types)
   - ✅ Malformed JSON (invalid request bodies)
@@ -119,13 +119,14 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
   - ✅ Null pointer exceptions
   - ✅ Custom business exceptions (`ApiException`)
   - ✅ General unexpected errors
+  - ✅ General unexpected errors
 - 🎭 **Custom Business Exceptions** - Abstract `ApiException` class for domain-specific errors **
 - ✅ **Validation Support** - Automatic `@Valid` annotation error handling
 
 ## 📦 Requirements
 
 - Java 17 or higher
-- Spring Boot 3.2.0 or higher (tested up to 4.0.2)
+- Spring Boot 3.2.0 or higher (tested up to 4.0.3)
 - No additional dependencies required (pure Java implementation)
 
 ## 🌟 What Makes This Different?
@@ -134,7 +135,10 @@ Unlike other response wrapper libraries, this one offers:
 
 - ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
 - ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
-- ✅ **Built-in Security Features** - Automatic XSS prevention, strict JSON validation, and HTML escaping
+- ✅ **Built-in Security Features** - Fail-fast XSS prevention, strict JSON validation, and smart string trimming
+  - HTML tag detection and rejection (not escaping)
+  - `@NoTrim` annotation for fields requiring whitespace preservation
+  - Regex-based validation: `(?s).*<\s*[a-zA-Z/!].*`
 - ✅ **Zero External Dependencies** - Pure Java implementation, won't conflict with your application
 - ✅ **Extensible Exception Handling** - Create custom business exceptions easily
 - ✅ **Trace ID Support** - Built-in distributed tracing capabilities
@@ -147,26 +151,30 @@ Unlike other response wrapper libraries, this one offers:
 - ✅ **Production-Grade Quality** - Clean builds, proper documentation, and battle-tested code
 ## 🚀 Installation
 
-### Maven (Latest - v1.1.0)
+### Maven (Latest - v1.2.0)
 
 ```xml
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
-### Gradle (Latest - v1.1.0)
+### Gradle (Latest - v1.2.0)
 
 ```gradle
-implementation 'io.github.og4dev:og4dev-spring-response:1.1.0'
+implementation 'io.github.og4dev:og4dev-spring-response:1.2.0'
 ```
 
-### Gradle Kotlin DSL (Latest - v1.1.0)
+### Gradle Kotlin DSL (Latest - v1.2.0)
 
 ```kotlin
-implementation("io.github.og4dev:og4dev-spring-response:1.1.0")
+implementation("io.github.og4dev:og4dev-spring-response:1.2.0")
+```
+
+```kotlin
+implementation("io.github.og4dev:og4dev-spring-response:1.1.1")
 ```
 
 ---
@@ -174,10 +182,12 @@ implementation("io.github.og4dev:og4dev-spring-response:1.1.0")
 
 ## 📁 Project Structure
 
-The library is organized into four main packages:
+The library is organized into five main packages:
 
 ```
 io.github.og4dev
+├── annotation/
+│   └── NoTrim.java                          # Annotation for trimming control
 ├── config/
 │   └── ApiResponseAutoConfiguration.java    # Spring Boot auto-configuration
 ├── dto/
@@ -193,6 +203,7 @@ io.github.og4dev
 
 | Package | Description |
 |---------|-------------|
+| `annotation` | Custom annotations for controlling JSON deserialization behavior |
 | `config` | Spring Boot auto-configuration classes for zero-config setup |
 | `dto` | Data Transfer Objects - main `ApiResponse<T>` wrapper class |
 | `exception` | Exception handling infrastructure with ProblemDetail support |
@@ -204,6 +215,7 @@ io.github.og4dev
 - **ApiResponseAutoConfiguration** - Automatic Spring Boot integration
 - **GlobalExceptionHandler** - Centralized exception handling with RFC 9457
 - **ApiException** - Base class for domain-specific exceptions
+- **@NoTrim** - Annotation to disable automatic string trimming for specific fields
 - **TraceIdFilter** - Automatic trace ID generation for distributed tracing
 
 ## 🎯 Quick Start
@@ -261,7 +273,7 @@ The library includes `META-INF/spring/org.springframework.boot.autoconfigure.Aut
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -323,34 +335,99 @@ public class UserDto {
 
 ### 2. Automatic XSS Prevention 🔒
 
-**HTML escaping for all string inputs**
+**Fail-fast HTML tag detection and rejection**
 
-All string values are automatically sanitized to prevent cross-site scripting (XSS) attacks:
+All string values are automatically validated to detect and reject HTML/XML tags, preventing cross-site scripting (XSS) attacks at the deserialization layer:
 
 ```java
-// Input request
+// ✅ Valid requests (accepted)
 {
-  "name": "  <script>alert('XSS')</script>  ",
-  "comment": "<img src=x onerror=alert(1)>"
+  "name": "  John Doe  ",           // Trimmed to: "John Doe"
+  "comment": "Price: $100 < $200",  // Comparison operators are OK
+  "math": "2 + 2 = 4"              // Math expressions are OK
 }
 
-// After automatic sanitization
+// ❌ Invalid requests (rejected with 400 Bad Request)
 {
-  "name": "&lt;script&gt;alert('XSS')&lt;/script&gt;",
-  "comment": "&lt;img src=x onerror=alert(1)&gt;"
+  "name": "<script>alert('XSS')</script>",  // Script injection
+  "comment": "<img src=x onerror=alert(1)>", // Image XSS
+  "bio": "Hello<br>World"                    // HTML tags
+}
+```
+
+**Error Response:**
+```json
+{
+  "type": "about:blank",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Security Error: HTML tags or XSS payloads are not allowed in the request.",
+  "traceId": "550e8400-e29b-41d4-a716-446655440000",
+  "timestamp": "2026-02-21T10:30:45.123Z"
 }
 ```
 
 **Features:**
-- ✅ Automatic HTML entity encoding
-- ✅ Trims leading/trailing whitespace
+- ✅ Detects HTML tags using regex: `(?s).*<\s*[a-zA-Z/!].*`
+- ✅ Rejects requests entirely (fail-fast approach)
+- ✅ Trims leading/trailing whitespace automatically
 - ✅ Preserves null values (doesn't convert to empty strings)
 - ✅ Works on all `@RequestBody` deserializations
+- ✅ Supports multiline content (DOTALL mode)
 
-**Security Benefit:**  
-Provides defense-in-depth even if output encoding is missed in views. The data is safe at the persistence layer.
+**Security Advantage:**  
+Unlike HTML escaping (which transforms `<` to `&lt;`), this fail-fast approach **rejects the request entirely**. This prevents:
+- Stored XSS attacks
+- DOM-based XSS attacks
+- Second-order injection vulnerabilities
+- Encoding bypass attempts
 
-### 3. Case-Insensitive Enum Handling 🎯
+### 3. Smart String Trimming with @NoTrim Support ✂️
+
+**Automatic whitespace trimming with opt-out capability**
+
+By default, all string fields are automatically trimmed. Fields that require whitespace preservation can use the `@NoTrim` annotation:
+
+```java
+import io.github.og4dev.annotation.NoTrim;
+
+public class LoginDTO {
+    private String username;       // Trimmed: "  admin  " → "admin"
+    private String email;          // Trimmed: " user@example.com " → "user@example.com"
+    
+    @NoTrim
+    private String password;       // NOT trimmed: "  pass123  " → "  pass123  "
+}
+
+public class CodeSubmissionDTO {
+    private String title;          // Trimmed automatically
+    
+    @NoTrim
+    private String sourceCode;     // NOT trimmed: preserves indentation
+}
+```
+
+**Use Cases for @NoTrim:**
+- Password fields where whitespace may be intentional
+- Code snippets or formatted text requiring exact spacing
+- Base64-encoded data that should not be modified
+- Poetry, ASCII art, or pre-formatted documents
+- API keys/tokens that must be processed exactly as provided
+
+**Important:** Even with `@NoTrim`, XSS validation is still performed:
+
+```java
+public class SecureDTO {
+    @NoTrim
+    private String sensitiveData;
+}
+
+// These will STILL be rejected even with @NoTrim:
+{"sensitiveData": "  <script>alert(1)</script>  "}  // ✗ XSS blocked
+{"sensitiveData": "  <img src=x>  "}               // ✗ HTML blocked
+```
+
+### 4. Case-Insensitive Enum Handling 🎯
 
 **Better API usability without compromising type safety**
 
@@ -382,20 +459,65 @@ public JsonMapperBuilderCustomizer strictJsonCustomizer() {
         // 2. Allow case-insensitive enums
         builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         
-        // 3. Sanitize all strings
+        // 3. Register AdvancedStringDeserializer for XSS prevention and smart trimming
         SimpleModule stringTrimModule = new SimpleModule();
-        stringTrimModule.addDeserializer(String.class, new StdDeserializer<>(String.class) {
+        
+        class AdvancedStringDeserializer extends StdScalarDeserializer<String> {
+            private final boolean shouldTrim;
+            
+            public AdvancedStringDeserializer() {
+                super(String.class);
+                this.shouldTrim = true;  // Default: trim enabled
+            }
+            
+            public AdvancedStringDeserializer(boolean shouldTrim) {
+                super(String.class);
+                this.shouldTrim = shouldTrim;
+            }
+            
             @Override
             public String deserialize(JsonParser p, DeserializationContext ctxt) {
                 String value = p.getValueAsString();
                 if (value == null) return null;
-                return HtmlUtils.htmlEscape(value.trim());
+                
+                // Apply trimming based on configuration
+                String processedValue = shouldTrim ? value.trim() : value;
+                
+                // Always validate for HTML tags (security check)
+                if (processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
+                    throw new IllegalArgumentException(
+                        "Security Error: HTML tags or XSS payloads are not allowed in the request."
+                    );
+                }
+                
+                return processedValue;
             }
-        });
+            
+            @Override
+            public ValueDeserializer<?> createContextual(
+                    DeserializationContext ct, BeanProperty property) {
+                // Check for @NoTrim annotation on field
+                if (property != null) {
+                    NoTrim noTrimAnnotation = property.getAnnotation(NoTrim.class);
+                    if (noTrimAnnotation != null) {
+                        return new AdvancedStringDeserializer(false);  // Disable trimming
+                    }
+                }
+                return this;
+            }
+        }
+        
+        stringTrimModule.addDeserializer(String.class, new AdvancedStringDeserializer());
         builder.addModules(stringTrimModule);
     };
 }
 ```
+
+**Key Features:**
+- **Context-Aware:** Uses `createContextual()` to detect `@NoTrim` annotation
+- **Two Modes:** Default mode (trim enabled) and NoTrim mode (trim disabled)
+- **Security First:** HTML tag validation is always performed, regardless of trim mode
+- **Performance:** Deserializer created once per field at initialization, not per request
 
 ### Disabling Security Features (Not Recommended)
 
@@ -2047,7 +2169,7 @@ The library uses **provided scope** for Spring Boot:
 - ✅ **No Dependency Conflicts** - Uses your application's existing Spring Boot version
 - ✅ **Zero External Dependencies** - Pure Java implementation, no Lombok or other libraries required
 - ✅ **Zero Bloat** - Adds only ~10KB to your application
-- ✅ **Version Flexibility** - Compatible with Spring Boot 3.2.0 - 4.0.2 and Java 17+
+- ✅ **Version Flexibility** - Compatible with Spring Boot 3.2.0 - 4.0.3 and Java 17+
 
 ### Auto-Configuration Architecture
 
@@ -2119,17 +2241,15 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 
 | Library Version | Java Version | Spring Boot Version | Status |
 |----------------|--------------|---------------------|--------|
-| 2.0.0 | 17, 21+ | 3.2.0 - 4.0.2 | ✅ Tested |
-| 1.3.0 | 17, 21+ | 3.2.0 - 4.0.2 | ✅ Tested |
-| 1.2.0 | 17, 21+ | 3.2.0+ | ✅ Tested |
-| 1.1.0 | 17, 21+ | 3.2.0+ | ✅ Tested |
+| 1.1.1 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
+| 1.1.0 | 17, 21+ | 3.2.0 - 4.0.2 | ✅ Tested |
 | 1.0.0 | 17, 21+ | 3.2.0+ | ✅ Tested |
 
 ### Version Requirements
 
 **Minimum Requirements:**
 - **Java:** 17 or higher
-- **Spring Boot:** 3.2.0 or higher (tested up to 4.0.2)
+- **Spring Boot:** 3.2.0 or higher (tested up to 4.0.3)
 - **Dependencies:** None (pure Java implementation)
 
 **Recommended:**
@@ -2138,8 +2258,8 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 
 ### Spring Boot 4.x Support
 
-✅ **Full Spring Boot 4.0.2 Compatibility**
-- The library has been tested and verified to work with Spring Boot 4.0.2
+✅ **Full Spring Boot 4.0.3 Compatibility**
+- The library has been tested and verified to work with Spring Boot 4.0.3
 - All features including auto-configuration work seamlessly
 - No breaking changes when upgrading from Spring Boot 3.x to 4.x
 - Uses provided scope dependencies to avoid version conflicts
@@ -2148,7 +2268,7 @@ public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
 
 | Framework | Supported | Notes |
 |-----------|-----------|-------|
-| Spring Boot 4.x | ✅ Yes | Full support with version 4.0.2 |
+| Spring Boot 4.x | ✅ Yes | Full support with version 4.0.3 |
 | Spring Boot 3.x | ✅ Yes | Full support with auto-configuration |
 | Spring Boot 2.x | ❌ No | Use Spring Boot 3.x+ |
 | Spring WebFlux | ⚠️ Partial | Manual adaptation required |
@@ -2728,7 +2848,7 @@ Simply add the dependency to your project:
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -3215,7 +3335,44 @@ Monthly sponsors receive:
 
 ## 📈 Version History
 
-### 1.1.0 (February 2026) - Current Release
+### 1.1.1 (February 2026) - Current Release
+
+🔧 **Maintenance Release:**
+- **Spring Boot 4.0.3 Support** - Updated compatibility to Spring Boot 4.0.3
+  - Tested and verified with Spring Boot 4.0.3
+  - All features continue to work flawlessly
+  - Seamless upgrade from Spring Boot 4.0.2
+- **Enhanced Stability** - Benefits from Spring Boot 4.0.3 bug fixes and improvements
+
+✨ **New Features:**
+- **@NoTrim Annotation** - Fine-grained control over string trimming behavior
+  - Opt-out of automatic whitespace trimming for specific fields
+  - Preserves whitespace for passwords, code snippets, Base64 data, etc.
+  - XSS validation still applies even with `@NoTrim`
+  - Context-aware deserialization using `createContextual()`
+- **Enhanced JavaDoc** - Comprehensive documentation improvements
+  - Updated `strictJsonCustomizer()` method with ~280 lines of documentation
+  - Added `@NoTrim` annotation documentation with complete examples
+  - Created annotation package-info.java with package-level overview
+  - 15+ code examples showing real-world usage scenarios
+  - Detailed security considerations and performance notes
+
+🔧 **Implementation Updates:**
+- **AdvancedStringDeserializer** - Enhanced string deserializer with two modes
+  - Default Mode: Trimming enabled (backward compatible)
+  - NoTrim Mode: Trimming disabled (activated by `@NoTrim` annotation)
+  - Regex pattern updated to `(?s).*<\s*[a-zA-Z/!].*` with DOTALL mode
+  - Fail-fast approach: rejects HTML tags instead of escaping
+
+✅ **All Features from 1.1.0 Included:**
+- Built-in Security Features with `strictJsonCustomizer()` method
+- Comprehensive Exception Handling (10 built-in handlers)
+- Distributed Tracing Support with trace IDs
+- RFC 9457 Compliance for error responses
+- Complete Javadoc Coverage (100%)
+- Ultra-lightweight: ~10KB JAR size
+
+### 1.1.0 (February 2026)
 
 ✅ **New Features:**
 - **Built-in Security Features** - Added `strictJsonCustomizer()` method with comprehensive JSON security
@@ -3260,7 +3417,7 @@ Monthly sponsors receive:
 
 🔧 **Technical Updates:**
 - Java 17+ support (Java 21 LTS recommended)
-- Spring Boot 3.2.0 - 4.0.2 compatibility (tested with 4.0.2)
+- Spring Boot 3.2.0 - 4.0.3 compatibility (tested with 4.0.3)
 - Jackson 3.x compatibility (tools.jackson packages)
 - Pure Java implementation - No Lombok dependency
 - Zero external runtime dependencies
@@ -3309,7 +3466,7 @@ The **OG4Dev Spring API Response** library is a production-ready, zero-configura
 | Response Time | < 1ms |
 | Memory per Response | ~200 bytes |
 | Thread Safety | 100% |
-| Spring Boot Support | 3.2.0 - 4.0.2 |
+| Spring Boot Support | 3.2.0 - 4.0.3 |
 | Java Version | 17+ |
 
 ### 🔗 Quick Access
