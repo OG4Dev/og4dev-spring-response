@@ -2,6 +2,7 @@ package io.github.og4dev.advice;
 
 import io.github.og4dev.annotation.AutoResponse;
 import io.github.og4dev.dto.ApiResponse;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @RestControllerAdvice(annotations = AutoResponse.class)
 @SuppressWarnings("unused")
-public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
+public @NullMarked class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
 
     /**
      * Determines whether the current response should be intercepted and wrapped.
@@ -65,7 +66,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
      * @return {@code true} if the body should be wrapped; {@code false} if it should be skipped.
      */
     @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+    public @NullMarked boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         Class<?> type = returnType.getParameterType();
         return !ApiResponse.class.isAssignableFrom(type) &&
                 !ResponseEntity.class.isAssignableFrom(type) &&

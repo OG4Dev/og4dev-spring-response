@@ -110,7 +110,7 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @author Pasindu OG
- * @version 1.3.0
+ * @version 1.4.0
  * @see io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()
  * @see io.github.og4dev.annotation.XssCheck
  * @see tools.jackson.databind.ValueDeserializer#createContextual

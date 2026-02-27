@@ -6,11 +6,11 @@
  * </p>
  * <p>
  * Simply add the dependency to your project, and all features are automatically enabled through
- * Spring Boot auto-configuration.
+ * Spring Boot autoconfiguration.
  * </p>
  *
  * @author Pasindu OG
- * @version 1.3.0
+ * @version 1.4.0
  * @since 1.0.0
  */
 package io.github.og4dev;

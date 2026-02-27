@@ -3,186 +3,175 @@
 # OG4Dev Spring API Response
 
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=java,spring,maven,git,github,idea" alt="Tech Stack" />
+<img src="https://skillicons.dev/icons?i=java,spring,maven,git,github,idea" alt="Tech Stack" />
 </p>
 
 <p align="center">
-  <em>A lightweight, zero-configuration REST API Response wrapper for Spring Boot applications</em>
+<em>A lightweight, zero-configuration REST API Response wrapper for Spring Boot applications</em>
 </p>
 
 <p align="center">
-  <a href="https://central.sonatype.com/artifact/io.github.og4dev/og4dev-spring-response">
-    <img src="https://img.shields.io/maven-central/v/io.github.og4dev/og4dev-spring-response.svg" alt="Maven Central">
-  </a>
-  <a href="https://opensource.org/licenses/Apache-2.0">
-    <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License">
-  </a>
-  <a href="https://www.oracle.com/java/">
-    <img src="https://img.shields.io/badge/Java-17+-orange.svg" alt="Java">
-  </a>
-  <a href="https://spring.io/projects/spring-boot">
-    <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
-  </a>
-  <a href="https://github.com/OG4Dev/og4dev-spring-response">
-    <img src="https://img.shields.io/badge/Version-1.3.0-brightgreen.svg" alt="Version">
-  </a>
+<a href="https://central.sonatype.com/artifact/io.github.og4dev/og4dev-spring-response">
+<img src="https://img.shields.io/maven-central/v/io.github.og4dev/og4dev-spring-response.svg" alt="Maven Central">
+</a>
+<a href="https://opensource.org/licenses/Apache-2.0">
+<img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License">
+</a>
+<a href="https://www.oracle.com/java/">
+<img src="https://img.shields.io/badge/Java-17+-orange.svg" alt="Java">
+</a>
+<a href="https://spring.io/projects/spring-boot">
+<img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
+</a>
+<a href="https://github.com/OG4Dev/og4dev-spring-response">
+<img src="https://img.shields.io/badge/Version-1.4.0-brightgreen.svg" alt="Version">
+</a>
 </p>
 
 <p align="center">
-A lightweight, type-safe API Response wrapper for Spring Boot applications. Standardize your REST API responses with consistent structure, automatic timestamps, distributed tracing support, and clean factory methods. Features zero-configuration Spring Boot auto-configuration and production-ready exception handling with comprehensive RFC 9457 ProblemDetail support covering 10 common error scenarios. No external dependencies required - uses pure Java with a custom builder pattern.
+A lightweight, type-safe API Response wrapper for Spring Boot applications. Standardize your REST API responses with consistent structure, automatic timestamps, distributed tracing support, and clean factory methods. Features zero-configuration Spring Boot auto-configuration, opt-in automatic response wrapping (@AutoResponse), and production-ready exception handling with comprehensive RFC 9457 ProblemDetail support covering 10 common error scenarios. No external dependencies required - uses pure Java with a custom builder pattern.
 </p>
 
 </div>
 
-
 ## 🔗 Quick Links
 
-- 📦 [Maven Central Repository](https://central.sonatype.com/artifact/io.github.og4dev/og4dev-spring-response)
-- 📚 [JavaDoc Documentation](https://javadoc.io/doc/io.github.og4dev/og4dev-spring-response)
-- 🐛 [Report Issues](https://github.com/OG4Dev/og4dev-spring-response/issues)
-- 💡 [Feature Requests](https://github.com/OG4Dev/og4dev-spring-response/issues/new)
-- 🤝 [Contributing Guide](#-contributing)
+* 📦 [Maven Central Repository](https://central.sonatype.com/artifact/io.github.og4dev/og4dev-spring-response)
+* 📚 [JavaDoc Documentation](https://javadoc.io/doc/io.github.og4dev/og4dev-spring-response)
+* 🐛 [Report Issues](https://github.com/OG4Dev/og4dev-spring-response/issues)
+* 💡 [Feature Requests](https://github.com/OG4Dev/og4dev-spring-response/issues/new)
+* 🤝 [Contributing Guide](#-contributing)
 
 ## 📑 Table of Contents
 
-- [Quick Links](#-quick-links)
-- [Key Highlights](#-key-highlights)
-- [Features](#-features)
-- [Requirements](#-requirements)
-- [What Makes This Different?](#-what-makes-this-different)
-- [Installation](#-installation)
-- [Project Structure](#-project-structure)
-- [Quick Start](#-quick-start)
-- [Auto-Configuration](#️-auto-configuration)
-- [Built-in Security Features](#-built-in-security-features)
-- [Built-in Exception Handling](#️-built-in-exception-handling)
-- [Usage](#-usage)
-- [Real-World Examples](#-real-world-examples)
-- [API Reference](#-api-reference)
-- [Response Structure](#-response-structure)
-- [Best Practices](#-best-practices)
-- [Testing](#-testing)
-- [Architecture & Design](#️-architecture--design-principles)
-- [OpenAPI/Swagger Integration](#-openapiswagger-integration)
-- [Compatibility Matrix](#-compatibility-matrix)
-- [Troubleshooting](#-troubleshooting)
-- [FAQ](#-faq)
-- [Performance & Best Practices](#-performance--best-practices)
-- [Migration Guide](#-migration-guide)
-- [Security Considerations](#-security-considerations)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Contact](#-contact)
-- [Acknowledgments](#-acknowledgments)
-- [Version History](#-version-history)
+* [Quick Links](#-quick-links)
+* [Key Highlights](#-key-highlights)
+* [Features](#-features)
+* [Requirements](#-requirements)
+* [What Makes This Different?](#-what-makes-this-different)
+* [Installation](#-installation)
+* [Project Structure](#-project-structure)
+* [Quick Start](#-quick-start)
+* [Auto-Configuration](#%EF%B8%8F-auto-configuration)
+* [Opt-in Automatic Wrapping (@AutoResponse)](#-opt-in-automatic-wrapping-autoresponse)
+* [Built-in Security Features](#-built-in-security-features)
+* [Built-in Exception Handling](#%EF%B8%8F-built-in-exception-handling)
+* [Usage](#-usage)
+* [Real-World Examples](#-real-world-examples)
+* [API Reference](#-api-reference)
+* [Response Structure](#-response-structure)
+* [Best Practices](#-best-practices)
+* [Testing](#-testing)
+* [Architecture & Design](#%EF%B8%8F-architecture--design-principles)
+* [OpenAPI/Swagger Integration](#-openapiswagger-integration)
+* [Compatibility Matrix](#-compatibility-matrix)
+* [Troubleshooting](#-troubleshooting)
+* [FAQ](#-faq)
+* [Performance & Best Practices](#-performance--best-practices)
+* [Migration Guide](#-migration-guide)
+* [Security Considerations](#-security-considerations)
+* [Contributing](#-contributing)
+* [License](#-license)
+* [Contact](#-contact)
+* [Acknowledgments](#-acknowledgments)
+* [Version History](#-version-history)
 
 ## 🎯 Key Highlights
 
-- 🚀 **Truly Zero Configuration** - Spring Boot 3.x/4.x auto-configuration with META-INF imports
-- 🎯 **Production-Ready** - Built-in RFC 9457 ProblemDetail with 10 comprehensive exception handlers
-- 🛡️ **Complete Error Coverage** - Handles validation, JSON parsing, 404s, method mismatches, media types, and more
-- 🔍 **Trace IDs in Errors** - Error responses include traceId for debugging
-- 🔒 **Type-Safe & Immutable** - Thread-safe design with generic type support
-- 📦 **Ultra-Lightweight** - Only ~10KB JAR size with provided dependencies
-- 🔍 **Microservices-Ready** - Built-in trace IDs for distributed tracing
-- ✅ **Battle-Tested** - Used in production Spring Boot applications
-- 📋 **Professional-Grade Javadoc** - 100% coverage with comprehensive method documentation
-- 🔐 **Opt-in Security Features** - Fine-grained control with field-level annotations
-- 🚫 **Zero External Dependencies** - Pure Java, no Lombok required
+* 🚀 **Truly Zero Configuration** - Spring Boot 3.x/4.x auto-configuration with META-INF imports
+* 🎁 **Zero Boilerplate** - Opt-in `@AutoResponse` to automatically wrap raw return types
+* 🎯 **Production-Ready** - Built-in RFC 9457 ProblemDetail with 10 comprehensive exception handlers
+* 🛡️ **Complete Error Coverage** - Handles validation, JSON parsing, 404s, method mismatches, media types, and more
+* 🔍 **Trace IDs in Errors** - Error responses include traceId for debugging
+* 🔒 **Type-Safe & Immutable** - Thread-safe design with generic type support
+* 📦 **Ultra-Lightweight** - Only ~10KB JAR size with provided dependencies
+* 🔍 **Microservices-Ready** - Built-in trace IDs for distributed tracing
+* ✅ **Battle-Tested** - Used in production Spring Boot applications
+* 📋 **Professional-Grade Javadoc** - 100% coverage with comprehensive method documentation
+* 🔐 **Opt-in Security Features** - Fine-grained control with field-level annotations
+* 🚫 **Zero External Dependencies** - Pure Java, no Lombok required
 
 ## ✨ Features
 
-- 🎯 **Consistent Structure** - All responses follow the same format: `status`, `message`, `content`, `timestamp`
-- 🔒 **Type-Safe** - Full generic type support with compile-time type checking
-- 🔍 **Distributed Tracing** - Trace IDs in error responses with MDC integration for request tracking
-- ⏰ **Auto Timestamps** - Automatic RFC 3339 UTC formatted timestamps on every response
-- 🏭 **Factory Methods** - Clean static methods: `success()`, `created()`, `status()`
-- 🚀 **Zero Config** - Spring Boot Auto-Configuration for instant setup
-- 🪶 **Lightweight** - Only ~10KB JAR with single provided dependency (Spring Web)
-- 📦 **Immutable** - Thread-safe with final fields
-- 🔌 **Spring Native** - Built on `ResponseEntity` and `HttpStatus`
-- 📋 **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807)
-- 📚 **Complete JavaDoc** - Every class and method fully documented with comprehensive examples
-- 🔐 **Opt-in Security Features** - Fine-grained JSON request protection via field annotations
-  - ✅ **Strict JSON Validation** - Rejects unknown properties to prevent mass assignment attacks (automatic)
-  - ✅ **XSS Prevention** - HTML tag detection and rejection via `@XssCheck` annotation (opt-in)
-  - ✅ **Smart String Trimming** - Whitespace trimming via `@AutoTrim` annotation (opt-in)
-  - ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability (automatic)
-- 🛡️ **Comprehensive Exception Handling** - 10 built-in handlers covering all common scenarios
-  - ✅ Validation errors (`@Valid` annotations)
-  - ✅ Type mismatches (wrong parameter types)
-  - ✅ Malformed JSON (invalid request bodies)
-  - ✅ Missing parameters (required `@RequestParam`)
-  - ✅ 404 Not Found (missing endpoints/resources)
-  - ✅ 405 Method Not Allowed (wrong HTTP method)
-  - ✅ 415 Unsupported Media Type (invalid Content-Type)
-  - ✅ Null pointer exceptions
-  - ✅ Custom business exceptions (`ApiException`)
-  - ✅ General unexpected errors
-- 🎭 **Custom Business Exceptions** - Abstract `ApiException` class for domain-specific errors
-- ✅ **Validation Support** - Automatic `@Valid` annotation error handling
+* 🎯 **Consistent Structure** - All responses follow the same format: `status`, `message`, `content`, `timestamp`
+* 🎁 **@AutoResponse Wrapping** - Return plain DTOs; let the library wrap them automatically (Opt-in)
+* 🔒 **Type-Safe** - Full generic type support with compile-time type checking
+* 🔍 **Distributed Tracing** - Trace IDs in error responses with MDC integration for request tracking
+* ⏰ **Auto Timestamps** - Automatic RFC 3339 UTC formatted timestamps on every response
+* 🏭 **Factory Methods** - Clean static methods: `success()`, `created()`, `status()`
+* 🚀 **Zero Config** - Spring Boot Auto-Configuration for instant setup
+* 🪶 **Lightweight** - Only ~10KB JAR with single provided dependency (Spring Web)
+* 📦 **Immutable** - Thread-safe with final fields
+* 🔌 **Spring Native** - Built on `ResponseEntity` and `HttpStatus`
+* 📋 **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807)
+* 📚 **Complete JavaDoc** - Every class and method fully documented with comprehensive examples
+* 🔐 **Opt-in Security Features** - Fine-grained JSON request protection via field annotations
+* ✅ **Strict JSON Validation** - Rejects unknown properties to prevent mass assignment attacks (automatic)
+* ✅ **XSS Prevention** - HTML tag detection and rejection via `@XssCheck` annotation (opt-in)
+* ✅ **Smart String Trimming** - Whitespace trimming via `@AutoTrim` annotation (opt-in)
+* ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability (automatic)
+* 🛡️ **Comprehensive Exception Handling** - 10 built-in handlers covering all common scenarios
 
 ## 📦 Requirements
 
-- Java 17 or higher
-- Spring Boot 3.2.0 or higher (tested up to 4.0.3)
-- No additional dependencies required (pure Java implementation)
+* Java 17 or higher
+* Spring Boot 3.2.0 or higher (tested up to 4.0.3)
+* No additional dependencies required (pure Java implementation)
 
 ## 🌟 What Makes This Different?
 
 Unlike other response wrapper libraries, this one offers:
 
-- ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
-- ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
-- ✅ **Opt-in Security Features** - Fine-grained control via field-level annotations
-  - `@XssCheck` - HTML tag detection and rejection (fail-fast approach)
-  - `@AutoTrim` - Whitespace trimming for specific fields
-  - Regex-based validation: `(?s).*<\s*[a-zA-Z/!].*`
-  - Default: Fields are NOT modified unless explicitly annotated
-- ✅ **Zero External Dependencies** - Pure Java implementation, won't conflict with your application
-- ✅ **Extensible Exception Handling** - Create custom business exceptions easily
-- ✅ **Trace ID Support** - Built-in distributed tracing capabilities
-- ✅ **Professional-Grade Documentation** - 100% Javadoc coverage with comprehensive method documentation including:
-  - Detailed security feature explanations
-  - Code examples for all major features
-  - Complete @param, @return, @see, and @since tags
-  - Method-level documentation explaining design decisions
-  - Zero Javadoc warnings on build
-- ✅ **Production-Grade Quality** - Clean builds, proper documentation, and battle-tested code
+* ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
+* ✅ **Zero-Boilerplate @AutoResponse** - Return raw objects, let the library wrap them automatically while preserving
+  your HTTP Status codes.
+* ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
+* ✅ **Opt-in Security Features** - Fine-grained control via field-level annotations (`@XssCheck`, `@AutoTrim`)
+* ✅ **Zero External Dependencies** - Pure Java implementation, won't conflict with your application
+* ✅ **Extensible Exception Handling** - Create custom business exceptions easily
+* ✅ **Trace ID Support** - Built-in distributed tracing capabilities
+* ✅ **Professional-Grade Documentation** - 100% Javadoc coverage
+
 ## 🚀 Installation
 
-### Maven (Latest - v1.3.0)
+### Maven (Latest - v1.4.0)
 
 ```xml
+
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
+
 ```
 
-### Gradle (Latest - v1.3.0)
+### Gradle (Latest - v1.4.0)
 
 ```gradle
-implementation 'io.github.og4dev:og4dev-spring-response:1.3.0'
+implementation 'io.github.og4dev:og4dev-spring-response:1.4.0'
+
 ```
 
-### Gradle Kotlin DSL (Latest - v1.3.0)
+### Gradle Kotlin DSL (Latest - v1.4.0)
 
 ```kotlin
-implementation("io.github.og4dev:og4dev-spring-response:1.3.0")
+implementation("io.github.og4dev:og4dev-spring-response:1.4.0")
+
 ```
 
 ---
 
-
 ## 📁 Project Structure
 
-The library is organized into five main packages:
+The library is organized into six main packages:
 
 ```
 io.github.og4dev
+├── advice/
+│   └── GlobalResponseWrapper.java           # Automatic response wrapper interceptor
 ├── annotation/
+│   ├── AutoResponse.java                    # Opt-in annotation for automatic wrapping
 │   ├── AutoTrim.java                        # Opt-in annotation for string trimming
 │   └── XssCheck.java                        # Opt-in annotation for XSS validation
 ├── config/
@@ -194,498 +183,151 @@ io.github.og4dev
 │   └── GlobalExceptionHandler.java          # RFC 9457 exception handler
 └── filter/
     └── TraceIdFilter.java                   # Request trace ID generation
+
 ```
-
-### Package Overview
-
-| Package | Description |
-|---------|-------------|
-| `annotation` | Field-level annotations for opt-in security and data processing features |
-| `config` | Spring Boot auto-configuration classes for zero-config setup |
-| `dto` | Data Transfer Objects - main `ApiResponse<T>` wrapper class |
-| `exception` | Exception handling infrastructure with ProblemDetail support |
-| `filter` | Servlet filters for trace ID generation and MDC management |
-
-### Key Components
-
-- **ApiResponse<T>** - Type-safe response wrapper with factory methods
-- **ApiResponseAutoConfiguration** - Automatic Spring Boot integration
-- **GlobalExceptionHandler** - Centralized exception handling with RFC 9457
-- **ApiException** - Base class for domain-specific exceptions
-- **@AutoTrim** - Annotation to opt-in to automatic string trimming for specific fields
-- **@XssCheck** - Annotation to opt-in to XSS validation for specific fields
-- **TraceIdFilter** - Automatic trace ID generation for distributed tracing
 
 ## 🎯 Quick Start
 
+You can use the library in two ways: **Explicit Factory Methods** or **Automatic Wrapping**.
+
+### Method 1: Explicit Factory Methods
+
 ```java
-import io.github.og4dev.dto.ApiResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
         User user = userService.findById(id);
         return ApiResponse.success("User retrieved successfully", user);
     }
 }
+
 ```
 
-**Response:**
+### Method 2: Automatic Wrapping (New in v1.4.0) 🎁
+
+Tired of typing `ResponseEntity<ApiResponse<T>>`? Use `@AutoResponse`!
+
+```java
+
+@RestController
+@RequestMapping("/api/users")
+@AutoResponse // Applies to all methods in this controller
+public class UserController {
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        // Just return the raw object!
+        return userService.findById(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED) // Preserves custom status codes!
+    public User createUser(@RequestBody UserDto dto) {
+        return userService.create(dto);
+    }
+}
+
+```
+
+**Both methods produce the exact same JSON:**
+
 ```json
 {
   "status": 200,
-  "message": "User retrieved successfully",
+  // or 201 for POST
+  "message": "Success",
   "content": {
     "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com"
+    "name": "John Doe"
   },
-  "timestamp": "2026-02-06T10:30:45.123Z"
+  "timestamp": "2026-02-28T10:30:45.123Z"
 }
+
 ```
 
-## ⚙️ Auto-Configuration 
+## ⚙️ Auto-Configuration
 
-The library now features **Spring Boot Auto-Configuration** for truly zero-config setup! Simply add the dependency and everything works automatically.
+The library features **Spring Boot Auto-Configuration** for truly zero-config setup!
 
-### What Gets Auto-Configured
+✅ **GlobalExceptionHandler** - Automatic exception handling
 
-When you include this library in your Spring Boot application, the following components are automatically registered:
+✅ **GlobalResponseWrapper** - Automatic payload wrapping via `@AutoResponse`
 
-✅ **GlobalExceptionHandler** - Automatic exception handling with RFC 7807 ProblemDetail format  
-✅ **Component Scanning** - All library components are automatically discovered  
-✅ **Bean Registration** - No manual @ComponentScan or @Import required  
+✅ **Security Customizers** - Jackson configuration for `@AutoTrim` and `@XssCheck`
 
-### How It Works
+**No configuration needed!** Just add the dependency.
 
-The library includes `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` which Spring Boot 3.x automatically detects and loads the `ApiResponseAutoConfiguration` class.
+## 🎁 Opt-in Automatic Wrapping (@AutoResponse)
 
-**No configuration needed!** Just add the dependency:
+Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the library wrap your controller responses
+automatically.
 
-```xml
-<dependency>
-    <groupId>io.github.og4dev</groupId>
-    <artifactId>og4dev-spring-response</artifactId>
-    <version>1.1.1</version>
-</dependency>
-```
+### How to use it:
 
-### Disabling Auto-Configuration (Optional)
-
-If you need to customize or disable the auto-configuration:
+Add the `@AutoResponse` annotation to your controller class (applies to all methods) or to specific methods.
 
 ```java
-@SpringBootApplication(exclude = ApiResponseAutoConfiguration.class)
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+
+@RestController
+@AutoResponse
+public class ProductController {
+    // ...
 }
+
 ```
 
-Or in `application.properties`:
-```properties
-spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguration
-```
+### Key Capabilities:
+
+* ✅ **Status Code Preservation:** Intelligently reads custom HTTP status codes set via `@ResponseStatus` (e.g., 201
+  Created) and reflects them in the `ApiResponse`.
+* ✅ **Double-Wrap Prevention:** Safely skips wrapping if you explicitly return an `ApiResponse` or `ResponseEntity`.
+* ✅ **Error Compatibility:** Bypasses `ProblemDetail` responses, ensuring standard error handling is never broken.
+* ✅ **String Safety:** Skips raw `String` returns to prevent `ClassCastException` with Spring's internal string message
+  converters.
 
 ## 🔐 Built-in Security Features
 
-The library provides fine-grained security and data processing features through field-level annotations. By default, **fields are NOT modified** unless explicitly annotated, giving you complete control over which fields receive special treatment.
-
-### Security Philosophy: Opt-in by Default
-
-**Version 1.3.0** introduces an opt-in approach:
-- ✅ **Default Behavior**: String fields are preserved as-is (no trimming, no XSS validation)
-- ✅ **Explicit Control**: Use `@AutoTrim` and `@XssCheck` annotations to enable features per field
-- ✅ **No Surprises**: Your data is not modified unless you explicitly request it
-- ✅ **Production-Ready**: Enable security only where needed
+The library provides fine-grained security and data processing features through field-level annotations. By default, **fields are NOT modified** unless explicitly annotated.
 
 ### 1. Strict Property Validation 🛡️ (Automatic)
 
-**Prevents mass assignment vulnerabilities and data injection attacks**
-
-Automatically rejects JSON payloads containing unexpected fields:
-
-```java
-// Your DTO
-public class UserDto {
-    private String name;
-    private String email;
-    // getters and setters
-}
-
-// ✅ Valid request
-{
-  "name": "John Doe",
-  "email": "john@example.com"
-}
-
-// ❌ Rejected with 400 Bad Request
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "isAdmin": true  // Unknown field - potential mass assignment attack
-}
-```
-
-**Benefits:**
-- Prevents privilege escalation attempts
-- Catches client-side typos early
-- Enforces strict API contracts
-- Improves API security posture
+Rejects JSON payloads containing unexpected fields to prevent mass assignment attacks.
 
 ### 2. Opt-in XSS Prevention with @XssCheck 🔒
 
-**Fail-fast HTML tag detection and rejection (opt-in per field)**
-
-Use the `@XssCheck` annotation to enable XSS validation on specific string fields:
+Fail-fast HTML tag detection and rejection using regex pattern `(?s).*<\s*[a-zA-Z/!].*`.
 
 ```java
-import io.github.og4dev.annotation.XssCheck;
 
-public class CommentDTO {
-    @XssCheck
-    private String content;        // XSS validated
-    
-    @XssCheck
-    private String authorName;     // XSS validated
-    
-    private String commentId;      // NOT validated (no annotation)
-}
+@XssCheck
+private String comment; // Rejects "<script>alert(1)</script>"
+
 ```
-
-**What happens:**
-
-```java
-// ✅ Valid requests (accepted for @XssCheck fields)
-{
-  "content": "Hello World",              // Plain text
-  "authorName": "John Doe",              // Plain text
-  "commentId": "<id-123>"                // No validation (no @XssCheck)
-}
-
-{
-  "content": "Price: $100 < $200",       // Comparison operators OK
-  "authorName": "User@2024"              // Special characters OK
-}
-
-// ❌ Invalid requests (rejected with 400 Bad Request for @XssCheck fields)
-{
-  "content": "<script>alert('XSS')</script>",  // Script injection
-  "authorName": "<b>John</b>",                 // HTML tags
-  "commentId": "<script>test</script>"         // NOT rejected (no @XssCheck)
-}
-```
-
-**Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Security Error: HTML tags or XSS payloads are not allowed in the request.",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-21T10:30:45.123Z"
-}
-```
-
-**Features:**
-- ✅ Detects HTML tags using regex: `(?s).*<\s*[a-zA-Z/!].*`
-- ✅ Rejects requests entirely (fail-fast approach)
-- ✅ Works only on annotated fields
-- ✅ Preserves null values (doesn't convert to empty strings)
-- ✅ Supports multiline content (DOTALL mode)
-
-**Security Advantage:**  
-Unlike HTML escaping (which transforms `<` to `&lt;`), this fail-fast approach **rejects the request entirely**. This prevents:
-- Stored XSS attacks
-- DOM-based XSS attacks
-- Second-order injection vulnerabilities
-- Encoding bypass attempts
 
 ### 3. Opt-in String Trimming with @AutoTrim ✂️
 
-**Whitespace removal for specific fields (opt-in per field)**
-
-Use the `@AutoTrim` annotation to enable automatic whitespace trimming on specific string fields:
+Automatic whitespace removal for specific fields.
 
 ```java
-import io.github.og4dev.annotation.AutoTrim;
 
-public class UserRegistrationDTO {
-    @AutoTrim
-    private String username;       // Trimmed: "  john_doe  " → "john_doe"
-    
-    @AutoTrim
-    private String email;          // Trimmed: " user@example.com " → "user@example.com"
-    
-    private String password;       // NOT trimmed: "  pass123  " → "  pass123  "
-    private String bio;            // NOT trimmed: preserves formatting
-}
+@AutoTrim
+private String username; // "  john_doe  " -> "john_doe"
+
 ```
 
-**What happens:**
-
-```java
-// Input JSON
-{
-  "username": "  john_doe  ",
-  "email": " user@example.com ",
-  "password": "  myPass123  ",
-  "bio": "  Software Developer  "
-}
-
-// After Deserialization
-username = "john_doe"              // ✓ Trimmed (has @AutoTrim)
-email    = "user@example.com"      // ✓ Trimmed (has @AutoTrim)
-password = "  myPass123  "         // ✗ NOT trimmed (no annotation)
-bio      = "  Software Developer  " // ✗ NOT trimmed (no annotation)
-```
-
-**Use Cases for @AutoTrim:**
-- User input fields: names, emails, addresses where whitespace is unwanted
-- Search queries: remove accidental spaces from user inputs
-- Usernames: ensure consistent formatting without extra spaces
-- Reference numbers: IDs, codes that should not have whitespace
-- Categories/Tags: taxonomy values that need consistent formatting
-
-**When NOT to use @AutoTrim:**
-- Password fields where whitespace may be intentional
-- Code snippets or formatted text requiring exact spacing
-- Base64-encoded data that should not be modified
-- Poetry, ASCII art, or pre-formatted documents
-- API keys/tokens that must be processed exactly as provided
-
-### 4. Combining Annotations for Maximum Security
-
-You can use both `@AutoTrim` and `@XssCheck` together for fields that need both behaviors:
-
-```java
-import io.github.og4dev.annotation.AutoTrim;
-import io.github.og4dev.annotation.XssCheck;
-
-public class SecureInputDTO {
-    @AutoTrim
-    @XssCheck
-    private String username;  // First trimmed, then XSS-validated
-    
-    @XssCheck
-    private String comment;   // Only XSS-validated (not trimmed)
-    
-    @AutoTrim
-    private String email;     // Only trimmed (not XSS-validated)
-    
-    private String bio;       // Neither (preserved as-is)
-}
-```
-
-**Processing order:**
-1. String is trimmed (if `@AutoTrim` is present)
-2. Trimmed string is checked for HTML tags (if `@XssCheck` is present)
-3. If HTML tags found, `IllegalArgumentException` is thrown
-
-**Example:**
-
-```java
-// These will be rejected (after trimming):
-{"username": "  <script>alert(1)</script>  "}  // ✗ XSS attempt blocked
-{"username": "  <img src=x>  "}               // ✗ HTML tag blocked
-
-// These are accepted:
-{"username": "  john_doe  "}  // ✓ Trimmed to "john_doe"
-{"comment": "<comparison> 5 < 10"}  // ✗ Rejected (has HTML tag)
-{"email": "  user@example.com  "}  // ✓ Trimmed to "user@example.com"
-{"bio": "  <emphasis on quality>  "}  // ✓ Preserved as-is (no annotations)
-```
-
-### 5. Case-Insensitive Enum Handling 🎯 (Automatic)
-
-**Better API usability without compromising type safety**
-
-Allows flexible enum value formats from clients:
-
-```java
-public enum Status {
-    ACTIVE, INACTIVE, PENDING
-}
-
-// All of these work ✅
-{ "status": "ACTIVE" }
-{ "status": "active" }
-{ "status": "Active" }
-{ "status": "AcTiVe" }
-```
-
-### How It Works
-
-These features are automatically configured via the `strictJsonCustomizer()` method in `ApiResponseAutoConfiguration`:
-
-```java
-@Bean
-public JsonMapperBuilderCustomizer strictJsonCustomizer() {
-    return builder -> {
-        // 1. Reject unknown properties (automatic)
-        builder.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        
-        // 2. Allow case-insensitive enums (automatic)
-        builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-        
-        
-        // 3. Register AdvancedStringDeserializer for opt-in features
-        SimpleModule stringModule = new SimpleModule();
-        
-        class AdvancedStringDeserializer extends StdScalarDeserializer<String> {
-            private final boolean shouldTrim;
-            private final boolean shouldXssCheck;
-            
-            public AdvancedStringDeserializer() {
-                super(String.class);
-                this.shouldTrim = false;      // Default: NO trimming
-                this.shouldXssCheck = false;  // Default: NO XSS checking
-            }
-            
-            public AdvancedStringDeserializer(boolean shouldTrim, boolean shouldXssCheck) {
-                super(String.class);
-                this.shouldTrim = shouldTrim;
-                this.shouldXssCheck = shouldXssCheck;
-            }
-            
-            @Override
-            public String deserialize(JsonParser p, DeserializationContext ctxt) {
-                String value = p.getValueAsString();
-                if (value == null) return null;
-                
-                // Apply trimming only if @AutoTrim is present
-                String processedValue = shouldTrim ? value.trim() : value;
-                
-                // Validate for HTML tags only if @XssCheck is present
-                if (shouldXssCheck && processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
-                    throw new IllegalArgumentException(
-                        "Security Error: HTML tags or XSS payloads are not allowed in the request."
-                    );
-                }
-                
-                return processedValue;
-            }
-            
-            @Override
-            public ValueDeserializer<?> createContextual(
-                    DeserializationContext ct, BeanProperty property) {
-                // Check for @AutoTrim and @XssCheck annotations on field
-                if (property != null) {
-                    boolean trim = property.getAnnotation(AutoTrim.class) != null;
-                    boolean xss = property.getAnnotation(XssCheck.class) != null;
-                    return new AdvancedStringDeserializer(trim, xss);
-                }
-                return this;
-            }
-        }
-        
-        stringModule.addDeserializer(String.class, new AdvancedStringDeserializer());
-        builder.addModules(stringModule);
-    };
-}
-```
-
-**Key Features:**
-- **Opt-in by Default:** Fields are NOT modified unless explicitly annotated
-- **Fine-grained Control:** Each field can have different behavior via annotations
-- **Context-Aware:** Uses `createContextual()` to detect field annotations
-- **Four Modes:**
-  - No annotations: String preserved as-is
-  - `@AutoTrim` only: String is trimmed
-  - `@XssCheck` only: String is XSS-validated
-  - Both annotations: String is trimmed then XSS-validated
-- **Performance:** Deserializer created once per field at initialization, not per request
-
-### Disabling Security Features (Not Recommended)
-
-If you need to disable these features for specific use cases:
-
-```java
-@Configuration
-public class CustomJacksonConfig {
-    
-    @Bean
-    @Primary  // Takes precedence over library's bean
-    public JsonMapperBuilderCustomizer myCustomizer() {
-        return builder -> {
-            // Your custom configuration
-            builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        };
-    }
-}
-```
-
-Or disable the entire auto-configuration:
-
-```properties
-spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguration
-```
-
-### Documentation
-
-For complete technical details, see the comprehensive Javadoc documentation:
-- 📚 [ApiResponseAutoConfiguration.strictJsonCustomizer()](https://javadoc.io/doc/io.github.og4dev/og4dev-spring-response/latest/io/github/og4dev/config/ApiResponseAutoConfiguration.html#strictJsonCustomizer())
+*(See full Security details in the Javadocs and examples above).*
 
 ## 🛡️ Built-in Exception Handling
 
-The library includes a **production-ready `GlobalExceptionHandler`** that automatically handles common exceptions using Spring Boot's **ProblemDetail (RFC 9457)** standard.
+The library includes a **production-ready `GlobalExceptionHandler**` that automatically handles 10 common exceptions
+using Spring Boot's **ProblemDetail (RFC 9457)** standard.
 
-### What's Included
-
-✅ **General Exception Handler** - Catches all unhandled exceptions (HTTP 500)  
-✅ **Validation Error Handler** - Automatically processes `@Valid` annotation failures (HTTP 400)  
-✅ **Type Mismatch Handler** - Handles method argument type conversion errors (HTTP 400)  
-✅ **Malformed JSON Handler** - Handles invalid JSON request bodies (HTTP 400)  
-✅ **Missing Parameter Handler** - Detects missing required request parameters (HTTP 400)  
-✅ **404 Not Found Handler** - Handles missing endpoints and resources (HTTP 404)  
-✅ **Method Not Allowed Handler** - Handles unsupported HTTP methods (HTTP 405)  
-✅ **Unsupported Media Type Handler** - Handles invalid Content-Type headers (HTTP 415)  
-✅ **Null Pointer Handler** - Specific handling for NullPointerException (HTTP 500)  
-✅ **Custom ApiException Handler** - Handles custom business exceptions extending `ApiException`  
-✅ **Automatic Logging** - SLF4J integration for all errors with consistent trace IDs  
-✅ **Trace ID Consistency** - Logs and responses always have matching trace IDs  
-✅ **Timestamp Support** - All error responses include RFC 3339 timestamps  
-✅ **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807)
-
-### Trace ID Consistency 
-
-All exception handlers now ensure **consistent trace IDs** between logs and error responses:
-
-- **With TraceIdFilter**: Uses the trace ID from SLF4J MDC
-- **Without Filter**: Generates a UUID and stores it in MDC for consistent logging
-- **Guaranteed**: Logs and responses always have matching trace IDs
-
-**Example Log Output:**
-```
-2026-02-07 10:30:45.123 [550e8400-e29b-41d4-a716-446655440000] ERROR GlobalExceptionHandler - Error in SQLExceptionTranslator:112
-```
-
-**Matching Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Internal Server Error",
-  "status": 500,
-  "detail": "Internal Server Error. Please contact technical support",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-07T10:30:45.123Z"
-}
-```
-
-✅ **No more "N/A" trace IDs** - Every error has a real, correlatable trace ID  
-✅ **Easy debugging** - Copy trace ID from response and find all related logs  
-✅ **Thread-safe** - Proper MDC management ensures no cross-thread contamination  
-
-### Custom Business Exceptions 
-
-Instead of throwing generic exceptions, you can now extend the **abstract `ApiException` class** to create domain-specific exceptions with automatic exception handling:
+* **Automatic Logging:** SLF4J integration for all errors.
+* **Trace ID Consistency:** Logs and responses always have matching trace IDs.
+* **Custom Business Exceptions:** Extend the abstract `ApiException` class to create domain-specific exceptions.
 
 ```java
 public class ResourceNotFoundException extends ApiException {
@@ -694,2955 +336,106 @@ public class ResourceNotFoundException extends ApiException {
     }
 }
 
-public class UnauthorizedAccessException extends ApiException {
-    public UnauthorizedAccessException(String message) {
-        super(message, HttpStatus.UNAUTHORIZED);
-    }
-}
-
-public class BusinessRuleViolationException extends ApiException {
-    public BusinessRuleViolationException(String message) {
-        super(message, HttpStatus.CONFLICT);
-    }
-}
-```
-
-**Usage in Controllers:**
-
-```java
-@GetMapping("/{id}")
-public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
-    User user = userService.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("User", id));
-    return ApiResponse.success("User retrieved successfully", user);
-}
-```
-
-**Automatic Error Response (RFC 9457):**
-```json
-{
-  "type": "about:blank",
-  "title": "Not Found",
-  "status": 404,
-  "detail": "User not found with ID: 123",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-The `GlobalExceptionHandler` automatically:
-- Extracts the HTTP status from your custom exception
-- Formats it as a ProblemDetail response
-- Logs the error with appropriate severity
-- Includes timestamps for traceability
-
-### Example: Validation Errors
-
-Add validation to your DTOs:
-
-```java
-public class UserDto {
-    @NotBlank(message = "Name is required")
-    private String name;
-    
-    @Email(message = "Email must be valid")
-    @NotBlank(message = "Email is required")
-    private String email;
-    
-    @Min(value = 18, message = "Age must be at least 18")
-    private Integer age;
-}
-```
-
-Use `@Valid` in your controller:
-
-```java
-@PostMapping
-public ResponseEntity<ApiResponse<User>> createUser(@Valid @RequestBody UserDto dto) {
-    User newUser = userService.create(dto);
-    return ApiResponse.created("User created successfully", newUser);
-}
-```
-
-**Automatic Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation Failed",
-  "errors": {
-    "email": "Email must be valid",
-    "name": "Name is required",
-    "age": "Age must be at least 18"
-  },
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-### Example: Malformed JSON Errors **
-
-When a client sends invalid JSON (missing quotes, commas, etc.):
-
-```bash
-# Request with malformed JSON
-POST /api/users
-Content-Type: application/json
-
-{
-  "name": "John Doe"
-  "email": "invalid"  # Missing comma
-}
-```
-
-**Automatic Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Malformed JSON request. Please check your request body format.",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-### Example: Missing Required Parameters **
-
-When a required `@RequestParam` is missing:
-
-```java
-@GetMapping("/search")
-public ResponseEntity<ApiResponse<List<User>>> search(
-    @RequestParam(required = true) String query) {
-    // ...
-}
-```
-
-**Automatic Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Required request parameter 'query' (type: String) is missing.",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-### Example: 404 Not Found **
-
-When accessing a non-existent endpoint or resource:
-
-```bash
-GET /api/nonexistent
-```
-
-**Automatic Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Not Found",
-  "status": 404,
-  "detail": "The requested resource '/api/nonexistent' was not found.",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-### Example: Method Not Allowed **
-
-When using an unsupported HTTP method:
-
-```bash
-# POST to an endpoint that only supports GET
-POST /api/users/123
-```
-
-**Automatic Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Method Not Allowed",
-  "status": 405,
-  "detail": "Method 'POST' is not supported for this endpoint. Supported methods are: [GET, PUT, DELETE]",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-### Example: Unsupported Media Type **
-
-When sending an unsupported Content-Type:
-
-```bash
-POST /api/users
-Content-Type: application/xml
-
-<user><name>John</name></user>
-```
-
-**Automatic Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Unsupported Media Type",
-  "status": 415,
-  "detail": "Content type 'application/xml' is not supported. Supported content types: [application/json]",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-### Logging
-
-All exceptions are automatically logged with appropriate severity levels:
-- **ERROR level** - General exceptions and null pointer exceptions
-- **WARN level** - Validation errors, type mismatches, malformed JSON, missing parameters, 404 errors, method not allowed, unsupported media types, and business logic exceptions
-
-```
-2026-02-02 10:30:45.123 WARN  i.g.p.e.GlobalExceptionHandler - Validation error: {email=Email must be valid, name=Name is required}
-2026-02-02 10:30:45.456 ERROR i.g.p.e.GlobalExceptionHandler - An unexpected error occurred:
-java.lang.RuntimeException: Database connection failed
-    at com.example.service.UserService.findById(UserService.java:42)
-2026-02-02 10:31:12.789 WARN  i.g.p.e.GlobalExceptionHandler - Malformed JSON request: JSON parse error: Unexpected character...
-2026-02-02 10:31:45.234 WARN  i.g.p.e.GlobalExceptionHandler - Missing parameter: Required request parameter 'query' (type: String) is missing.
-2026-02-02 10:32:15.567 WARN  i.g.p.e.GlobalExceptionHandler - 404 Not Found: The requested resource '/api/invalid' was not found.
-2026-02-02 10:32:45.890 WARN  i.g.p.e.GlobalExceptionHandler - Method not allowed: Method 'POST' is not supported for this endpoint.
-2026-02-02 10:33:15.123 WARN  i.g.p.e.GlobalExceptionHandler - Unsupported media type: Content type 'application/xml' is not supported.
-```
-```
-
-## 🔍 Distributed Tracing 
-
-The library provides **production-ready distributed tracing** with automatic trace ID generation and MDC (Mapped Diagnostic Context) integration for seamless log correlation across your microservices architecture.
-
-### Key Features
-
-✅ **Automatic Trace ID Generation** - Every response includes a unique UUID for request tracking  
-✅ **MDC Integration** - Trace IDs automatically available in all log statements via SLF4J MDC  
-✅ **TraceIdFilter** - Optional servlet filter for consistent trace ID management **  
-✅ **Flexible Priority** - Supports explicit trace IDs, MDC context, or auto-generation  
-✅ **Thread-Safe** - Proper MDC cleanup prevents memory leaks  
-✅ **Zero Configuration** - Works out of the box with sensible defaults  
-✅ **UUID Format** - Standard 128-bit globally unique identifiers  
-
-### Industry Standards Compatibility
-
-The trace ID implementation uses **UUID format** (128-bit), which is:
-- ✅ Widely supported across distributed systems
-- ✅ Compatible with most logging and APM tools
-- ✅ Globally unique without coordination
-
-**For enhanced interoperability**, consider implementing header propagation to support:
-- `X-Trace-Id` / `X-Request-ID` (Common custom headers)
-- `X-B3-TraceId` (Zipkin/B3 format)
-- `traceparent` (W3C Trace Context standard)
-
-See the [Enhanced TraceIdFilter](#enhanced-traceidfilter-with-header-propagation) section below for implementation details.
-
-### How It Works
-
-#### Default Behavior (Without Filter)
-
-By default, `ApiResponse` automatically generates a trace ID for each response:
-
-```java
-@GetMapping("/{id}")
-public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
-    User user = userService.findById(id);
-    return ApiResponse.success("User found", user);
-}
-```
-
-**Response:**
-```json
-{
-  "status": 200,
-  "message": "User found",
-  "content": { "id": 1, "name": "John" },
-  "timestamp": "2026-02-06T10:30:45.123Z"
-}
-```
-
-**Note:** Success responses (ApiResponse) do NOT include `traceId`. Trace IDs are only included in error responses (ProblemDetail format) for debugging purposes.
-```
-
-#### Enhanced Tracing with TraceIdFilter
-
-For comprehensive distributed tracing, register the `TraceIdFilter` to automatically manage trace IDs across your entire request lifecycle:
-
-**Step 1: Register the Filter**
-
-```java
-@Configuration
-public class FilterConfig {
-
-    @Bean
-    public FilterRegistrationBean<TraceIdFilter> traceIdFilter() {
-        FilterRegistrationBean<TraceIdFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new TraceIdFilter());
-        registration.addUrlPatterns("/*");
-        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return registration;
-    }
-}
-```
-
-**Step 2: Automatic Benefits**
-
-Once registered, the filter:
-1. Generates a unique UUID for each incoming request
-2. Stores it in SLF4J MDC (available for logging)
-3. Makes it available to `ApiResponse` automatically
-4. Cleans up MDC after request completion
-
-**Step 3: Trace ID in Logs**
-
-All your log statements automatically include the trace ID:
-
-```java
-@Service
-@Slf4j
-public class UserService {
-    
-    public User findById(Long id) {
-        log.info("Finding user by ID: {}", id);  // Trace ID automatically included
-        // ... business logic
-        log.debug("User retrieved from database");
-        return user;
-    }
-}
-```
-
-**Log Output (with Logback configuration):**
-```
-2026-02-06 10:30:45.123 [a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d] INFO  c.e.s.UserService - Finding user by ID: 123
-2026-02-06 10:30:45.234 [a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d] DEBUG c.e.s.UserService - User retrieved from database
-```
-
-**Logback Configuration (logback-spring.xml):**
-```xml
-<configuration>
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-DD HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-    
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </root>
-</configuration>
-```
-
-### Trace ID Priority
-
-The trace ID is resolved with the following priority:
-
-1. **Explicit Parameter** - If you explicitly set a trace ID via builder
-2. **MDC Context** - If `TraceIdFilter` has set a trace ID in MDC
-3. **Auto-Generated** - Falls back to a random UUID
-
-```java
-// Priority 1: Explicit trace ID
-UUID customId = UUID.randomUUID();
-ApiResponse.<User>builder()
-    .traceId(customId)  // This takes highest priority
-    .status(200)
-    .message("User found")
-    .content(user)
-    .build();
-
-// Priority 2: From MDC (when TraceIdFilter is active)
-// Automatically uses the filter-generated trace ID
-
-// Priority 3: Auto-generated (when no filter and no explicit ID)
-// Falls back to random UUID
-```
-
-### End-to-End Tracing Example
-
-**Scenario:** Client → API Gateway → User Service → Database
-
-```java
-// API Gateway receives request with trace ID
-@RestController
-@RequestMapping("/api/users")
-public class UserController {
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
-        // TraceIdFilter already set MDC with trace ID
-        log.info("Received request for user: {}", id);
-        
-        User user = userService.findById(id);
-        
-        // Response automatically includes the same trace ID
-        return ApiResponse.success("User found", user);
-    }
-}
-
-@Service
-@Slf4j
-public class UserService {
-    
-    public User findById(Long id) {
-        // All logs automatically include trace ID from MDC
-        log.info("Finding user in database: {}", id);
-        
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> {
-                log.warn("User not found: {}", id);
-                return new ResourceNotFoundException("User", id);
-            });
-            
-        log.info("User found: {}", user.getEmail());
-        return user;
-    }
-}
-```
-
-**Complete Request Flow:**
-```
-1. Request arrives → TraceIdFilter generates UUID: a1b2c3d4-...
-2. MDC.put("traceId", "a1b2c3d4-...")
-3. Controller logs: [a1b2c3d4-...] INFO - Received request for user: 123
-4. Service logs:    [a1b2c3d4-...] INFO - Finding user in database: 123
-5. Service logs:    [a1b2c3d4-...] INFO - User found: john@example.com
-6. Response includes: "traceId": "a1b2c3d4-..."
-7. MDC.clear() in finally block
-```
-
-### Propagating Trace IDs to Downstream Services
-
-For microservices architectures, propagate the trace ID to downstream services:
-
-```java
-@Service
-@RequiredArgsConstructor
-public class OrderService {
-    
-    private final RestTemplate restTemplate;
-    
-    public Order createOrder(OrderDto dto) {
-        // Get trace ID from MDC
-        String traceId = MDC.get("traceId");
-        
-        // Create headers with trace ID
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Trace-Id", traceId);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        
-        // Call downstream service
-        HttpEntity<OrderDto> request = new HttpEntity<>(dto, headers);
-        ResponseEntity<ApiResponse<Order>> response = restTemplate.exchange(
-            "http://payment-service/api/payments",
-            HttpMethod.POST,
-            request,
-            new ParameterizedTypeReference<ApiResponse<Order>>() {}
-        );
-        
-        return response.getBody().getContent();
-    }
-}
-```
-
-**Downstream Service (Payment Service):**
-```java
-@RestController
-@RequestMapping("/api/payments")
-public class PaymentController {
-    
-    @PostMapping
-    public ResponseEntity<ApiResponse<Payment>> processPayment(
-            @RequestHeader(value = "X-Trace-Id", required = false) String incomingTraceId,
-            @RequestBody PaymentDto dto) {
-        
-        // Use incoming trace ID if provided
-        if (incomingTraceId != null) {
-            MDC.put("traceId", incomingTraceId);
-        }
-        
-        Payment payment = paymentService.process(dto);
-        return ApiResponse.created("Payment processed", payment);
-    }
-}
-```
-
-### Testing with Trace IDs
-
-**Unit Tests:**
-```java
-@Test
-void testTraceIdInResponse() {
-    // Set trace ID in MDC (simulating TraceIdFilter)
-    String expectedTraceId = UUID.randomUUID().toString();
-    MDC.put("traceId", expectedTraceId);
-    
-    try {
-        ApiResponse<User> response = ApiResponse.<User>builder()
-            .status(200)
-            .message("Success")
-            .content(user)
-            .build();
-        
-        assertEquals(UUID.fromString(expectedTraceId), response.getTraceId());
-    } finally {
-        MDC.clear();
-    }
-}
-```
-
-**Integration Tests:**
-```java
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class UserControllerIntegrationTest {
-    
-    @Autowired
-    private TestRestTemplate restTemplate;
-    
-    @Test
-    void testTraceIdInApiResponse() {
-        ResponseEntity<ApiResponse<User>> response = restTemplate.exchange(
-            "/api/users/1",
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<ApiResponse<User>>() {}
-        );
-        
-        assertNotNull(response.getBody().getTraceId());
-        // Trace ID should be in response
-    }
-}
-```
-
-### Benefits
-
-1. **Simplified Debugging** - Track requests across multiple services with a single ID
-2. **Log Correlation** - All logs for a request share the same trace ID
-3. **Performance Monitoring** - Identify slow requests by trace ID
-4. **Error Investigation** - Quickly find all logs related to a failed request
-5. **Distributed Systems** - Essential for microservices architecture
-6. **Production Ready** - No memory leaks with automatic MDC cleanup
-
-### Enhanced TraceIdFilter with Header Propagation
-
-For better interoperability with industry-standard distributed tracing systems, you can extend `TraceIdFilter` to support incoming trace ID headers and add trace IDs to response headers:
-
-```java
-package io.github.og4dev.filter;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.MDC;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.UUID;
-
-/**
- * Enhanced TraceIdFilter with industry-standard header support.
- * Supports incoming trace IDs from common headers and propagates to response.
- */
-public class EnhancedTraceIdFilter extends OncePerRequestFilter {
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        UUID traceId = extractOrGenerateTraceId(request);
-
-        try {
-            request.setAttribute("traceId", traceId);
-            MDC.put("traceId", traceId.toString());
-
-            // Add trace ID to response header for downstream services
-            response.setHeader("X-Trace-Id", traceId.toString());
-
-            filterChain.doFilter(request, response);
-        } finally {
-            MDC.clear();
-        }
-    }
-
-    /**
-     * Extracts trace ID from standard headers or generates a new one.
-     * Checks headers in order of priority:
-     * 1. X-Trace-Id (custom)
-     * 2. X-Request-ID (common)
-     * 3. X-B3-TraceId (Zipkin)
-     * 4. traceparent (W3C Trace Context)
-     */
-    private UUID extractOrGenerateTraceId(HttpServletRequest request) {
-        // Check X-Trace-Id header
-        String traceId = request.getHeader("X-Trace-Id");
-
-        // Check X-Request-ID header
-        if (traceId == null) {
-            traceId = request.getHeader("X-Request-ID");
-        }
-
-        // Check X-B3-TraceId header (Zipkin format)
-        if (traceId == null) {
-            traceId = request.getHeader("X-B3-TraceId");
-        }
-
-        // Check W3C traceparent header
-        if (traceId == null) {
-            String traceparent = request.getHeader("traceparent");
-            if (traceparent != null) {
-                // Format: 00-{trace-id}-{span-id}-{flags}
-                String[] parts = traceparent.split("-");
-                if (parts.length >= 2) {
-                    traceId = parts[1]; // Extract trace-id
-                }
-            }
-        }
-
-        // Try to parse as UUID, or generate new one
-        if (traceId != null) {
-            try {
-                return UUID.fromString(traceId);
-            } catch (IllegalArgumentException e) {
-                // Invalid UUID format, generate new one
-            }
-        }
-
-        return UUID.randomUUID();
-    }
-}
-```
-
-**Register the Enhanced Filter:**
-
-```java
-@Configuration
-public class FilterConfig {
-
-    @Bean
-    public FilterRegistrationBean<EnhancedTraceIdFilter> traceIdFilter() {
-        FilterRegistrationBean<EnhancedTraceIdFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new EnhancedTraceIdFilter());
-        registration.addUrlPatterns("/*");
-        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return registration;
-    }
-}
-```
-
-**Benefits of Enhanced Filter:**
-- ✅ Accepts trace IDs from upstream services (API Gateway, Load Balancer)
-- ✅ Supports multiple industry-standard header formats
-- ✅ Adds trace ID to response headers for downstream services
-- ✅ Maintains compatibility with W3C, Zipkin, and custom formats
-- ✅ Graceful fallback to UUID generation
-
-**Testing with cURL:**
-```bash
-# Send request with trace ID in header
-curl -H "X-Trace-Id: 12345678-1234-1234-1234-123456789012" \
-     http://localhost:8080/api/users/1
-
-# Check response header - trace ID is propagated
-HTTP/1.1 200 OK
-X-Trace-Id: 12345678-1234-1234-1234-123456789012
-
-# Success response body (no traceId field in ApiResponse)
-{
-  "status": 200,
-  "message": "User found",
-  "content": {...},
-  "timestamp": "2026-02-06T10:30:45.123Z"
-}
-
-# Error responses include traceId in body (ProblemDetail format)
-# For errors, the traceId appears in the response JSON:
-{
-  "type": "about:blank",
-  "title": "Not Found",
-  "status": 404,
-  "detail": "User not found",
-  "traceId": "12345678-1234-1234-1234-123456789012",
-  "timestamp": "2026-02-06T10:30:45.123Z"
-}
-```
-
-**Note:** 
-- Success responses (ApiResponse) do NOT have `traceId` in the response body
-- Error responses (ProblemDetail) DO include `traceId` for debugging
-- Both success and error responses can have `X-Trace-Id` header if TraceIdFilter is configured
-
-## 📖 Usage
-
-### Success Responses (HTTP 200)
-
-**With data:**
-```java
-@GetMapping
-public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
-    List<User> users = userService.findAll();
-    return ApiResponse.success("Users retrieved successfully", users);
-}
-```
-
-**Without data:**
-```java
-@DeleteMapping("/{id}")
-public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
-    userService.delete(id);
-    return ApiResponse.success("User deleted successfully");
-}
-```
-
-### Created Responses (HTTP 201)
-
-```java
-@PostMapping
-public ResponseEntity<ApiResponse<User>> createUser(@RequestBody UserDto dto) {
-    User newUser = userService.create(dto);
-    return ApiResponse.created("User created successfully", newUser);
-}
-```
-
-### Custom Status Responses
-
-**Without data:**
-```java
-@GetMapping("/health")
-public ResponseEntity<ApiResponse<Void>> healthCheck() {
-    if (!service.isHealthy()) {
-        return ApiResponse.status("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
-    }
-    return ApiResponse.success("Service is healthy");
-}
-```
-
-**With data:**
-```java
-@PutMapping("/{id}")
-public ResponseEntity<ApiResponse<User>> updateUser(
-        @PathVariable Long id, 
-        @RequestBody UserDto dto) {
-    User updated = userService.update(id, dto);
-    return ApiResponse.status("User updated", updated, HttpStatus.OK);
-}
 ```
 
 ## 🌍 Real-World Examples
 
-### Example 1: Complete CRUD Controller
+### Example 1: Clean CRUD Controller (Using @AutoResponse)
 
 ```java
+
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
-@Slf4j
+@AutoResponse // ✨ Zero boilerplate for the whole controller!
 public class ProductController {
 
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<Product>>> getAllProducts(
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Product> products = productService.findAll(pageable);
-        return ApiResponse.success("Products retrieved successfully", products);
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> getProduct(@PathVariable Long id) {
-        Product product = productService.findById(id)
+    public Product getProduct(@PathVariable Long id) {
+        return productService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", id));
-        return ApiResponse.success("Product found", product);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Product>> createProduct(
-            @Valid @RequestBody ProductDto dto) {
-        Product product = productService.create(dto);
-        log.info("Product created with ID: {}", product.getId());
-        return ApiResponse.created("Product created successfully", product);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> updateProduct(
-            @PathVariable Long id,
-            @Valid @RequestBody ProductDto dto) {
-        Product product = productService.update(id, dto);
-        return ApiResponse.success("Product updated successfully", product);
+    @ResponseStatus(HttpStatus.CREATED) // ✨ 201 Created preserved automatically
+    public Product createProduct(@Valid @RequestBody ProductDto dto) {
+        return productService.create(dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
+    public void deleteProduct(@PathVariable Long id) {
         productService.delete(id);
-        return ApiResponse.success("Product deleted successfully");
-    }
-
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<ApiResponse<Product>> updateStatus(
-            @PathVariable Long id,
-            @RequestParam ProductStatus status) {
-        Product product = productService.updateStatus(id, status);
-        return ApiResponse.success("Product status updated", product);
-    }
-}
-```
-
-### Example 2: File Upload with Progress
-
-```java
-@RestController
-@RequestMapping("/api/files")
-@RequiredArgsConstructor
-public class FileUploadController {
-
-    private final FileStorageService fileService;
-
-    @PostMapping("/upload")
-    public ResponseEntity<ApiResponse<FileMetadata>> uploadFile(
-            @RequestParam("file") MultipartFile file) {
-        
-        if (file.isEmpty()) {
-            throw new InvalidFileException("File cannot be empty");
-        }
-
-        if (file.getSize() > 10 * 1024 * 1024) { // 10MB limit
-            throw new FileTooLargeException("File size exceeds 10MB limit");
-        }
-
-        FileMetadata metadata = fileService.store(file);
-        return ApiResponse.created("File uploaded successfully", metadata);
-    }
-
-    @GetMapping("/{id}/download")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String id) {
-        FileData fileData = fileService.load(id);
-        
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(fileData.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, 
-                        "attachment; filename=\"" + fileData.getFilename() + "\"")
-                .body(fileData.getResource());
+        // Returns empty content with 200 OK automatically
     }
 }
 
-// Custom exceptions
-public class InvalidFileException extends ApiException {
-    public InvalidFileException(String message) {
-        super(message, HttpStatus.BAD_REQUEST);
-    }
-}
-
-public class FileTooLargeException extends ApiException {
-    public FileTooLargeException(String message) {
-        super(message, HttpStatus.PAYLOAD_TOO_LARGE);
-    }
-}
-```
-
-### Example 3: Async Processing with Callbacks
-
-```java
-@RestController
-@RequestMapping("/api/reports")
-@RequiredArgsConstructor
-public class ReportController {
-
-    private final ReportService reportService;
-
-    @PostMapping("/generate")
-    public ResponseEntity<ApiResponse<ReportJob>> generateReport(
-            @Valid @RequestBody ReportRequest request) {
-        
-        ReportJob job = reportService.submitJob(request);
-        
-        return ApiResponse.status(
-                "Report generation started. Check status at /api/reports/" + job.getId(),
-                job,
-                HttpStatus.ACCEPTED
-        );
-    }
-
-    @GetMapping("/{jobId}/status")
-    public ResponseEntity<ApiResponse<ReportJobStatus>> getStatus(@PathVariable String jobId) {
-        ReportJobStatus status = reportService.getJobStatus(jobId);
-        
-        return switch (status.getState()) {
-            case COMPLETED -> ApiResponse.success("Report is ready", status);
-            case FAILED -> ApiResponse.status("Report generation failed", status, HttpStatus.INTERNAL_SERVER_ERROR);
-            case PROCESSING -> ApiResponse.status("Report is being generated", status, HttpStatus.ACCEPTED);
-            default -> ApiResponse.status("Report is queued", status, HttpStatus.ACCEPTED);
-        };
-    }
-}
-```
-
-### Example 4: Search with Filters
-
-```java
-@RestController
-@RequestMapping("/api/search")
-@RequiredArgsConstructor
-public class SearchController {
-
-    private final SearchService searchService;
-
-    @GetMapping("/products")
-    public ResponseEntity<ApiResponse<SearchResults<Product>>> searchProducts(
-            @RequestParam(required = false) String query,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(required = false) List<String> categories,
-            @RequestParam(required = false) Boolean inStock,
-            Pageable pageable) {
-
-        SearchCriteria criteria = SearchCriteria.builder()
-                .query(query)
-                .minPrice(minPrice)
-                .maxPrice(maxPrice)
-                .categories(categories)
-                .inStock(inStock)
-                .build();
-
-        SearchResults<Product> results = searchService.search(criteria, pageable);
-        
-        String message = String.format("Found %d results", results.getTotalElements());
-        return ApiResponse.success(message, results);
-    }
-}
-```
-
-### Example 5: Batch Operations
-
-```java
-@RestController
-@RequestMapping("/api/batch")
-@RequiredArgsConstructor
-public class BatchOperationController {
-
-    private final BatchService batchService;
-
-    @PostMapping("/users/import")
-    public ResponseEntity<ApiResponse<BatchResult>> importUsers(
-            @RequestBody List<@Valid UserImportDto> users) {
-        
-        if (users.isEmpty()) {
-            throw new InvalidRequestException("User list cannot be empty");
-        }
-
-        if (users.size() > 1000) {
-            throw new BatchTooLargeException("Maximum 1000 users per batch");
-        }
-
-        BatchResult result = batchService.importUsers(users);
-        
-        String message = String.format(
-                "Batch completed: %d successful, %d failed",
-                result.getSuccessCount(),
-                result.getFailureCount()
-        );
-        
-        return ApiResponse.success(message, result);
-    }
-
-    @DeleteMapping("/users")
-    public ResponseEntity<ApiResponse<BatchDeleteResult>> deleteUsers(
-            @RequestBody List<Long> userIds) {
-        
-        BatchDeleteResult result = batchService.deleteUsers(userIds);
-        
-        return ApiResponse.success(
-                String.format("Deleted %d users", result.getDeletedCount()),
-                result
-        );
-    }
-}
-```
-
-### Example 6: Health Check & Monitoring
-
-```java
-@RestController
-@RequestMapping("/api")
-@RequiredArgsConstructor
-public class HealthController {
-
-    private final DatabaseHealthChecker dbHealthChecker;
-    private final CacheHealthChecker cacheHealthChecker;
-    private final ExternalApiHealthChecker apiHealthChecker;
-
-    @GetMapping("/health")
-    public ResponseEntity<ApiResponse<HealthStatus>> health() {
-        HealthStatus status = HealthStatus.builder()
-                .database(dbHealthChecker.check())
-                .cache(cacheHealthChecker.check())
-                .externalApi(apiHealthChecker.check())
-                .timestamp(Instant.now())
-                .build();
-
-        HttpStatus httpStatus = status.isHealthy() ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
-        String message = status.isHealthy() ? "All systems operational" : "Some systems are down";
-        
-        return ApiResponse.status(message, status, httpStatus);
-    }
-
-    @GetMapping("/metrics")
-    public ResponseEntity<ApiResponse<SystemMetrics>> metrics() {
-        SystemMetrics metrics = SystemMetrics.builder()
-                .uptime(ManagementFactory.getRuntimeMXBean().getUptime())
-                .memoryUsage(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())
-                .activeThreads(Thread.activeCount())
-                .timestamp(Instant.now())
-                .build();
-        
-        return ApiResponse.success("System metrics retrieved", metrics);
-    }
-}
-```
-
-### Error Handling with GlobalExceptionHandler
-
-**Version 2.0.0 includes a comprehensive `GlobalExceptionHandler`** with 10 built-in exception handlers using Spring Boot's `ProblemDetail` (RFC 9457) for standardized error responses:
-
-**Handled Exception Types:**
-1. ✅ **General Exceptions** (HTTP 500)
-2. ✅ **Validation Errors** (HTTP 400) - `@Valid` annotation failures
-3. ✅ **Type Mismatches** (HTTP 400) - Wrong parameter types
-4. ✅ **Malformed JSON** (HTTP 400) - Invalid request body **
-5. ✅ **Missing Parameters** (HTTP 400) - Required `@RequestParam` missing **
-6. ✅ **404 Not Found** (HTTP 404) - Missing endpoints/resources **
-7. ✅ **405 Method Not Allowed** (HTTP 405) - Wrong HTTP method **
-8. ✅ **415 Unsupported Media Type** (HTTP 415) - Invalid Content-Type **
-9. ✅ **Null Pointer Exceptions** (HTTP 500)
-10. ✅ **Custom ApiExceptions** - Domain-specific business logic errors
-
-```java
-package io.github.og4dev.exception;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
-
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    // 10 comprehensive exception handlers included
-    // See full implementation in the source code
-
-    private String getOrGenerateTraceId() {
-        String traceId = MDC.get("traceId");
-        if (traceId == null) {
-            traceId = UUID.randomUUID().toString();
-            MDC.put("traceId", traceId);
-        }
-        return traceId;
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ProblemDetail handleAllExceptions(Exception ex) {
-        String traceId = getOrGenerateTraceId();
-        log.error("[TraceID: {}] An unexpected error occurred: ", traceId, ex);
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Internal Server Error. Please contact technical support"
-        );
-        problemDetail.setProperty("traceId", traceId);
-        problemDetail.setProperty("timestamp", Instant.now());
-        return problemDetail;
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String traceId = getOrGenerateTraceId();
-        Map<String, String> errorMessage = new HashMap<>();
-        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            errorMessage.merge(fieldError.getField(), fieldError.getDefaultMessage(),
-                    (msg1, msg2) -> msg1 + "; " + msg2);
-        }
-        log.warn("[TraceID: {}] Validation error: {}", traceId, errorMessage);
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST,
-                "Validation Failed"
-        );
-        problemDetail.setProperty("errors", errorMessage);
-        problemDetail.setProperty("traceId", traceId);
-        problemDetail.setProperty("timestamp", Instant.now());
-        return problemDetail;
-    }
-
-    @ExceptionHandler(NullPointerException.class)
-    public ProblemDetail handleNullPointerExceptions(NullPointerException ex) {
-        String traceId = getOrGenerateTraceId();
-        log.error("[TraceID: {}] Null pointer exception occurred: ", traceId, ex);
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "A null pointer exception occurred."
-        );
-        problemDetail.setProperty("traceId", traceId);
-        problemDetail.setProperty("timestamp", Instant.now());
-        return problemDetail;
-    }
-}
-```
-
-**The GlobalExceptionHandler provides:**
-- 🛡️ **ProblemDetail RFC 9457** - Latest standard error format (supersedes RFC 7807)
-- ✅ **Validation Error Handling** - Automatic `@Valid` annotation support
-- 📝 **Comprehensive Logging** - SLF4J integration with trace IDs
-- ⏰ **Automatic Timestamps** - On all error responses
-- 🔍 **Trace ID Generation** - Automatic UUID generation for all errors
-- 🔍 **Null Pointer Protection** - Dedicated NullPointerException handling
-- 📊 **10 Exception Handlers** - Covers all common error scenarios
-
-**Example Validation Error Response:**
-```json
-{
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation Failed",
-  "errors": {
-    "email": "must be a well-formed email address",
-    "name": "must not be blank"
-  },
-  "timestamp": "2026-02-02T10:30:45.123Z"
-}
-```
-
-You can also create custom exception handlers using ApiResponse:
-
-```java
-@ControllerAdvice
-public class CustomExceptionHandler {
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
-        return ApiResponse.status(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBadRequest(IllegalArgumentException ex) {
-        return ApiResponse.status("Invalid request: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-}
 ```
 
 ## 📚 API Reference
 
-### Static Factory Methods
-
-| Method | Parameters | Return Type | HTTP Status | Description |
-|--------|-----------|-------------|-------------|-------------|
-| `success(String message)` | message | `ResponseEntity<ApiResponse<Void>>` | 200 OK | Success without data |
-| `success(String message, T data)` | message, data | `ResponseEntity<ApiResponse<T>>` | 200 OK | Success with data |
-| `created(String message, T data)` | message, data | `ResponseEntity<ApiResponse<T>>` | 201 CREATED | Resource creation |
-| `status(String message, HttpStatus status)` | message, status | `ResponseEntity<ApiResponse<Void>>` | Custom | Custom status without data |
-| `status(String message, T data, HttpStatus status)` | message, data, status | `ResponseEntity<ApiResponse<T>>` | Custom | Custom status with data |
-
-### Response Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `status` | `Integer` | HTTP status code (e.g., 200, 201, 404) |
-| `message` | `String` | Human-readable message describing the response |
-| `content` | `T` (Generic) | Response payload (can be any type or null) |
-| `timestamp` | `Instant` | ISO-8601 formatted UTC timestamp (auto-generated) |
-
-## 🔍 Response Structure
-
-All **success responses** follow this consistent structure:
-
-```json
-{
-  "status": 200,
-  "message": "string",
-  "content": {},
-  "timestamp": "2026-02-06T10:30:45.123456Z"
-}
-```
-
-**Note:** `traceId` is NOT included in success responses. Trace IDs are only added to **error responses** (ProblemDetail format) by the GlobalExceptionHandler for debugging purposes.
-
-### Examples
-
-**Single Object:**
-```json
-{
-  "status": 200,
-  "message": "Product found",
-  "content": {
-    "id": 1,
-    "name": "Laptop",
-    "price": 999.99
-  },
-  "timestamp": "2026-02-01T10:30:45.123Z"
-}
-```
-
-**Array/List:**
-```json
-{
-  "status": 200,
-  "message": "Products retrieved",
-  "content": [
-    {"id": 1, "name": "Laptop"},
-    {"id": 2, "name": "Mouse"}
-  ],
-  "timestamp": "2026-02-01T10:30:45.123Z"
-}
-```
-
-**No Content (Void):**
-```json
-{
-  "status": 200,
-  "message": "Product deleted successfully",
-  "timestamp": "2026-02-01T10:30:45.123Z"
-}
-```
-
-**Error Response (ProblemDetail format with traceId):**
-```json
-{
-  "type": "about:blank",
-  "title": "Not Found",
-  "status": 404,
-  "detail": "Product not found with ID: 123",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-01T10:30:45.123Z"
-}
-```
-
-## 💡 Best Practices
-
-### 1. Use Appropriate Methods
-
-```java
-// ✅ Use success() for standard operations
-return ApiResponse.success("Retrieved", data);
-
-// ✅ Use created() for resource creation
-return ApiResponse.created("Created", newResource);
-
-// ✅ Use status() for custom status codes
-return ApiResponse.status("Accepted", HttpStatus.ACCEPTED);
-```
-
-### 2. Write Clear Messages
-
-```java
-// ✅ Good - Descriptive and specific
-return ApiResponse.success("User profile updated successfully", user);
-
-// ❌ Avoid - Too generic
-return ApiResponse.success("Success", user);
-```
-
-### 3. Leverage Generics
-
-```java
-// Specific types
-ResponseEntity<ApiResponse<User>> getUser();
-ResponseEntity<ApiResponse<List<Product>>> getProducts();
-ResponseEntity<ApiResponse<Map<String, Object>>> getMetadata();
-ResponseEntity<ApiResponse<Void>> deleteResource();
-```
-
-### 4. Custom Business Exceptions 
-
-**Version 1.3.0 includes an abstract `ApiException` class** for creating domain-specific exceptions. The built-in `GlobalExceptionHandler` automatically handles them with the correct HTTP status:
-
-```java
-// Define custom exceptions
-public class ResourceNotFoundException extends ApiException {
-    public ResourceNotFoundException(String resource, Long id) {
-        super(String.format("%s not found with ID: %d", resource, id), HttpStatus.NOT_FOUND);
-    }
-}
-
-public class InsufficientBalanceException extends ApiException {
-    public InsufficientBalanceException(String accountId) {
-        super("Insufficient balance in account: " + accountId, HttpStatus.PAYMENT_REQUIRED);
-    }
-}
-
-// Use them in your service/controller
-@GetMapping("/{id}")
-public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("User", id));
-    return ApiResponse.success("User found", user);
-}
-```
-
-**Benefits:**
-- ✅ No need to manually create `@ExceptionHandler` methods
-- ✅ Automatic RFC 9457 ProblemDetail formatting
-- ✅ Type-safe with compile-time checking
-- ✅ Clean, readable code
-
-You can still create additional custom exception handlers if needed:
-
-```java
-@ControllerAdvice
-public class CustomExceptionHandler {
-    
-    @ExceptionHandler(ThirdPartyApiException.class)
-    public ProblemDetail handleThirdPartyError(ThirdPartyApiException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-            HttpStatus.BAD_GATEWAY, ex.getMessage()
-        );
-        problem.setProperty("timestamp", Instant.now());
-        return problem;
-    }
-}
-```
-
-### 5. RESTful Conventions
-
-```java
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-
-    @GetMapping("/{id}")  // 200 OK
-    public ResponseEntity<ApiResponse<Product>> get(@PathVariable Long id) {
-        return ApiResponse.success("Product found", productService.findById(id));
-    }
-
-    @PostMapping  // 201 CREATED
-    public ResponseEntity<ApiResponse<Product>> create(@RequestBody ProductDto dto) {
-        return ApiResponse.created("Product created", productService.create(dto));
-    }
-
-    @PutMapping("/{id}")  // 200 OK
-    public ResponseEntity<ApiResponse<Product>> update(
-            @PathVariable Long id, @RequestBody ProductDto dto) {
-        return ApiResponse.success("Product updated", productService.update(id, dto));
-    }
-
-    @DeleteMapping("/{id}")  // 200 OK
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
-        productService.delete(id);
-        return ApiResponse.success("Product deleted");
-    }
-}
-```
-
-## 🧪 Testing
-
-### Unit Testing with MockMvc
-
-```java
-@WebMvcTest(UserController.class)
-class UserControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private UserService userService;
-
-    @Test
-    void shouldReturnUserSuccessfully() throws Exception {
-        User user = new User(1L, "John Doe", "john@example.com");
-        when(userService.findById(1L)).thenReturn(user);
-
-        mockMvc.perform(get("/api/users/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.message").value("User retrieved successfully"))
-                .andExpect(jsonPath("$.data.id").value(1))
-                .andExpect(jsonPath("$.data.name").value("John Doe"))
-                .andExpect(jsonPath("$.traceId").exists())
-                .andExpect(jsonPath("$.timestamp").exists());
-    }
-
-    @Test
-    void shouldReturnCreatedStatus() throws Exception {
-        User newUser = new User(1L, "Jane Doe", "jane@example.com");
-        when(userService.create(any())).thenReturn(newUser);
-
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value(201))
-                .andExpect(jsonPath("$.message").value("User created successfully"))
-                .andExpect(jsonPath("$.data.id").value(1))
-                .andExpect(jsonPath("$.traceId").exists());
-    }
-    
-    @Test
-    void shouldReturnValidationErrors() throws Exception {
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"\",\"email\":\"invalid\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.detail").value("Validation Failed"))
-                .andExpect(jsonPath("$.errors.name").exists())
-                .andExpect(jsonPath("$.errors.email").exists())
-                .andExpect(jsonPath("$.timestamp").exists());
-    }
-    
-    @Test
-    void shouldHandleCustomException() throws Exception {
-        when(userService.findById(999L))
-                .thenThrow(new ResourceNotFoundException("User", 999L));
-
-        mockMvc.perform(get("/api/users/999"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.status").value(404))
-                .andExpect(jsonPath("$.detail").value("User not found with ID: 999"))
-                .andExpect(jsonPath("$.timestamp").exists());
-    }
-}
-```
-
-### Integration Testing with TestRestTemplate
-
-```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserControllerIntegrationTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Test
-    void shouldGetUser() {
-        ResponseEntity<ApiResponse> response = restTemplate.getForEntity(
-                "/api/users/1", ApiResponse.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getStatus()).isEqualTo(200);
-        assertThat(response.getBody().getMessage()).contains("User");
-        assertThat(response.getBody().getTraceId()).isNotNull();
-        assertThat(response.getBody().getTimestamp()).isNotNull();
-    }
-
-    @Test
-    void shouldCreateUser() {
-        UserDto newUser = new UserDto("Jane Doe", "jane@example.com");
-        
-        ResponseEntity<ApiResponse> response = restTemplate.postForEntity(
-                "/api/users", newUser, ApiResponse.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody().getStatus()).isEqualTo(201);
-    }
-}
-```
-
-### Testing Custom Exceptions
-
-```java
-@ExtendWith(MockitoExtension.class)
-class CustomExceptionTest {
-
-    @Test
-    void shouldThrowResourceNotFoundException() {
-        ResourceNotFoundException exception = 
-            new ResourceNotFoundException("User", 123L);
-
-        assertThat(exception.getMessage()).isEqualTo("User not found with ID: 123");
-        assertThat(exception.getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
-}
-```
-
-### Testing with WebTestClient (WebFlux)
-
-If you adapt the library for reactive applications:
-
-```java
-@WebFluxTest(UserController.class)
-class UserControllerWebFluxTest {
-
-    @Autowired
-    private WebTestClient webTestClient;
-
-    @MockBean
-    private UserService userService;
-
-    @Test
-    void shouldReturnUser() {
-        User user = new User(1L, "John Doe", "john@example.com");
-        when(userService.findById(1L)).thenReturn(Mono.just(user));
-
-        webTestClient.get()
-                .uri("/api/users/1")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo(200)
-                .jsonPath("$.data.name").isEqualTo("John Doe")
-                .jsonPath("$.traceId").exists();
-    }
-}
-```
-        User newUser = new User(1L, "Jane Doe", "jane@example.com");
-        when(userService.create(any())).thenReturn(newUser);
-
-        mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value(201))
-                .andExpect(jsonPath("$.message").value("User created successfully"))
-                .andExpect(jsonPath("$.data.id").value(1))
-                .andExpect(jsonPath("$.traceId").exists());
-    }
-}
-```
-
-## 🏗️ Architecture & Design Principles
-
-### Thread Safety & Immutability
-
-The `ApiResponse<T>` class is designed with **immutability** at its core:
-
-- All fields are declared as `final`
-- No setter methods exist (only getters)
-- Uses a custom inner Builder class for object construction
-- Thread-safe by design - can be safely shared across threads
-
-```java
-// Once created, the response cannot be modified
-ApiResponse<User> response = new ApiResponse.ApiResponseBuilder<User>()
-    .message("Success")
-    .content(user)
-    .build();
-
-// This is thread-safe and can be safely cached or shared
-```
-
-### Dependency Management
-
-The library uses **provided scope** for Spring Boot:
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-    <scope>provided</scope>  <!-- Will not bloat your application -->
-</dependency>
-```
-
-**Benefits:**
-- ✅ **No Dependency Conflicts** - Uses your application's existing Spring Boot version
-- ✅ **Zero External Dependencies** - Pure Java implementation, no Lombok or other libraries required
-- ✅ **Zero Bloat** - Adds only ~10KB to your application
-- ✅ **Version Flexibility** - Compatible with Spring Boot 3.2.0 - 4.0.3 and Java 17+
-
-### Auto-Configuration Architecture
-
-```
-┌─────────────────────────────────────────────────────┐
-│  Spring Boot Application Starts                     │
-└─────────────┬───────────────────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────────────────┐
-│  Reads META-INF/spring/                             │
-│  org.springframework.boot.autoconfigure             │
-│  .AutoConfiguration.imports                         │
-└─────────────┬───────────────────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────────────────┐
-│  Loads ApiResponseAutoConfiguration                 │
-└─────────────┬───────────────────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────────────────┐
-│  Registers GlobalExceptionHandler Bean              │
-│  (as @RestControllerAdvice)                         │
-└─────────────┬───────────────────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────────────────┐
-│  Ready to Handle Exceptions Automatically           │
-└─────────────────────────────────────────────────────┘
-```
-
-### Design Patterns Used
-
-- **Factory Pattern** - Static factory methods (`success()`, `created()`, `status()`)
-- **Builder Pattern** - Custom inner Builder class for flexible object construction
-- **Template Method Pattern** - `ApiException` abstract class for custom exceptions
-- **Advisor Pattern** - `GlobalExceptionHandler` with `@RestControllerAdvice`
-
-## 🔌 OpenAPI/Swagger Integration
-
-Works seamlessly with SpringDoc OpenAPI:
-
-```java
-@Operation(summary = "Get user by ID", description = "Returns a single user")
-@ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "User found"),
-    @ApiResponse(responseCode = "404", description = "User not found")
-})
-@GetMapping("/{id}")
-public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
-    User user = userService.findById(id);
-    return ApiResponse.success("User retrieved successfully", user);
-}
-```
-
-**Add SpringDoc dependency:**
-```xml
-<dependency>
-    <groupId>org.springdoc</groupId>
-    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.3.0</version>
-</dependency>
-```
-
-## 🔄 Compatibility Matrix
-
-### Tested Compatibility
-
-| Library Version | Java Version | Spring Boot Version | Status |
-|----------------|--------------|---------------------|--------|
-| 1.3.0 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
-| 1.2.0 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
-| 1.1.1 | 17, 21+ | 3.2.0 - 4.0.3 | ✅ Tested |
-| 1.1.0 | 17, 21+ | 3.2.0 - 4.0.2 | ✅ Tested |
-| 1.0.0 | 17, 21+ | 3.2.0+ | ✅ Tested |
-
-### Version Requirements
-
-**Minimum Requirements:**
-- **Java:** 17 or higher
-- **Spring Boot:** 3.2.0 or higher (tested up to 4.0.3)
-- **Dependencies:** None (pure Java implementation)
-
-**Recommended:**
-- **Java:** 21 (LTS)
-- **Spring Boot:** 3.4.x or 4.0.x (fully compatible with Spring Boot 4)
-
-### Spring Boot 4.x Support
-
-✅ **Full Spring Boot 4.0.3 Compatibility**
-- The library has been tested and verified to work with Spring Boot 4.0.3
-- All features including auto-configuration work seamlessly
-- No breaking changes when upgrading from Spring Boot 3.x to 4.x
-- Uses provided scope dependencies to avoid version conflicts
-
-### Framework Compatibility
-
-| Framework | Supported | Notes |
-|-----------|-----------|-------|
-| Spring Boot 4.x | ✅ Yes | Full support with version 4.0.3 |
-| Spring Boot 3.x | ✅ Yes | Full support with auto-configuration |
-| Spring Boot 2.x | ❌ No | Use Spring Boot 3.x+ |
-| Spring WebFlux | ⚠️ Partial | Manual adaptation required |
-| Micronaut | ❌ No | Spring-specific features used |
-| Quarkus | ❌ No | Spring-specific features used |
-
-### Build Tools
-
-| Build Tool | Supported | Configuration |
-|------------|-----------|---------------|
-| Maven | ✅ Yes | Native support |
-| Gradle | ✅ Yes | Groovy & Kotlin DSL |
-| Gradle (Groovy) | ✅ Yes | `implementation 'io.github.og4dev:og4dev-spring-response:1.0.0'` |
-| Gradle (Kotlin) | ✅ Yes | `implementation("io.github.og4dev:og4dev-spring-response:1.0.0")` |
-
-## 🔧 Troubleshooting
-
-### Common Issues & Solutions
-
-#### 1. GlobalExceptionHandler Not Working
-
-**Problem:** Exceptions are not being caught by the GlobalExceptionHandler.
-
-**Solution:**
-- Check that auto-configuration is not excluded
-- Verify Spring Boot version is 3.2.0+
-
-```java
-// Verify auto-configuration is active
-@SpringBootApplication
-// Do NOT exclude ApiResponseAutoConfiguration
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
-```
-
-#### 2. Response Fields Not Serializing
-
-**Problem:** Some fields like `status`, `message`, or `content` are missing in JSON responses.
-
-**Solution:**
-- The library uses `@JsonInclude(JsonInclude.Include.NON_NULL)` to exclude null fields
-- This is intentional behavior - only non-null fields are included in the response
-- To include all fields, you would need to customize Jackson's configuration in your application
-
-#### 3. Auto-Configuration Not Working
-
-**Problem:** GlobalExceptionHandler is not being picked up automatically.
-
-**Solution:**
-- Ensure you're using Spring Boot 3.2.0 or higher
-- Check that the library JAR is on the classpath
-- Verify `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` exists in the JAR
-- Check application logs for auto-configuration reports
-
-#### 4. Version Conflicts with Spring Boot
-    .status(200)
-    .traceId(UUID.randomUUID())  // Must set manually
-    .message("Success")
-    .content(data)
-    .build());
-```
-
-- For **error responses**, trace IDs are **automatically generated** by GlobalExceptionHandler
-- All error logs and responses have matching trace IDs for easy correlation
-
-#### 4. Dependency Conflicts
-
-**Problem:** Version conflicts with Spring Boot.
-
-**Solution:**
-- The library uses `provided` scope for Spring Boot - it won't conflict
-- Ensure your application has Spring Boot Web dependency:
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-```
-
-#### 5. Custom Exception Not Being Caught
-
-**Problem:** Custom `ApiException` subclass not returning ProblemDetail.
-
-**Solution:**
-- Ensure your exception extends `ApiException`
-- Verify the exception is actually being thrown
-- Check GlobalExceptionHandler is registered
-
-```java
-// ✅ Correct
-public class MyException extends ApiException {
-    public MyException(String message) {
-        super(message, HttpStatus.BAD_REQUEST);
-    }
-}
-
-// ❌ Wrong - must extend ApiException
-public class MyException extends RuntimeException {
-    // ...
-}
-```
-
-#### 6. Timestamp Format Issues
-
-**Problem:** Timestamp format not as expected.
-
-**Solution:**
-- The library uses `Instant` (UTC) by default
-- Configure Jackson if you need different format:
-
-```java
-@Configuration
-public class JacksonConfig {
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        return mapper;
-    }
-}
-```
-
-#### 7. Auto-Configuration Not Loading
-
-**Problem:** Auto-configuration doesn't work.
-
-**Solution:**
-- Verify you're using Spring Boot 3.x (not 2.x)
-- Check the JAR includes `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`
-- Clear Maven/Gradle cache and rebuild:
-
-```bash
-# Maven
-mvn clean install
-
-# Gradle
-./gradlew clean build --refresh-dependencies
-```
-
-#### 8. Jackson Serialization Issues
-
-**Problem:** Fields are not serializing as expected or timestamp format is wrong.
-
-**Solution:**
-- The library uses Jackson's `@JsonInclude(NON_NULL)` by default
-- Ensure you have `jackson-datatype-jsr310` for Java 8+ date/time support (included in Spring Boot)
-- Configure Jackson if needed:
-
-```java
-@Configuration
-public class JacksonConfig {
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper;
-    }
-}
-```
-
-#### 9. UUID Not Serializing Properly
-
-**Problem:** TraceId appears as an object instead of string.
-
-**Solution:**
-- This shouldn't happen with standard Jackson configuration
-- Verify Jackson version is compatible with Spring Boot
-- UUID is serialized as string by default in Jackson
-
-```json
-// ✅ Correct
-"traceId": "550e8400-e29b-41d4-a716-446655440000"
-
-// ❌ Wrong (shouldn't happen)
-"traceId": {"mostSigBits": 123, "leastSigBits": 456}
-```
-
-### Getting Help
-
-If you encounter issues not covered here:
-
-1. **Check the Issues:** [GitHub Issues](https://github.com/OG4Dev/og4dev-spring-response/issues)
-2. **Review JavaDocs:** All classes are fully documented
-3. **Enable Debug Logging:**
-   ```properties
-   logging.level.io.github.og4dev=DEBUG
-   ```
-4. **Open an Issue:** Provide minimal reproducible example
-
-## ❓ FAQ
-
-### How do I use trace IDs for debugging? **
-
-**Error responses** automatically include a `traceId` (UUID) in the ProblemDetail format for request tracking and debugging. Success responses (ApiResponse) do NOT include traceId in the response body, but you can add trace IDs via headers using the TraceIdFilter.
-
-**Key Points:**
-- ✅ **Error responses** - traceId is automatically included in ProblemDetail JSON
-- ❌ **Success responses** - traceId is NOT in ApiResponse JSON (use headers instead)
-- 🔍 **Logging** - All exceptions are logged with [TraceID: xxx] for correlation
-
-For comprehensive distributed tracing with MDC integration and header propagation, see the **Distributed Tracing** section above.
-
-**Quick Example with TraceIdFilter:**
-
-```java
-// 1. Register TraceIdFilter for header propagation
-@Configuration
-public class FilterConfig {
-    @Bean
-    public FilterRegistrationBean<TraceIdFilter> traceIdFilter() {
-        FilterRegistrationBean<TraceIdFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new TraceIdFilter());
-        registration.addUrlPatterns("/*");
-        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return registration;
-    }
-}
-
-// 2. Use in your service (trace ID automatically in logs)
-@Service
-@Slf4j
-public class UserService {
-    public User createUser(UserDto dto) {
-        log.info("Creating user with email: {}", dto.getEmail());  // [traceId] in logs
-        // ... business logic
-        return user;
-    }
-}
-```
-
-**For industry-standard header propagation** (accepting trace IDs from upstream services), use the **[Enhanced TraceIdFilter](#enhanced-traceidfilter-with-header-propagation)** which supports:
-- `X-Trace-Id` and `X-Request-ID` headers
-- `X-B3-TraceId` (Zipkin format)
-- `traceparent` (W3C Trace Context)
-- Automatic response header injection
-}
-```
-
-**Response:**
-```json
-{
-  "status": 200,
-  "message": "User created",
-  "content": {...},
-  "timestamp": "2026-02-06T10:30:45.123Z"
-}
-```
-
-**Note:** The traceId is in the MDC for logging and can be added to response headers, but is NOT in the ApiResponse JSON body.
-
-**Logs (with traceId from MDC):**
-```
-2026-02-06 10:30:45.123 [550e8400-e29b-41d4-a716-446655440000] INFO c.e.s.UserService - Creating user with email: john@example.com
-```
-```
-
-For more details on MDC integration, propagating trace IDs to downstream services, and end-to-end tracing examples, see the **[Distributed Tracing](#-distributed-tracing-enhanced-in-v200)** section.
-```
-
-### How do I create custom business exceptions?
-
-Extend the abstract `ApiException` class to create domain-specific exceptions:
-
-```java
-public class ResourceNotFoundException extends ApiException {
-    public ResourceNotFoundException(String resource, Long id) {
-        super(String.format("%s not found with ID: %d", resource, id), HttpStatus.NOT_FOUND);
-    }
-}
-
-public class DuplicateResourceException extends ApiException {
-    public DuplicateResourceException(String message) {
-        super(message, HttpStatus.CONFLICT);
-    }
-}
-```
-
-Then throw them in your code - the `GlobalExceptionHandler` will automatically convert them to RFC 9457 ProblemDetail responses:
-
-```java
-@GetMapping("/{id}")
-public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("User", id));
-    return ApiResponse.success("User found", user);
-}
-```
-
-### How do I use the built-in GlobalExceptionHandler?
-
-The `GlobalExceptionHandler` is **automatically configured** via Spring Boot Auto-Configuration. No manual setup is required!
-
-Simply add the library dependency, and the exception handler will be active immediately. The auto-configuration mechanism automatically registers the handler when the library is detected on the classpath.
-
-### Can I customize or extend the GlobalExceptionHandler?
-
-Yes! You can add your own `@ControllerAdvice` handlers alongside the built-in one:
-
-```java
-@ControllerAdvice
-public class CustomExceptionHandler {
-    
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
-        return ApiResponse.status(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-    
-    @ExceptionHandler(UnauthorizedException.class)
-    public ProblemDetail handleUnauthorized(UnauthorizedException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-            HttpStatus.UNAUTHORIZED, ex.getMessage()
-        );
-        problem.setProperty("timestamp", Instant.now());
-        return problem;
-    }
-}
-```
-
-### How do I disable the GlobalExceptionHandler?
-
-You can disable it by excluding the auto-configuration:
-
-```java
-@SpringBootApplication(exclude = ApiResponseAutoConfiguration.class)
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
-```
-
-Or in `application.properties`:
-```properties
-spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguration
-```
-
-### How do I customize the timestamp format?
-
-Configure Jackson's ObjectMapper:
-
-```java
-@Configuration
-public class JacksonConfig {
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return mapper;
-    }
-}
-```
-
-### Can I add custom fields?
-
-The library provides a standard structure. To add custom fields, wrap the response:
-
-```java
-public class ExtendedResponse<T> {
-    private ApiResponse<T> response;
-    private String requestId;
-    private Map<String, String> metadata;
-    // getters and setters
-}
-```
-
-### Does this work with Spring WebFlux?
-
-Currently designed for Spring MVC. For WebFlux, you'd need to adapt it to work with `Mono<ResponseEntity<ApiResponse<T>>>`.
-
-### How do I handle paginated responses?
-
-Use Spring's `Page` as the data type:
-
-```java
-@GetMapping
-public ResponseEntity<ApiResponse<Page<User>>> getUsers(Pageable pageable) {
-    Page<User> users = userService.findAll(pageable);
-    return ApiResponse.success("Users retrieved", users);
-}
-```
-
-### Why use this over plain ResponseEntity?
-
-| Plain ResponseEntity | ApiResponse |
-|---------------------|-------------|
-| Inconsistent structure | ✅ Standardized everywhere |
-| Manual timestamps | ✅ Automatic |
-| No trace IDs | ✅ Built-in UUID trace IDs |
-| No status in body | ✅ Status code included in response |
-| Manual exception handling | ✅ Custom ApiException support |
-| More boilerplate | ✅ Concise factory methods |
-| No message field | ✅ Always includes message |
-
-## 🚀 Performance & Best Practices
-
-### Performance Characteristics
-
-- **Response Creation:** < 1ms (simple object instantiation with builder pattern)
-- **Memory Footprint:** ~200 bytes per response object (excluding data payload)
-- **Thread Safety:** 100% thread-safe (immutable design with final fields)
-- **GC Impact:** Minimal (uses immutable objects, eligible for quick collection)
-- **JSON Serialization:** Optimized with `@JsonInclude(NON_NULL)` to reduce payload size
-- **UUID Generation:** Negligible overhead (~0.1ms per UUID using `UUID.randomUUID()`)
-- **Timestamp Generation:** Negligible overhead (~0.01ms using `Instant.now()`)
-
-### Benchmark Results (Approximate)
-
-| Operation | Time | Notes |
-|-----------|------|-------|
-| `ApiResponse.success()` | ~0.5ms | Including UUID and timestamp generation |
-| `ApiResponse.created()` | ~0.5ms | Same as success() |
-| `ApiResponse.builder().build()` | ~0.3ms | Manual builder without factory methods |
-| JSON Serialization (small DTO) | ~1-2ms | Standard Jackson performance |
-| GlobalExceptionHandler catch | ~0.1ms | Minimal overhead for exception transformation |
-
-### Best Practices
-
-#### 1. Prefer Factory Methods Over Builder
-
-```java
-// ✅ RECOMMENDED - Auto-generates trace ID and timestamp
-return ApiResponse.success("User found", user);
-
-// ⚠️ AVOID - More verbose, manual field management
-return ResponseEntity.ok(ApiResponse.<User>builder()
-    .status(200)
-    .traceId(UUID.randomUUID())
-    .message("User found")
-    .data(user)
-    .timestamp(Instant.now())
-    .build());
-```
-
-#### 2. Use Appropriate HTTP Status Codes
-
-```java
-// ✅ POST - Use created() for 201
-@PostMapping
-public ResponseEntity<ApiResponse<User>> create(@RequestBody UserDto dto) {
-    return ApiResponse.created("User created", userService.create(dto));
-}
-
-// ✅ DELETE - Use success() with no data
-@DeleteMapping("/{id}")
-public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
-    userService.delete(id);
-    return ApiResponse.success("User deleted");
-}
-
-// ✅ Custom status - Use status() method
-@GetMapping("/health")
-public ResponseEntity<ApiResponse<Void>> health() {
-    return ApiResponse.status("Service degraded", HttpStatus.SERVICE_UNAVAILABLE);
-}
-```
-
-#### 3. Write Descriptive Messages
-
-```java
-// ✅ GOOD - Clear and actionable
-return ApiResponse.success("User profile updated successfully", updatedUser);
-
-// ❌ BAD - Too generic
-return ApiResponse.success("Success", updatedUser);
-
-// ❌ BAD - Technical jargon
-return ApiResponse.success("User entity persisted to database", updatedUser);
-```
-
-#### 4. Handle Exceptions Properly
-
-```java
-// ✅ GOOD - Use custom ApiException
-public class InsufficientFundsException extends ApiException {
-    public InsufficientFundsException(String accountId) {
-        super("Insufficient funds in account: " + accountId, HttpStatus.PAYMENT_REQUIRED);
-    }
-}
-
-// In your service
-if (account.getBalance() < amount) {
-    throw new InsufficientFundsException(account.getId());
-}
-
-// ❌ AVOID - Generic exceptions
-throw new RuntimeException("Not enough money");
-```
-
-#### 5. Leverage Trace IDs for Debugging
-
-```java
-// Log the trace ID from incoming requests
-@PostMapping
-public ResponseEntity<ApiResponse<User>> createUser(@RequestBody UserDto dto) {
-    UUID traceId = UUID.randomUUID();
-    log.info("Processing user creation request, traceId: {}", traceId);
-    
-    User user = userService.create(dto);
-    
-    // Create response with same trace ID
-    ApiResponse<User> response = ApiResponse.<User>builder()
-        .status(HttpStatus.CREATED.value())
-        .traceId(traceId)
-        .message("User created successfully")
-        .data(user)
-        .build();
-    
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
-}
-```
-
-#### 6. Caching Considerations
-
-```java
-// ⚠️ CAUTION - Response includes timestamp, making caching difficult
-// Consider extracting just the data for caching:
-
-@Cacheable("users")
-public User getUserData(Long id) {
-    return userRepository.findById(id).orElseThrow();
-}
-
-@GetMapping("/{id}")
-public ResponseEntity<ApiResponse<User>> getUser(@PathVariable Long id) {
-    // Fresh response wrapper, cached data
-    return ApiResponse.success("User found", getUserData(id));
-}
-```
-
-## 📋 Migration Guide
-
-### From v1.0.0 to v1.1.0
-
-This is a minor release with **new security features** and documentation fixes:
-
-#### ✨ New Features:
-- ✅ **Strict JSON Validation** - New `strictJsonCustomizer()` method that adds:
-  - `FAIL_ON_UNKNOWN_PROPERTIES` - Rejects JSON with unexpected fields (prevents mass assignment attacks)
-  - `ACCEPT_CASE_INSENSITIVE_ENUMS` - Flexible enum handling (e.g., "ACTIVE", "active", "Active")
-  - **Automatic XSS Prevention** - Detects and rejects HTML tags in string inputs
-  - **Automatic String Trimming** - Removes leading/trailing whitespace
-  - Throws `IllegalArgumentException` with message: "Security Error: HTML tags or XSS payloads are not allowed in the request."
-
-#### 📝 Documentation Fixes:
-- ✅ Fixed incorrect package name references in README (`io.github.pasinduog` → `io.github.og4dev`)
-
-#### 🔄 Migration Steps:
-**No code changes required!** The new security features are automatically applied.
-
-If you need to disable strict validation (e.g., to accept HTML content):
-```java
-@Configuration
-public class CustomConfig {
-    @Bean
-    @Primary  // Override the default
-    public JsonMapperBuilderCustomizer myCustomizer() {
-        return builder -> {
-            // Your custom configuration
-        };
-    }
-}
-```
-
-### Getting Started (New Users)
-
-Simply add the dependency to your project:
-
-```xml
-<dependency>
-    <groupId>io.github.og4dev</groupId>
-    <artifactId>og4dev-spring-response</artifactId>
-    <version>1.3.0</version>
-</dependency>
-```
-
-All features are automatically enabled through Spring Boot auto-configuration. No manual configuration needed!
-
-## 🔒 Security Considerations
-
-### 🛡️ Built-in Security Features (Automatic)
-
-The library includes **three automatic security protections** that are enabled by default:
-
-#### 1. ✅ Strict JSON Property Validation (Mass Assignment Prevention)
-
-**Automatically enabled** - Rejects unknown properties to prevent mass assignment attacks:
-
-```java
-// Your DTO
-public class UserUpdateDto {
-    private String name;
-    private String email;
-}
-
-// ✅ Valid request
-{"name": "John", "email": "john@example.com"}
-
-// ❌ Automatically rejected with 400 Bad Request
-{"name": "John", "email": "john@example.com", "isAdmin": true}
-```
-
-**What it prevents:**
-- Privilege escalation attempts
-- Data injection attacks
-- Unauthorized field modifications
-
-#### 2. ✅ Automatic XSS Prevention (HTML Tag Rejection)
-
-**Automatically enabled** - All string inputs are validated for HTML tags, and requests with HTML content are rejected:
-
-```java
-// ✅ Valid input - Clean text
-{"comment": "This is a safe comment"}
-
-// ❌ Rejected with 400 Bad Request
-{"comment": "<script>alert('XSS')</script>"}
-
-// Error response:
-{
-  "status": 400,
-  "detail": "Security Error: HTML tags or XSS payloads are not allowed in the request.",
-  "traceId": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-02-16T10:30:45.123Z"
-}
-```
-
-**What it prevents:**
-- Cross-Site Scripting (XSS) attacks
-- HTML injection
-- JavaScript injection
-- XML/XHTML injection attempts
-
-**Note:** Fail-fast approach - malicious content never enters your system.
-
-#### 3. ✅ Automatic String Sanitization
-
-**Automatically enabled** - Trims whitespace and preserves null values:
-
-```java
-// Input
-{"name": "  John Doe  ", "middleName": null}
-
-// Automatically processed to
-{"name": "John Doe", "middleName": null}
-```
-
-**See also:** [Built-in Security Features](#-built-in-security-features) for detailed documentation.
-
----
-
-### 1. Exception Message Sanitization
-
-The library's `GlobalExceptionHandler` provides safe defaults, but be mindful:
-
-```java
-// ✅ SAFE - No sensitive data
-throw new ApiException("User not found", HttpStatus.NOT_FOUND);
-
-// ⚠️ CAUTION - May leak sensitive information
-throw new ApiException("Database connection failed: " + sqlException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-// ✅ BETTER - Generic message
-throw new ApiException("An internal error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-```
-
-### 2. Trace ID Privacy
-
-Trace IDs are UUIDs and don't contain sensitive information. However:
-
-- **Don't log sensitive data** alongside trace IDs
-- **Consider rate limiting** to prevent trace ID enumeration
-- **Rotate logs** regularly to limit exposure
-
-```java
-// ✅ SAFE
-log.info("User created successfully, traceId: {}", traceId);
-
-// ❌ UNSAFE - Logs password
-log.info("User created, traceId: {}, password: {}", traceId, password);
-```
-
-### 3. Stack Trace Exposure
-
-The `GlobalExceptionHandler` **never exposes stack traces** to clients. Stack traces are:
-- ✅ Logged server-side for debugging
-- ❌ Never sent in API responses
-- ✅ Replaced with generic messages
-
-### 4. Validation Error Details
-
-Validation errors include field names and constraints:
-
-```json
-{
-  "status": 400,
-  "detail": "Validation Failed",
-  "errors": {
-    "email": "must be a well-formed email address",
-    "password": "must not be blank"
-  }
-}
-```
-
-**Security Tips:**
-- ✅ Don't include sensitive field values in error messages
-- ✅ Use generic constraint messages for sensitive fields
-- ✅ Consider custom validators for sensitive data
-
-```java
-public class SensitiveDto {
-    @NotBlank(message = "Required field is missing")  // Generic message
-    private String creditCardNumber;
-    
-    @Pattern(regexp = "...", message = "Invalid format")  // No details
-    private String ssn;
-}
-```
-
-### 5. CORS & Security Headers
-
-The library doesn't interfere with Spring Security or CORS configuration:
-
-```java
-@Configuration
-public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            // ... other configurations
-        return http.build();
-    }
-}
-```
-
-### 6. Dependency Security
-
-The library uses **provided scope** dependencies:
-- ✅ No transitive dependency vulnerabilities
-- ✅ Uses your application's Spring Boot version
-- ✅ No additional security surface area
-
-**Verify with:**
-```bash
-mvn dependency:tree -Dincludes=io.github.og4dev:og4dev-spring-response
-```
-
-### 7. ProblemDetail Information Disclosure
-
-RFC 9457 ProblemDetail responses (supersedes RFC 7807) include:
-- `type` - URI reference (defaults to "about:blank")
-- `title` - Short, human-readable summary
-- `status` - HTTP status code
-- `detail` - Human-readable explanation
-- `instance` - URI reference (not used by default)
-
-**Best Practice:** Don't include internal system details in error messages.
-
-## 🤝 Contributing
-
-**We welcome and encourage contributions from everyone!** 🎉
-
-This project is licensed under the **Apache License 2.0**, which means:
-- ✅ **Anyone can contribute** - The project is open to all developers
-- ✅ **Your contributions are protected** - No one can claim exclusive ownership of your work
-- ✅ **You retain copyright** - You keep rights to your work while granting usage rights to the project
-- ✅ **Fair and equal terms** - All contributions are made under the same Apache 2.0 terms
-
-### 🔐 Contributor License Agreement
-
-By contributing to this project, you agree that:
-
-1. **Your contributions** will be licensed under the Apache License 2.0
-2. **You grant** the project maintainers and users a perpetual, worldwide license to use your contributions
-3. **You retain** copyright to your contributions
-4. **You confirm** that you have the right to submit the contribution and grant these rights
-5. **Your work is protected** - No one (including the project maintainer) can claim exclusive ownership of your contributions or publish them elsewhere as their own
-
-### 📜 What Apache 2.0 Means for Contributors
-
-✅ **Your Rights:**
-- You keep copyright to your contributions
-- Your name is attributed in the project
-- You can use your contributions elsewhere
-- You're protected from patent claims
-
-🛡️ **Project Protection:**
-- **Prevents anyone from copyrighting the project** - No one can claim exclusive ownership
-- Ensures the project remains open source
-- Protects all contributors equally
-- Maintains free usage for everyone
-- **Cannot be published elsewhere as proprietary** - Derivative works must maintain the Apache 2.0 License
-
-### How to Contribute
-
-1. **Fork the repository** on GitHub
-   - Navigate to https://github.com/OG4Dev/og4dev-spring-response
-   - Click the "Fork" button in the top-right corner
-
-2. **Clone your fork** locally
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/api-response.git
-   cd api-response
-   ```
-
-3. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-
-4. **Make your changes**
-   - Follow the existing code style and conventions
-   - Add JavaDoc comments for all public methods and classes
-   - Ensure all existing tests pass (when tests are added)
-   - Keep changes focused and atomic
-
-5. **Commit your changes** (follow conventional commit format)
-   ```bash
-   git commit -m 'feat: add amazing feature'
-   ```
-
-6. **Push to your fork**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-
-7. **Open a Pull Request** on the main repository
-   - Go to the original repository on GitHub
-   - Click "New Pull Request"
-   - Select your branch and describe your changes in detail
-   - Reference any related issues
-
-### Contribution Guidelines
-
-#### Code Quality Standards
-- ✅ Follow existing code style and conventions
-- ✅ Add comprehensive JavaDoc comments for all public methods and classes
-- ✅ Include explicit constructor documentation for all constructors
-- ✅ Ensure all existing tests pass
-- ✅ Keep changes focused and atomic
-- ✅ Update README.md if adding new features or changing behavior
-- ✅ Verify zero Javadoc warnings (`mvn javadoc:javadoc` should run cleanly)
-
-#### Commit Message Format
-Follow [Conventional Commits](https://www.conventionalcommits.org/) specification:
-
-```bash
-# Format: <type>(<scope>): <subject>
-
-# Types:
-feat: add new response wrapper method
-fix: correct trace ID generation
-docs: update installation instructions
-refactor: improve exception handling
-test: add unit tests for ApiResponse
-style: format code and fix whitespace
-chore: update dependencies
-perf: optimize response creation
-```
-
-**Examples:**
-```bash
-feat(dto): add pagination support to ApiResponse
-fix(exception): resolve NPE in GlobalExceptionHandler
-docs(readme): add contributing guidelines
-test(response): add unit tests for success factory methods
-```
-
-#### Pull Request Process
-1. **Update documentation** - Modify README.md if adding features or changing behavior
-2. **Add JavaDoc** - Document all new public methods and classes with zero warnings
-3. **Write clear PR description**:
-   - What problem does this solve?
-   - What changes were made?
-   - How was it tested?
-   - Any breaking changes?
-4. **Reference issues** - Link related issues using `#issue-number` or `Fixes #issue-number`
-5. **Wait for review** - Maintainer will review and provide feedback
-6. **Address feedback** - Make requested changes and push updates
-7. **Squash commits** - Clean up commit history if needed before merge
-
-### Development Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/OG4Dev/og4dev-spring-response.git
-cd og4dev-spring-response
-
-# Build the project
-mvn clean install
-
-# Generate JavaDoc (builds with zero warnings)
-mvn javadoc:javadoc
-
-# Generate JavaDoc JAR (clean build with comprehensive documentation)
-mvn javadoc:jar
-
-# Package for Maven Central (requires GPG key)
-mvn clean deploy -P release
-```
-
-**Note:** The project includes explicit constructor documentation for all classes, ensuring zero Javadoc warnings during the build process. All constructors (including Spring bean constructors) are properly documented.
-
-### Project Structure for Contributors
-
-```
-og4dev-spring-response/
-├── src/
-│   ├── main/
-│   │   ├── java/io/github/og4dev/
-│   │   │   ├── config/           # Auto-configuration classes
-│   │   │   ├── dto/              # Response wrapper classes
-│   │   │   └── exception/        # Exception handling
-│   │   └── resources/
-│   │       └── META-INF/spring/  # Auto-configuration metadata
-│   └── test/java/                # Unit tests (to be added)
-├── pom.xml                       # Maven configuration
-└── README.md                     # Documentation
-```
-
-### What We're Looking For
-
-- 🐛 Bug fixes
-- 📝 Documentation improvements
-- ✨ New features (discuss in issue first)
-- 🧪 Test coverage improvements
-- 🎨 Code quality enhancements
-- 🌐 Internationalization support
-
-### Code of Conduct
-
-- Be respectful and inclusive
-- Provide constructive feedback
-
-## 📄 License
-
-This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for full details.
-
-### What This Means
-
-The Apache 2.0 License is a permissive open-source license that:
-
-#### ✅ **Allows You To:**
-- ✅ Use this library in personal, commercial, or proprietary projects
-- ✅ Modify and distribute the source code
-- ✅ Sublicense the code
-- ✅ Use the software for any purpose (private, commercial, etc.)
-- ✅ Patent protection - contributors grant you patent rights
-
-#### 🛡️ **Protects The Project:**
-- 🛡️ **No one can claim ownership** - Others cannot copyright this work as their own
-- 🛡️ **Attribution required** - Anyone using or modifying this code must give credit
-- 🛡️ **License propagation** - Modified versions must include the Apache 2.0 License
-- 🛡️ **Trademark protection** - Project name and trademarks remain protected
-- 🛡️ **No liability** - Software is provided "as-is" without warranty
-
-#### 🤝 **For Contributors:**
-- 🤝 **Open contribution** - Anyone can contribute under the same terms
-- 🤝 **Grant of rights** - By contributing, you grant Apache 2.0 rights to your contributions
-- 🤝 **Your work is protected** - Contributions are attributed and cannot be claimed by others
-- 🤝 **Patent peace** - Contributors cannot sue users for patent infringement related to their contributions
-
-### Key License Terms
-
-```
-Copyright 2026 Pasindu OG
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
-
-### Summary for Users
-
-✅ **You CAN:**
-- Use in commercial products
-- Modify the code
-- Distribute copies
-- Grant sublicenses
-- Use privately
-
-❌ **You CANNOT:**
-- Hold the author liable
-- Use contributor names for endorsement
-- Remove copyright notices
-- Claim ownership of the original work
-
-📋 **You MUST:**
-- Include the Apache 2.0 License
-- Include copyright notice
-- State significant changes made
-- Include the NOTICE file (if applicable)
-
-For the complete license text, see [LICENSE](LICENSE) or visit [Apache.org](http://www.apache.org/licenses/LICENSE-2.0).
-
-## 📧 Contact
-
-**Pasindu OG**
-- 📧 Email: pasinduogdev@gmail.com
-- 🐙 GitHub: [@pasinduog](https://github.com/pasinduog)
-- 💻 Repository: [github.com/OG4Dev/og4dev-spring-response](https://github.com/OG4Dev/og4dev-spring-response)
-
-## 💖 Sponsorship
-
-**Love this project? Consider sponsoring!** ☕
-
-This library is developed and maintained in my free time with passion for the Spring Boot community. Your sponsorship helps keep this project alive and growing!
-
-### 🌟 Why Sponsor?
-
-Your support enables:
-- 🔧 **Continuous Maintenance** - Regular updates, bug fixes, and security patches
-- ✨ **New Features** - Pagination, WebFlux support, internationalization, and more
-- 📚 **Better Documentation** - More examples, tutorials, and comprehensive guides
-- 🧪 **Higher Quality** - More tests, better coverage, and reliability improvements
-- ⚡ **Faster Support** - Priority response to your issues and feature requests
-
-### 💝 How to Support
-
-Choose your preferred platform:
-
-- **GitHub Sponsors** - [Sponsor @pasinduog](https://github.com/sponsors/pasinduog)
-- **Buy Me a Coffee** - [buymeacoffee.com/pasinduog](https://buymeacoffee.com/pasinduog)
-- **PayPal** - [paypal.me/pasinduog](https://paypal.me/pasinduog)
-
-### 🎁 Sponsor Perks
-
-Monthly sponsors receive:
-- 🏆 Recognition in README with name/company logo
-- 🎯 Priority support for issues and features
-- 📢 Early access to new releases
-- 💬 Direct communication channel
-- 🗺️ Influence on project roadmap
-
-### 🙏 Current Sponsors
-
-*Your name could be here! Become the first sponsor of OG4Dev Spring API Response.*
-
-<!-- Sponsor badges will appear here -->
-
-**Every dollar helps!** Even small contributions make a big difference. Thank you for your support! ❤️
-
-## 🙏 Acknowledgments
-
-- Spring Boot team for the excellent framework
-- The open-source community for inspiration and support
+*(Refer to Javadoc for full details)*
 
 ## 📈 Version History
 
-### 1.3.0 (February 2026) - Current Release
-
-✨ **Major Breaking Change: Opt-in Security Model**
-- **Security Philosophy Change** - Complete redesign from automatic to opt-in approach
-  - **Before (v1.2.0):** All strings automatically trimmed and XSS-validated
-  - **After (v1.3.0):** Fields preserved as-is by default; features enabled via annotations
-  - **Reason:** Gives developers full control over which fields need processing
-  - **Migration:** Add `@AutoTrim` and/or `@XssCheck` to fields that need them
+### 1.4.0 (February 2026) - Current Release
 
 ✨ **New Features:**
-- **@AutoTrim Annotation** - Opt-in automatic string trimming
-  - Replaces default trimming behavior from v1.2.0
-  - Apply to individual fields that should have whitespace removed
-  - Examples: usernames, emails, search queries, reference numbers
-  - Comprehensive Javadoc with 100+ lines of documentation
-  - Null-safe processing with proper empty string handling
-- **@XssCheck Annotation** - Opt-in XSS validation
-  - Replaces automatic XSS validation from v1.2.0
-  - Apply to individual fields that should reject HTML tags
-  - Examples: comments, user-generated content, profile fields
-  - Fail-fast regex pattern: `(?s).*<\s*[a-zA-Z/!].*`
-  - Comprehensive Javadoc with 150+ lines of documentation
-- **Fine-Grained Control** - Four processing modes per field
-  - No annotations: String preserved as-is (default)
-  - `@AutoTrim` only: String is trimmed
-  - `@XssCheck` only: String is XSS-validated
-  - Both annotations: String is trimmed then XSS-validated
 
-📚 **Documentation Overhaul:**
-- **Complete README Rewrite** - Entirely new documentation structure
-  - Updated all code examples to show annotation-based approach
-  - Added "Security Philosophy: Opt-in by Default" section
-  - Expanded annotation usage examples with 20+ code samples
-  - Clear migration guide from v1.2.0
-  - Updated "How It Works" section with new implementation
-- **Comprehensive JavaDoc Updates**
-  - `@AutoTrim`: 100+ lines of detailed documentation
-  - `@XssCheck`: 150+ lines of detailed documentation
-  - Updated `ApiResponseAutoConfiguration` to reflect opt-in model
-  - All examples updated to show annotation usage
-  - Zero Javadoc warnings
+* **@AutoResponse Annotation & GlobalResponseWrapper**
+* Opt-in automatic response wrapping to eliminate boilerplate code.
+* Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
+* Preserves HTTP status codes from `@ResponseStatus`.
+* Intelligently skips `ResponseEntity`, `ApiResponse`, `ProblemDetail`, and `String` to prevent double-wrapping and
+  casting errors.
 
-🔧 **Technical Updates:**
-- Spring Boot 4.0.3 compatibility maintained
-- Jackson 3.x with tools.jackson packages
-- Enhanced `AdvancedStringDeserializer` with four-mode operation
-- Context-aware deserialization via `createContextual()`
-- Performance optimized: deserializer created once per field at initialization
-- Removed `@NoTrim` annotation (no longer needed with opt-in approach)
 
-🔄 **Breaking Changes:**
-- **⚠️ IMPORTANT:** Default behavior changed from v1.2.0
-  - **v1.2.0:** All strings automatically trimmed and XSS-validated
-  - **v1.3.0:** Strings preserved as-is unless annotated
-  - **Migration Required:** Add `@AutoTrim` and/or `@XssCheck` to fields that need processing
-  - **Example Migration:**
-    ```java
-    // v1.2.0 (automatic processing)
-    public class UserDTO {
-        private String username;  // Was automatically trimmed
-        private String comment;   // Was automatically XSS-validated
-    }
-    
-    // v1.3.0 (opt-in with annotations)
-    public class UserDTO {
-        @AutoTrim
-        private String username;  // Now explicitly trimmed
-        
-        @XssCheck
-        private String comment;   // Now explicitly XSS-validated
-    }
-    ```
+* **package-info.java documentation** added for the new `advice` package.
 
-### 1.2.0 (February 2026) - Previous Release
+### 1.3.0 (February 2026)
 
-✨ **New Features:**
-- **@NoTrim Annotation** - Fine-grained control over string trimming behavior
-  - Opt-out of automatic whitespace trimming for specific fields
-  - Preserves whitespace for passwords, code snippets, Base64 data, API tokens
-  - XSS validation still applies even with `@NoTrim` for security
-  - Context-aware deserialization using `createContextual()` method
-- **Enhanced Security Model** - Improved XSS prevention approach
-  - Changed from HTML escaping to fail-fast tag rejection
-  - Regex pattern: `(?s).*<\s*[a-zA-Z/!].*` with DOTALL mode support
-  - Prevents stored XSS, DOM-based XSS, and second-order injections
-- **Advanced String Deserializer** - Context-aware string processing
-  - Two-mode operation: Default Mode (trim enabled) and NoTrim Mode (preserve whitespace)
-  - Field-level annotation detection via `createContextual()`
-  - Performance optimized: deserializer created once at initialization
+* **Security Philosophy Change:** Complete redesign from automatic to opt-in approach for JSON sanitization.
+* Added **@AutoTrim** annotation for explicit string trimming.
+* Added **@XssCheck** annotation for explicit fail-fast XSS validation.
+* Extensive Javadoc and README updates regarding the new security model.
 
-📚 **Documentation Enhancements:**
-- Comprehensive JavaDoc improvements
-- Updated `strictJsonCustomizer()` with ~280 lines of detailed documentation
-- Added `@NoTrim` annotation documentation with complete examples
-- Complete README refresh with corrected XSS prevention descriptions
+### 1.2.0 (February 2026)
 
-🔧 **Technical Updates:**
-- Spring Boot 4.0.3 compatibility (tested and verified)
-- Jackson 3.x with tools.jackson packages
-- Added annotation package: `io.github.og4dev.annotation`
-- Enhanced StdScalarDeserializer implementation
+* Added `@NoTrim` annotation (Legacy - removed in 1.3.0 in favor of opt-in model).
+* Enhanced Advanced String Deserializer.
 
-🔄 **Breaking Changes:**
-- None - Fully backward compatible with v1.1.0 and v1.1.1
+### 1.1.0 & 1.1.1 (February 2026)
 
-### 1.1.1 (February 2026)
+* Added `GlobalExceptionHandler` and RFC 9457 Support.
+* Added `TraceIdFilter` and MDC Integration.
+* Verified Spring Boot 4.0.3 Compatibility.
 
-🔧 **Maintenance Release:**
-- **Spring Boot 4.0.3 Support** - Updated compatibility to Spring Boot 4.0.3
-  - Tested and verified with Spring Boot 4.0.3
-  - All features continue to work flawlessly
-  - Seamless upgrade from Spring Boot 4.0.2
-- **Enhanced Stability** - Benefits from Spring Boot 4.0.3 bug fixes and improvements
+### 1.0.0 (February 2026)
 
-*Note: Version 1.1.1 was a Spring Boot patch compatibility update. New features were added in v1.2.0.*
-
-### 1.1.0 (February 2026)
-
-✅ **New Features:**
-- **Built-in Security Features** - Added `strictJsonCustomizer()` method with comprehensive JSON security
-  - ✅ **Strict Property Validation** - Rejects unknown properties to prevent mass assignment attacks
-  - ✅ **XSS Prevention** - Automatic HTML tag detection and rejection using regex pattern `.*<\s*[a-zA-Z/!].*`
-  - ✅ **String Sanitization** - Automatic whitespace trimming on deserialization
-  - ✅ **Case-Insensitive Enums** - Flexible enum handling for better API usability
-- **Comprehensive Exception Handling** - GlobalExceptionHandler with 10 built-in exception handlers
-  - General exceptions (HTTP 500)
-  - Validation errors with field-level details (HTTP 400)
-  - Type mismatch errors (HTTP 400)
-  - Malformed JSON requests (HTTP 400)
-  - Missing required parameters (HTTP 400)
-  - 404 Not Found errors
-  - 405 Method Not Allowed
-  - 415 Unsupported Media Type
-  - Null pointer exceptions (HTTP 500)
-  - Custom ApiException instances (custom status codes)
-- **Distributed Tracing Support** - Trace IDs in error responses for debugging
-- **RFC 9457 Compliance** - Standard ProblemDetail format for error responses
-- **Spring Boot Auto-Configuration** - Zero-configuration setup via META-INF imports
-- **TraceIdFilter** - Optional servlet filter for trace ID generation and MDC integration
-- **Custom Business Exceptions** - Abstract ApiException class for domain-specific errors
-
-🔧 **Improvements:**
-- **Complete Javadoc Coverage** - 100% documentation with zero warnings
-  - Comprehensive documentation for all classes and methods
-  - Detailed security feature explanations
-  - Code examples for all major features
-  - Complete @param, @return, @see, and @since tags
-- **Enhanced Security** - Fail-fast approach with HTML tag rejection instead of escaping
-- **Better Error Messages** - Clear, actionable error messages for all scenarios
-- **Improved Logging** - Consistent trace IDs between logs and error responses
-- **Production-Ready Quality** - Clean Maven builds, proper documentation, battle-tested code
-
-📚 **Documentation:**
-- Added dedicated "Built-in Security Features" section in README
-- Enhanced JavaDoc for `strictJsonCustomizer()` method with detailed examples
-- Added comprehensive exception handling documentation
-- Added distributed tracing examples and best practices
-- Complete package-info.java files for all packages
-
-🔧 **Technical Updates:**
-- Java 17+ support (Java 21 LTS recommended)
-- Spring Boot 3.2.0 - 4.0.3 compatibility (tested with 4.0.3)
-- Jackson 3.x compatibility (tools.jackson packages)
-- Pure Java implementation - No Lombok dependency
-- Zero external runtime dependencies
-- Ultra-lightweight: ~10KB JAR size
-
-### 1.0.0 (February 2026) - Initial Release
-
-✅ **Core Features:**
-- Standard API Response wrapper with generic type support
-- Factory methods: `success()`, `created()`, `status()`
-- Automatic RFC 3339 UTC timestamp generation
-- Thread-safe & immutable design
-- Full Spring Boot 3.2.0+ integration
-- Comprehensive JavaDoc documentation
-
-🎯 **Roadmap:**
-- Spring WebFlux support (reactive)
-- Pagination metadata support
-- OpenAPI schema generation
-- Internationalization (i18n) support
-- Response compression support
-- Custom serialization options
-- Metrics and monitoring integration
+* Initial Release. Core `ApiResponse` wrapper.
 
 ---
 
-## 📋 Summary
+## 🤝 Contributing
 
-The **OG4Dev Spring API Response** library is a production-ready, zero-configuration solution for standardizing REST API responses in Spring Boot applications.
+We welcome contributions! Please see the Contributing section above for details on our Apache 2.0 license terms and PR
+process.
 
-### 🎯 Why Choose This Library?
+## 📄 License
 
-✅ **Instant Setup** - Add dependency, start using. No configuration needed.  
-✅ **Battle-Tested** - Production-ready code with comprehensive testing  
-✅ **Modern Standards** - RFC 9457 ProblemDetail, Spring Boot 4.x support  
-✅ **Developer Friendly** - Comprehensive docs, clear examples, active maintenance  
-✅ **Lightweight** - Only ~10KB, zero runtime dependencies  
-✅ **Type Safe** - Full generic support with compile-time checking  
-✅ **Pure Java** - No Lombok or external dependencies required  
+Licensed under the Apache License 2.0.
 
-### 📊 Quick Stats
+## 📧 Contact
 
-| Metric | Value |
-|--------|-------|
-| JAR Size | ~10KB |
-| Response Time | < 1ms |
-| Memory per Response | ~200 bytes |
-| Thread Safety | 100% |
-| Spring Boot Support | 3.2.0 - 4.0.3 |
-| Java Version | 17+ |
-
-### 🔗 Quick Access
-
-- 📦 **[Maven Central](https://central.sonatype.com/artifact/io.github.og4dev/og4dev-spring-response)** - Download & integration
-- 📚 **[JavaDoc](https://javadoc.io/doc/io.github.og4dev/og4dev-spring-response)** - Complete API documentation  
-- 🐛 **[Issues](https://github.com/OG4Dev/og4dev-spring-response/issues)** - Report bugs or request features
-- 💬 **[Discussions](https://github.com/OG4Dev/og4dev-spring-response/discussions)** - Ask questions & share ideas
+**Pasindu OG** | [pasinduogdev@gmail.com](mailto:pasinduogdev@gmail.com) |
+GitHub: [@pasinduog](https://github.com/pasinduog)
 
 ---
 
 **⭐ If you find this library helpful, please give it a star on GitHub!**
-
-Made with ❤️ by [Pasindu OG](https://github.com/pasinduog)
