@@ -152,7 +152,7 @@
  * </p>
  *
  * @author Pasindu OG
- * @version 1.3.0
+ * @version 1.4.0
  * @see io.github.og4dev.annotation.AutoTrim
  * @see io.github.og4dev.annotation.XssCheck
  * @see io.github.og4dev.config.ApiResponseAutoConfiguration
