@@ -17,10 +17,10 @@ import java.time.Instant;
  * The response structure follows a standardized format:
  * </p>
  * <ul>
- *   <li><b>status</b> - HTTP status code (200, 201, 404, etc.)</li>
- *   <li><b>message</b> - Human-readable description of the response</li>
- *   <li><b>content</b> - The response payload (generic type T, optional)</li>
- *   <li><b>timestamp</b> - RFC 3339 UTC timestamp (auto-generated)</li>
+ * <li><b>status</b> - HTTP status code (200, 201, 404, etc.)</li>
+ * <li><b>message</b> - Human-readable description of the response</li>
+ * <li><b>content</b> - The response payload (generic type T, optional)</li>
+ * <li><b>timestamp</b> - RFC 3339 UTC timestamp (auto-generated)</li>
  * </ul>
  * <p>
  * <b>Thread Safety:</b> This class is immutable and thread-safe. All fields are final and set during
@@ -49,7 +49,7 @@ import java.time.Instant;
  *
  * @param <T> the type of the response content (can be any Java type or Void for no content)
  * @author Pasindu OG
- * @version 1.3.0
+ * @version 1.4.0
  * @since 1.0.0
  * @see org.springframework.http.ResponseEntity
  * @see org.springframework.http.HttpStatus
@@ -130,9 +130,24 @@ public class ApiResponse<T> {
     }
 
     /**
+     * Creates a CREATED (201) response with a message.
+     *
+     * @param <T>     the type of the response content
+     * @param message the response message
+     * @return a ResponseEntity with CREATED status
+     */
+    public static <T> ResponseEntity<ApiResponse<T>> created(String message) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponseBuilder<T>()
+                        .status(HttpStatus.CREATED.value())
+                        .message(message)
+                        .build());
+    }
+
+    /**
      * Creates a CREATED (201) response with a message and content.
      *
-     * @param <T> the type of the response content
+     * @param <T>     the type of the response content
      * @param message the response message
      * @param content the response content
      * @return a ResponseEntity with CREATED status
@@ -163,7 +178,7 @@ public class ApiResponse<T> {
     /**
      * Creates a SUCCESS (200) response with a message and content.
      *
-     * @param <T> the type of the response content
+     * @param <T>     the type of the response content
      * @param message the response message
      * @param content the response content
      * @return a ResponseEntity with OK status
@@ -181,7 +196,7 @@ public class ApiResponse<T> {
      * Creates a response with a custom HTTP status and message only.
      *
      * @param message the response message
-     * @param status the HTTP status
+     * @param status  the HTTP status
      * @return a ResponseEntity with the specified status
      */
     public static ResponseEntity<ApiResponse<Void>> status(String message, HttpStatus status) {
@@ -195,10 +210,10 @@ public class ApiResponse<T> {
     /**
      * Creates a response with a custom HTTP status, message, and content.
      *
-     * @param <T> the type of the response content
+     * @param <T>     the type of the response content
      * @param message the response message
      * @param content the response content
-     * @param status the HTTP status
+     * @param status  the HTTP status
      * @return a ResponseEntity with the specified status
      */
     public static <T> ResponseEntity<ApiResponse<T>> status(String message, T content, HttpStatus status) {
@@ -211,14 +226,55 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Builder class for constructing ApiResponse instances.
+     * Creates a response with a custom HTTP status and error message only.
+     *
+     * @param message the error response message
+     * @param status  the HTTP status
+     * @return a ResponseEntity with the specified status
+     */
+    public static ResponseEntity<ApiResponse<Void>> error(String message, HttpStatus status) {
+        return ResponseEntity.status(status)
+                .body(new ApiResponseBuilder<Void>()
+                        .status(status.value())
+                        .message(message)
+                        .build());
+    }
+
+    /**
+     * Creates a response with a custom HTTP status, error message, and content.
+     *
+     * @param <T>     the type of the response content
+     * @param message the error response message
+     * @param content the response content
+     * @param status  the HTTP status
+     * @return a ResponseEntity with the specified status
+     */
+    public static <T> ResponseEntity<ApiResponse<T>> error(String message, T content, HttpStatus status) {
+        return ResponseEntity.status(status)
+                .body(new ApiResponseBuilder<T>()
+                        .status(status.value())
+                        .message(message)
+                        .content(content)
+                        .build());
+    }
+
+    /**
+     * Builder class for constructing {@link ApiResponse} instances.
      *
      * @param <T> the type of the response content
      */
     public static class ApiResponseBuilder<T> {
+
         private Integer status;
         private String message;
         private T content;
+
+        /**
+         * Default constructor for creating an empty builder.
+         */
+        public ApiResponseBuilder() {
+            // Default constructor
+        }
 
         /**
          * Sets the HTTP status code.
@@ -226,7 +282,7 @@ public class ApiResponse<T> {
          * @param status the status code
          * @return this builder instance
          */
-        private ApiResponseBuilder<T> status(Integer status) {
+        public ApiResponseBuilder<T> status(Integer status) {
             this.status = status;
             return this;
         }
@@ -254,7 +310,7 @@ public class ApiResponse<T> {
         }
 
         /**
-         * Builds the ApiResponse instance.
+         * Builds the {@link ApiResponse} instance.
          *
          * @return a new ApiResponse instance
          */

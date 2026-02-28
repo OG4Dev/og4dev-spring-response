@@ -1,7 +1,7 @@
 /**
  * Configuration classes for the OG4Dev Spring API Response Library.
  * <p>
- * This package contains Spring Boot auto-configuration classes that automatically
+ * This package contains Spring Boot autoconfiguration classes that automatically
  * register required beans when the library is added to the classpath. Zero manual
  * configuration is required - simply add the dependency and all features are enabled.
  * </p>
@@ -12,8 +12,7 @@
  * </p>
  *
  * @author Pasindu OG
- * @version 1.3.0
+ * @version 1.4.0
  * @since 1.0.0
  */
 package io.github.og4dev.config;
-

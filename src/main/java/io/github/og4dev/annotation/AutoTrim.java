@@ -9,57 +9,57 @@ import java.lang.annotation.Target;
  * Annotation to explicitly enable automatic string trimming during JSON deserialization.
  * <p>
  * By default, the OG4Dev Spring API Response library does NOT automatically trim strings.
- * This annotation allows you to opt-in to automatic trimming for specific fields where
- * removing leading and trailing whitespace is desired for data quality and consistency.
+ * This annotation allows you to opt-in to automatic trimming for specific fields or entire
+ * classes where removing leading and trailing whitespace is desired for data quality and consistency.
  * </p>
  * <p>
  * <b>Important:</b> When {@code @AutoTrim} is applied, XSS validation (HTML tag detection)
  * is still performed on the trimmed value to maintain security.
  * </p>
  *
- * <h2>Use Cases</h2>
+ * <h2>Target Scopes</h2>
  * <ul>
- *   <li><b>User input fields:</b> Names, emails, addresses where whitespace is typically unwanted</li>
- *   <li><b>Search queries:</b> Remove accidental spaces from user search inputs</li>
- *   <li><b>Usernames:</b> Ensure consistent username formatting without leading/trailing spaces</li>
- *   <li><b>Reference numbers:</b> IDs, codes, or identifiers that should not have extra whitespace</li>
- *   <li><b>Categories/Tags:</b> Taxonomy values that need consistent formatting</li>
+ * <li><b>Field Level ({@link ElementType#FIELD}):</b> Applies trimming <i>only</i> to the specific annotated String field.</li>
+ * <li><b>Class Level ({@link ElementType#TYPE}):</b> Applies trimming to <i>all</i> String fields within the annotated class globally.</li>
  * </ul>
  *
- * <h2>Example Usage</h2>
+ * <h2>Example Usage: Field Level</h2>
  * <pre>{@code
  * public class UserRegistrationDTO {
- *     @AutoTrim
- *     private String username;       // Trimmed: "  john_doe  " → "john_doe"
+ * @AutoTrim
+ * private String username;       // Trimmed: "  john_doe  " → "john_doe"
  *
- *     @AutoTrim
- *     private String email;          // Trimmed: " user@example.com " → "user@example.com"
+ * @AutoTrim
+ * private String email;          // Trimmed: " user@example.com " → "user@example.com"
  *
- *     @AutoTrim
- *     private String firstName;      // Trimmed: "  John  " → "John"
- *
- *     private String password;       // NOT trimmed (no annotation)
- *     private String bio;            // NOT trimmed (no annotation)
+ * private String password;       // NOT trimmed (no annotation)
+ * private String bio;            // NOT trimmed (no annotation)
  * }
  * }</pre>
  *
- * <h2>Input/Output Examples</h2>
+ * <h2>Example Usage: Class Level</h2>
  * <pre>{@code
- * // Request JSON
+ * @AutoTrim // Automatically applies to ALL String fields in this class!
+ * public class GlobalTrimDTO {
+ * private String firstName;      // Trimmed: "  John  " → "John"
+ * private String lastName;       // Trimmed: " Doe  " → "Doe"
+ * private String address;        // Trimmed: " 123 Main St " → "123 Main St"
+ * }
+ * }</pre>
+ *
+ * <h2>Input/Output Examples (Class Level)</h2>
+ * <pre>{@code
+ * // Request JSON for GlobalTrimDTO
  * {
- *   "username": "  john_doe  ",
- *   "email": " john@example.com ",
- *   "firstName": "\t\nJohn\t\n",
- *   "password": "  myPass123  ",
- *   "bio": "  Software Developer  "
+ * "firstName": "\t\nJohn\t\n",
+ * "lastName": "  Doe  ",
+ * "address": " 123 Main St "
  * }
  *
  * // After Deserialization
- * username  = "john_doe"              // ✓ Trimmed (has @AutoTrim)
- * email     = "john@example.com"      // ✓ Trimmed (has @AutoTrim)
- * firstName = "John"                  // ✓ Trimmed (has @AutoTrim)
- * password  = "  myPass123  "         // ✗ NOT trimmed (no annotation)
- * bio       = "  Software Developer  " // ✗ NOT trimmed (no annotation)
+ * firstName = "John"                  // ✓ Trimmed (due to class-level @AutoTrim)
+ * lastName  = "Doe"                   // ✓ Trimmed (due to class-level @AutoTrim)
+ * address   = "123 Main St"           // ✓ Trimmed (due to class-level @AutoTrim)
  * }</pre>
  *
  * <h2>XSS Validation Still Active</h2>
@@ -77,10 +77,10 @@ import java.lang.annotation.Target;
  * You can combine {@code @AutoTrim} with {@link XssCheck @XssCheck} for both behaviors:
  * </p>
  * <pre>{@code
+ * @AutoTrim // Trims all fields
  * public class SecureDTO {
- *     @AutoTrim
- *     @XssCheck
- *     private String cleanInput;  // Both trimmed and XSS-validated
+ * @XssCheck
+ * private String cleanInput;  // Both trimmed (from class scope) and XSS-validated
  * }
  * }</pre>
  *
@@ -89,7 +89,8 @@ import java.lang.annotation.Target;
  * This annotation is processed by the {@code AdvancedStringDeserializer} in
  * {@link io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()}.
  * The deserializer uses {@link tools.jackson.databind.ValueDeserializer#createContextual}
- * to detect the annotation and create a specialized instance that enables trimming.
+ * to detect the annotation on either the field itself or its declaring class, creating a
+ * specialized instance that enables trimming.
  * </p>
  *
  * <h2>Null Value Handling</h2>
@@ -110,13 +111,13 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @author Pasindu OG
- * @version 1.3.0
+ * @version 1.4.0
  * @see io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()
  * @see io.github.og4dev.annotation.XssCheck
  * @see tools.jackson.databind.ValueDeserializer#createContextual
  * @since 1.3.0
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @SuppressWarnings("unused")
 public @interface AutoTrim {
