@@ -79,7 +79,7 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 ## 🎯 Key Highlights
 
 * 🚀 **Truly Zero Configuration** - Spring Boot 3.x/4.x auto-configuration with META-INF imports
-* 🎁 **Zero Boilerplate** - Opt-in `@AutoResponse` to automatically wrap raw return types
+* 🎁 **Zero Boilerplate** - Opt-in `@AutoResponse` to automatically wrap raw return types (Class or Method level)
 * 🎯 **Production-Ready** - Built-in RFC 9457 ProblemDetail with 10 comprehensive exception handlers
 * 🛡️ **Complete Error Coverage** - Handles validation, JSON parsing, 404s, method mismatches, media types, and more
 * 🔍 **Trace IDs in Errors** - Error responses include traceId for debugging
@@ -88,7 +88,7 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 * 🔍 **Microservices-Ready** - Built-in trace IDs for distributed tracing
 * ✅ **Battle-Tested** - Used in production Spring Boot applications
 * 📋 **Professional-Grade Javadoc** - 100% coverage with comprehensive method documentation
-* 🔐 **Opt-in Security Features** - Fine-grained control with field-level annotations
+* 🔐 **Opt-in Security Features** - Fine-grained control with field and class-level annotations
 * 🚫 **Zero External Dependencies** - Pure Java, no Lombok required
 
 ## ✨ Features
@@ -123,8 +123,7 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 Unlike other response wrapper libraries, this one offers:
 
 * ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
-* ✅ **Zero-Boilerplate @AutoResponse** - Return raw objects, let the library wrap them automatically while preserving
-  your HTTP Status codes.
+* ✅ **Zero-Boilerplate @AutoResponse** - Return raw objects, let the library wrap them automatically while preserving your HTTP Status codes. **Supports both Class-level and Method-level granularity.**
 * ✅ **Intelligent String Handling** - Safely wraps raw `String` returns into JSON without throwing `ClassCastException`.
 * ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
 * ✅ **Opt-in Security Features** - Fine-grained control via field and **class-level** annotations (`@XssCheck`, `@AutoTrim`)
@@ -138,13 +137,11 @@ Unlike other response wrapper libraries, this one offers:
 ### Maven (Latest - v1.4.0)
 
 ```xml
-
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
     <version>1.4.0</version>
 </dependency>
-
 
 ```
 
@@ -153,14 +150,12 @@ Unlike other response wrapper libraries, this one offers:
 ```gradle
 implementation 'io.github.og4dev:og4dev-spring-response:1.4.0'
 
-
 ```
 
 ### Gradle Kotlin DSL (Latest - v1.4.0)
 
 ```kotlin
 implementation("io.github.og4dev:og4dev-spring-response:1.4.0")
-
 
 ```
 
@@ -188,7 +183,6 @@ io.github.og4dev
 └── filter/
     └── TraceIdFilter.java                   # Request trace ID generation
 
-
 ```
 
 ## 🎯 Quick Start
@@ -198,7 +192,6 @@ You can use the library in two ways: **Explicit Factory Methods** or **Automatic
 ### Method 1: Explicit Factory Methods
 
 ```java
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -209,39 +202,39 @@ public class UserController {
     }
 }
 
-
 ```
 
 ### Method 2: Automatic Wrapping (New in v1.4.0) 🎁
 
-Tired of typing `ResponseEntity<ApiResponse<T>>`? Use `@AutoResponse`!
+Tired of typing `ResponseEntity<ApiResponse<T>>`? Use `@AutoResponse`! You can apply it to the whole class, or just specific methods.
 
 ```java
-
 @RestController
 @RequestMapping("/api/users")
-@AutoResponse // Applies to all methods in this controller
+// @AutoResponse // Uncomment this to apply to ALL methods in the controller
 public class UserController {
 
+    @AutoResponse // Applied ONLY to this specific method
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         // Just return the raw object!
         return userService.findById(id);
     }
 
+    @AutoResponse
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // Preserves custom status codes!
     public User createUser(@RequestBody UserDto dto) {
         return userService.create(dto);
     }
 
+    @AutoResponse
     @GetMapping("/greeting")
     public String greeting() {
         // Raw strings are safely converted to JSON ApiResponse too!
         return "Hello World"; 
     }
 }
-
 
 ```
 
@@ -259,7 +252,6 @@ public class UserController {
   "timestamp": "2026-02-28T10:30:45.123Z"
 }
 
-
 ```
 
 ## ⚙️ Auto-Configuration
@@ -267,37 +259,23 @@ public class UserController {
 The library features **Spring Boot Auto-Configuration** for truly zero-config setup!
 
 ✅ **GlobalExceptionHandler** - Automatic exception handling
-
 ✅ **GlobalResponseWrapper** - Automatic payload wrapping via `@AutoResponse`
-
 ✅ **Security Customizers** - Jackson configuration for `@AutoTrim` and `@XssCheck`
 
 **No configuration needed!** Just add the dependency.
 
 ## 🎁 Opt-in Automatic Wrapping (@AutoResponse)
 
-Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the library wrap your controller responses
-automatically.
+Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the library wrap your controller responses automatically.
 
-### How to use it:
+### Flexible Granularity:
 
-Add the `@AutoResponse` annotation to your controller class (applies to all methods) or to specific methods.
-
-```java
-
-@RestController
-@AutoResponse
-public class ProductController {
-    // ...
-}
-
-
-```
+* **Class Level (`@Target(ElementType.TYPE)`):** Apply `@AutoResponse` to your controller class to automatically wrap *all* endpoint responses within it.
+* **Method Level (`@Target(ElementType.METHOD)`):** Apply `@AutoResponse` to specific request mapping methods for fine-grained, opt-in control over exactly which endpoints get wrapped.
 
 ### Key Capabilities:
 
-* ✅ **Status Code Preservation:** Intelligently reads custom HTTP status codes set via `@ResponseStatus` (e.g., 201
-  Created) and reflects them in the `ApiResponse`.
+* ✅ **Status Code Preservation:** Intelligently reads custom HTTP status codes set via `@ResponseStatus` (e.g., 201 Created) and reflects them in the `ApiResponse`.
 * ✅ **Double-Wrap Prevention:** Safely skips wrapping if you explicitly return an `ApiResponse` or `ResponseEntity`.
 * ✅ **Error Compatibility:** Bypasses `ProblemDetail` responses, ensuring standard error handling is never broken.
 * ✅ **Intelligent String Handling:** Uses the injected `ObjectMapper` to serialize raw `String` returns into JSON format safely, preventing `ClassCastException` conflicts with Spring's native `StringHttpMessageConverter`.
@@ -317,10 +295,8 @@ Rejects JSON payloads containing unexpected fields to prevent mass assignment at
 Fail-fast HTML tag detection and rejection using regex pattern `(?s).*<\s*[a-zA-Z/!].*`.
 
 ```java
-
 @XssCheck
 private String comment; // Rejects "<script>alert(1)</script>"
-
 
 ```
 
@@ -329,10 +305,8 @@ private String comment; // Rejects "<script>alert(1)</script>"
 Automatic whitespace removal for specific fields.
 
 ```java
-
 @AutoTrim
 private String username; // "  john_doe  " -> "john_doe"
-
 
 ```
 
@@ -356,8 +330,7 @@ public class SecureRegistrationDTO {
 
 ## 🛡️ Built-in Exception Handling
 
-The library includes a **production-ready `GlobalExceptionHandler**` that automatically handles 10 common exceptions
-using Spring Boot's **ProblemDetail (RFC 9457)** standard.
+The library includes a **production-ready `GlobalExceptionHandler**` that automatically handles 10 common exceptions using Spring Boot's **ProblemDetail (RFC 9457)** standard.
 
 * **Automatic Logging:** SLF4J integration for all errors.
 * **Trace ID Consistency:** Logs and responses always have matching trace IDs.
@@ -370,15 +343,13 @@ public class ResourceNotFoundException extends ApiException {
     }
 }
 
-
 ```
 
 ## 🌍 Real-World Examples
 
-### Example 1: Clean CRUD Controller (Using @AutoResponse)
+### Example 1: Clean CRUD Controller (Using Class-Level @AutoResponse)
 
 ```java
-
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -411,7 +382,6 @@ public class ProductController {
     }
 }
 
-
 ```
 
 ## 📚 API Reference
@@ -422,10 +392,11 @@ public class ProductController {
 
 ### 1.4.0 (February 2026) - Current Release
 
-✨ **New Features:**
+✨ **New Features & Improvements:**
 
 * **@AutoResponse Annotation & GlobalResponseWrapper**
 * Opt-in automatic response wrapping to eliminate boilerplate code.
+* **Improved Granularity:** Fully supports both Class-level (`ElementType.TYPE`) and Method-level (`ElementType.METHOD`) placement for precision control over which endpoints are wrapped.
 * Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
 * Preserves HTTP status codes from `@ResponseStatus`.
 * Intelligently skips `ResponseEntity`, `ApiResponse`, and `ProblemDetail` to prevent double-wrapping.
@@ -436,7 +407,10 @@ public class ProductController {
 * `@AutoTrim` and `@XssCheck` can now be applied at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
 
 
-* **package-info.java documentation** added for the new `advice` package.
+* **Documentation**
+* `package-info.java` documentation added for the new `advice` package.
+
+
 
 ### 1.3.0 (February 2026)
 
@@ -464,8 +438,7 @@ public class ProductController {
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see the Contributing section above for details on our Apache 2.0 license terms and PR
-process.
+We welcome contributions! Please see the Contributing section above for details on our Apache 2.0 license terms and PR process.
 
 ## 📄 License
 
@@ -473,8 +446,7 @@ Licensed under the Apache License 2.0.
 
 ## 📧 Contact
 
-**Pasindu OG** | [pasinduogdev@gmail.com](mailto:pasinduogdev@gmail.com) |
-GitHub: [@pasinduog](https://github.com/pasinduog)
+**Pasindu OG** | [pasinduogdev@gmail.com](mailto:pasinduogdev@gmail.com) | GitHub: [@pasinduog](https://github.com/pasinduog)
 
 ---
 
