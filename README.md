@@ -105,7 +105,7 @@ A lightweight, type-safe API Response wrapper for Spring Boot applications. Stan
 * 🔌 **Spring Native** - Built on `ResponseEntity` and `HttpStatus`
 * 📋 **RFC 9457 Compliance** - Standard ProblemDetail format (supersedes RFC 7807)
 * 📚 **Complete JavaDoc** - Every class and method fully documented with comprehensive examples
-* 🔐 **Opt-in Security Features** - Fine-grained JSON request protection via field annotations
+* 🔐 **Opt-in Security Features** - Fine-grained JSON request protection via field and class-level annotations
 * ✅ **Strict JSON Validation** - Rejects unknown properties to prevent mass assignment attacks (automatic)
 * ✅ **XSS Prevention** - HTML tag detection and rejection via `@XssCheck` annotation (opt-in)
 * ✅ **Smart String Trimming** - Whitespace trimming via `@AutoTrim` annotation (opt-in)
@@ -125,8 +125,9 @@ Unlike other response wrapper libraries, this one offers:
 * ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
 * ✅ **Zero-Boilerplate @AutoResponse** - Return raw objects, let the library wrap them automatically while preserving
   your HTTP Status codes.
+* ✅ **Intelligent String Handling** - Safely wraps raw `String` returns into JSON without throwing `ClassCastException`.
 * ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
-* ✅ **Opt-in Security Features** - Fine-grained control via field-level annotations (`@XssCheck`, `@AutoTrim`)
+* ✅ **Opt-in Security Features** - Fine-grained control via field and **class-level** annotations (`@XssCheck`, `@AutoTrim`)
 * ✅ **Zero External Dependencies** - Pure Java implementation, won't conflict with your application
 * ✅ **Extensible Exception Handling** - Create custom business exceptions easily
 * ✅ **Trace ID Support** - Built-in distributed tracing capabilities
@@ -144,6 +145,7 @@ Unlike other response wrapper libraries, this one offers:
     <version>1.4.0</version>
 </dependency>
 
+
 ```
 
 ### Gradle (Latest - v1.4.0)
@@ -151,12 +153,14 @@ Unlike other response wrapper libraries, this one offers:
 ```gradle
 implementation 'io.github.og4dev:og4dev-spring-response:1.4.0'
 
+
 ```
 
 ### Gradle Kotlin DSL (Latest - v1.4.0)
 
 ```kotlin
 implementation("io.github.og4dev:og4dev-spring-response:1.4.0")
+
 
 ```
 
@@ -184,6 +188,7 @@ io.github.og4dev
 └── filter/
     └── TraceIdFilter.java                   # Request trace ID generation
 
+
 ```
 
 ## 🎯 Quick Start
@@ -203,6 +208,7 @@ public class UserController {
         return ApiResponse.success("User retrieved successfully", user);
     }
 }
+
 
 ```
 
@@ -228,7 +234,14 @@ public class UserController {
     public User createUser(@RequestBody UserDto dto) {
         return userService.create(dto);
     }
+
+    @GetMapping("/greeting")
+    public String greeting() {
+        // Raw strings are safely converted to JSON ApiResponse too!
+        return "Hello World"; 
+    }
 }
+
 
 ```
 
@@ -245,6 +258,7 @@ public class UserController {
   },
   "timestamp": "2026-02-28T10:30:45.123Z"
 }
+
 
 ```
 
@@ -277,6 +291,7 @@ public class ProductController {
     // ...
 }
 
+
 ```
 
 ### Key Capabilities:
@@ -285,12 +300,13 @@ public class ProductController {
   Created) and reflects them in the `ApiResponse`.
 * ✅ **Double-Wrap Prevention:** Safely skips wrapping if you explicitly return an `ApiResponse` or `ResponseEntity`.
 * ✅ **Error Compatibility:** Bypasses `ProblemDetail` responses, ensuring standard error handling is never broken.
-* ✅ **String Safety:** Skips raw `String` returns to prevent `ClassCastException` with Spring's internal string message
-  converters.
+* ✅ **Intelligent String Handling:** Uses the injected `ObjectMapper` to serialize raw `String` returns into JSON format safely, preventing `ClassCastException` conflicts with Spring's native `StringHttpMessageConverter`.
 
 ## 🔐 Built-in Security Features
 
 The library provides fine-grained security and data processing features through field-level annotations. By default, **fields are NOT modified** unless explicitly annotated.
+
+*New in v1.4.0:* You can now apply `@AutoTrim` and `@XssCheck` to **entire classes** to protect all string fields at once!
 
 ### 1. Strict Property Validation 🛡️ (Automatic)
 
@@ -305,6 +321,7 @@ Fail-fast HTML tag detection and rejection using regex pattern `(?s).*<\s*[a-zA-
 @XssCheck
 private String comment; // Rejects "<script>alert(1)</script>"
 
+
 ```
 
 ### 3. Opt-in String Trimming with @AutoTrim ✂️
@@ -315,6 +332,23 @@ Automatic whitespace removal for specific fields.
 
 @AutoTrim
 private String username; // "  john_doe  " -> "john_doe"
+
+
+```
+
+### 4. Class-Level Protection (New in v1.4.0) 🛡️
+
+Apply annotations to the class level to automatically protect **ALL** string fields within that class!
+
+```java
+@AutoTrim
+@XssCheck
+public class SecureRegistrationDTO {
+    // Both of these fields will be automatically trimmed and XSS-validated!
+    private String username;
+    private String email;
+    private String bio;
+}
 
 ```
 
@@ -335,6 +369,7 @@ public class ResourceNotFoundException extends ApiException {
         super(String.format("%s not found with ID: %d", resource, id), HttpStatus.NOT_FOUND);
     }
 }
+
 
 ```
 
@@ -376,6 +411,7 @@ public class ProductController {
     }
 }
 
+
 ```
 
 ## 📚 API Reference
@@ -392,8 +428,12 @@ public class ProductController {
 * Opt-in automatic response wrapping to eliminate boilerplate code.
 * Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
 * Preserves HTTP status codes from `@ResponseStatus`.
-* Intelligently skips `ResponseEntity`, `ApiResponse`, `ProblemDetail`, and `String` to prevent double-wrapping and
-  casting errors.
+* Intelligently skips `ResponseEntity`, `ApiResponse`, and `ProblemDetail` to prevent double-wrapping.
+* **Intelligent String Handling:** Uses Spring's `ObjectMapper` to safely serialize raw `String` returns to JSON, avoiding `ClassCastException` with native converters.
+
+
+* **Class-Level Security Annotations**
+* `@AutoTrim` and `@XssCheck` can now be applied at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
 
 
 * **package-info.java documentation** added for the new `advice` package.
