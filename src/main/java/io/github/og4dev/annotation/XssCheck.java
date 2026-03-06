@@ -6,206 +6,135 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to explicitly enable XSS (Cross-Site Scripting) validation for string fields during JSON deserialization.
+ * Opt-in annotation to enable XSS (Cross-Site Scripting) protection for string fields
+ * during JSON deserialization.
  * <p>
- * By default, the OG4Dev Spring API Response library does NOT perform XSS validation on strings.
- * This annotation allows you to opt-in to automatic HTML/XML tag detection and rejection for specific fields
- * or <b>entire classes</b> where preventing malicious content injection is critical for security.
+ * By default the OG4Dev Spring API Response library does <b>not</b> validate string values.
+ * Placing {@code @XssCheck} on a field or class opts in to automatic HTML and XML tag
+ * detection at the deserialization layer. Any string containing a tag pattern is rejected
+ * immediately with an HTTP 400 Bad Request response — the malicious payload never reaches
+ * application logic or the database.
  * </p>
  * <p>
- * <b>Security Approach:</b> This annotation implements a <b>fail-fast rejection strategy</b> - requests
- * containing HTML tags are rejected entirely with a 400 Bad Request error.  This is more secure than
- * HTML escaping, as it prevents stored XSS, DOM-based XSS, and second-order injection vulnerabilities.
+ * This implements a <b>fail-fast rejection strategy</b> which is more secure than HTML
+ * escaping because it prevents stored XSS, DOM-based XSS, and second-order injection
+ * vulnerabilities at the earliest possible point.
  * </p>
  *
  * <h2>Target Scopes</h2>
  * <ul>
- * <li><b>Field Level ({@link ElementType#FIELD}):</b> Applies XSS validation <i>only</i> to the specific annotated String field.</li>
- * <li><b>Class Level ({@link ElementType#TYPE}):</b> Applies XSS validation to <i>all</i> String fields within the annotated class globally.</li>
+ *   <li><b>Field Level ({@link ElementType#FIELD}):</b> Validates <i>only</i> the annotated
+ *       {@code String} field; all other fields in the class are unaffected.</li>
+ *   <li><b>Class Level ({@link ElementType#TYPE}):</b> Validates <i>all</i> {@code String}
+ *       fields within the annotated class without requiring per-field annotations.</li>
  * </ul>
  *
- * <h2>Example Usage: Field Level</h2>
+ * <h2>Example — Field Level</h2>
  * <pre>{@code
  * public class CommentDTO {
- * @XssCheck
- * private String content;        // XSS validated - rejects HTML tags
  *
- * @XssCheck
- * private String authorName;     // XSS validated - rejects HTML tags
+ *     @XssCheck
+ *     private String content;    // Rejects HTML tags
  *
- * private String commentId;      // NOT validated (no annotation)
- * private Instant timestamp;     // NOT validated (not a string)
+ *     @XssCheck
+ *     private String authorName; // Rejects HTML tags
+ *
+ *     private String commentId;  // NOT validated (no annotation)
  * }
  * }</pre>
  *
- * <h2>Example Usage: Class Level</h2>
+ * <h2>Example — Class Level</h2>
  * <pre>{@code
- * @XssCheck // Automatically protects ALL String fields in this class!
+ * @XssCheck
  * public class SecureUserProfileDTO {
- * private String bio;            // XSS validated automatically
- * private String displayName;    // XSS validated automatically
- * private String websiteUrl;     // XSS validated automatically
+ *     private String bio;         // Validated automatically
+ *     private String displayName; // Validated automatically
+ *     private String websiteUrl;  // Validated automatically
  * }
  * }</pre>
  *
  * <h2>Valid and Invalid Inputs</h2>
  * <pre>{@code
- * // ✅ Valid inputs (accepted)
- * {"content": "Hello World"}                     // Plain text
- * {"content": "Price: $100 < $200"}              // Comparison operators (no tag)
- * {"content": "2 + 2 = 4"}                       // Math expressions
- * {"content": "Use angle brackets: 3 < 5"}       // Text with < but no HTML tag
+ * // Accepted
+ * {"content": "Hello World"}               // Plain text
+ * {"content": "Price: $100 < $200"}        // Comparison operator, not an HTML tag
+ * {"content": "3 < 5 and 6 > 4"}          // Arithmetic, not HTML
  *
- * // ❌ Invalid inputs (rejected with 400 Bad Request)
- * {"content": "<script>alert('XSS')</script>"}   // Script injection
- * {"content": "<img src=x onerror=alert(1)>"}    // Image XSS attack
- * {"content": "Hello<br>World"}                  // HTML break tag
- * {"content": ""}                  // HTML comment
- * {"content": "<!DOCTYPE html>"}                 // DOCTYPE declaration
- * {"content": "</div>"}                          // Closing tag
- * {"content": "<b>Bold text</b>"}                // HTML formatting
+ * // Rejected with 400 Bad Request
+ * {"content": "<script>alert(1)</script>"} // Script injection
+ * {"content": "<img src=x onerror=...>"}   // Attribute-based XSS
+ * {"content": "Hello<br>World"}            // HTML tag
+ * {"content": "<!DOCTYPE html>"}           // DOCTYPE declaration
+ * {"content": "</div>"}                    // Closing tag
  * }</pre>
  *
- * <h2>Error Response Format</h2>
+ * <h2>Error Response</h2>
  * <p>
- * When HTML tags are detected, the request is rejected with a 400 Bad Request error:
+ * When a tag is detected the request is rejected with an RFC 9457 ProblemDetail response:
  * </p>
  * <pre>{@code
  * {
- * "type": "about:blank",
- * "title": "Bad Request",
- * "status": 400,
- * "detail": "Security Error: HTML tags or XSS payloads are not allowed in the request.",
- * "traceId": "550e8400-e29b-41d4-a716-446655440000",
- * "timestamp": "2026-02-21T10:30:45.123Z"
+ *     "type": "about:blank",
+ *     "title": "Bad Request",
+ *     "status": 400,
+ *     "detail": "Security Error: HTML tags or XSS payloads are not allowed in the request.",
+ *     "traceId": "550e8400-e29b-41d4-a716-446655440000",
+ *     "timestamp": "2026-03-03T10:30:45.123Z"
  * }
  * }</pre>
  *
- * <h2>XSS Detection Mechanism</h2>
+ * <h2>Detection Pattern</h2>
  * <p>
- * The validation uses a robust regex pattern: {@code (?s).*<\s*[a-zA-Z/!].*}
+ * Tags are detected with the regular expression {@code (?s).*<\s*[a-zA-Z/!].*} (DOTALL mode).
+ * It matches opening tags, closing tags, self-closing tags, HTML comments, DOCTYPE declarations,
+ * and tags spanning multiple lines. Bare {@code <} characters in mathematical comparisons
+ * (e.g., {@code 5 < 10}) are <b>not</b> matched because they are not followed by a letter,
+ * slash, or exclamation mark.
  * </p>
- * <p>
- * This pattern detects:
- * </p>
- * <ul>
- * <li><b>Opening tags:</b> {@code <script>}, {@code <img>}, {@code <div>}, {@code <iframe>}</li>
- * <li><b>Closing tags:</b> {@code </div>}, {@code </script>}, {@code </body>}</li>
- * <li><b>Self-closing tags:</b> {@code <br/>}, {@code <input/>}</li>
- * <li><b>Special tags:</b> {@code <!DOCTYPE>}, {@code }, {@code <![CDATA[]]>}</li>
- * <li><b>Tags with attributes:</b> {@code <div class="test">}, {@code <img src="x">}</li>
- * <li><b>Multiline tags:</b> Tags spanning multiple lines (DOTALL mode enabled)</li>
- * </ul>
- * <p>
- * <b>What is NOT detected (safe to use):</b>
- * </p>
- * <ul>
- * <li>Mathematical comparisons: {@code 5 < 10}, {@code x > y}</li>
- * <li>Arrows and symbols: {@code -> <-}, {@code <=>}</li>
- * <li>Quoted examples: {@code "less than symbol: <"} (if properly escaped in JSON)</li>
- * </ul>
  *
- * <h2>Why Rejection Instead of Escaping?</h2>
+ * <h2>Combining with {@code @AutoTrim}</h2>
  * <p>
- * This library uses a <b>fail-fast rejection approach</b> rather than HTML escaping (converting {@code <} to {@code &lt;}).
- * This is more secure because:
- * </p>
- * <ul>
- * <li><b>Prevents stored XSS:</b> Malicious content never enters your database</li>
- * <li><b>Prevents DOM-based XSS:</b> No chance of client-side re-interpretation</li>
- * <li><b>Prevents second-order attacks:</b> Escaped content cannot be un-escaped later</li>
- * <li><b>Prevents encoding bypasses:</b> No risk of double-encoding vulnerabilities</li>
- * <li><b>Clear security policy:</b> Users know HTML is not allowed</li>
- * </ul>
- *
- * <h2>Combining with @AutoTrim</h2>
- * <p>
- * You can combine {@code @XssCheck} with {@link AutoTrim @AutoTrim} for both behaviors:
+ * Both annotations may be applied together. Trimming is always applied first so that
+ * whitespace-padded payloads (e.g., {@code "  <script>...  "}) are correctly detected after
+ * the leading and trailing spaces are removed:
  * </p>
  * <pre>{@code
- * @XssCheck // Protects all fields
- * public class SecureInputDTO {
- * @AutoTrim // Trims only this field
- * private String username;
- * }
+ * @AutoTrim
+ * @XssCheck
+ * private String username; // First trimmed, then validated for HTML tags
+ * }</pre>
+ *
+ * <h2>Null Value Handling</h2>
+ * <p>
+ * {@code null} values bypass validation and pass through unchanged:
+ * </p>
+ * <pre>{@code
+ * {"content": null}  → content = null  (no validation performed)
+ * {"content": ""}    → content = ""    (validated; empty string is safe)
  * }</pre>
  *
  * <h2>How It Works</h2>
  * <p>
- * This annotation is processed by the {@code AdvancedStringDeserializer} in
+ * This annotation is detected by the {@code AdvancedStringDeserializer} registered via
  * {@link io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()}.
- * The deserializer uses {@link tools.jackson.databind.ValueDeserializer#createContextual}
- * to detect the annotation on either the field itself or its declaring class, creating a
- * specialized instance that enables XSS validation.
+ * The deserializer inspects each field's annotations — and the annotations on its
+ * declaring class — at mapper initialization time (once per field, not per request) and
+ * returns a contextual instance with XSS validation enabled when {@code @XssCheck} is found.
  * </p>
  *
- * <h2>Null Value Handling</h2>
+ * <h2>Performance</h2>
  * <p>
- * Null values are not validated (they are safe) and pass through unchanged:
+ * Validation adds minimal overhead (typically under {@code 1 ms} per field) because the
+ * contextual deserializer is created once during {@code ObjectMapper} initialization,
+ * not on every request.
  * </p>
- * <pre>{@code
- * {"content": null}      → content = null (no validation)
- * {"content": ""}        → content = "" (validated, but empty string is safe)
- * {"content": "  "}      → content = "  " (validated, but whitespace is safe)
- * }</pre>
- *
- * <h2>Performance Considerations</h2>
- * <p>
- * The regex validation is highly optimized and adds minimal overhead (typically {@code <1ms}
- * per field). The deserializer is created once per field during mapper initialization,
- * not on every request, ensuring optimal runtime performance.
- * </p>
- *
- * <h2>When to Use This Annotation</h2>
- * <table border="1" cellpadding="5">
- * <tr>
- * <th>Field Type</th>
- * <th>Use @XssCheck?</th>
- * <th>Reason</th>
- * </tr>
- * <tr>
- * <td>User comments</td>
- * <td>✅ Yes</td>
- * <td>User-generated content that will be displayed</td>
- * </tr>
- * <tr>
- * <td>Profile bio</td>
- * <td>✅ Yes</td>
- * <td>Free-form text that could contain malicious content</td>
- * </tr>
- * <tr>
- * <td>Search queries</td>
- * <td>✅ Yes</td>
- * <td>User input that might be echoed back</td>
- * </tr>
- * <tr>
- * <td>Email address</td>
- * <td>⚠️ Optional</td>
- * <td>Use if email will be displayed; skip if only stored</td>
- * </tr>
- * <tr>
- * <td>IDs/UUIDs</td>
- * <td>❌ No</td>
- * <td>Structured format, not free-form text</td>
- * </tr>
- * <tr>
- * <td>Timestamps</td>
- * <td>❌ No</td>
- * <td>Not a string field</td>
- * </tr>
- * <tr>
- * <td>Rich text (HTML editor)</td>
- * <td>❌ No</td>
- * <td>Intentionally contains HTML; use server-side sanitization instead</td>
- * </tr>
- * </table>
  *
  * @author Pasindu OG
  * @version 1.4.0
- * @see io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()
- * @see io.github.og4dev.annotation.AutoTrim
- * @see tools.jackson.databind.ValueDeserializer#createContextual
  * @since 1.3.0
+ * @see AutoTrim
+ * @see io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()
+ * @see io.github.og4dev.config.AdvancedStringDeserializer
  */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

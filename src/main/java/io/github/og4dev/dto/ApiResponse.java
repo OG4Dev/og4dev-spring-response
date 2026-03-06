@@ -7,52 +7,79 @@ import org.springframework.http.ResponseEntity;
 import java.time.Instant;
 
 /**
- * Standard API Response wrapper for Spring Boot applications.
+ * Immutable, type-safe wrapper for standardized HTTP API responses.
  * <p>
- * This class provides a consistent, type-safe structure for API responses across your application,
- * including HTTP status codes, descriptive messages, content payload, and automatic timestamps.
- * It supports both successful and error responses with optional content, ensuring a uniform API contract.
- * </p>
- * <p>
- * The response structure follows a standardized format:
+ * Every response produced by this class follows the same four-field contract, ensuring a
+ * uniform API surface across the entire application:
  * </p>
  * <ul>
- * <li><b>status</b> - HTTP status code (200, 201, 404, etc.)</li>
- * <li><b>message</b> - Human-readable description of the response</li>
- * <li><b>content</b> - The response payload (generic type T, optional)</li>
- * <li><b>timestamp</b> - RFC 3339 UTC timestamp (auto-generated)</li>
+ *   <li><b>status</b> — The HTTP status code (e.g., 200, 201, 404).</li>
+ *   <li><b>message</b> — A human-readable description of the outcome.</li>
+ *   <li><b>content</b> — The response payload of generic type {@code T};
+ *       excluded from JSON serialization when {@code null}.</li>
+ *   <li><b>timestamp</b> — An RFC 3339 UTC {@link Instant} auto-generated at
+ *       construction time.</li>
  * </ul>
+ *
+ * <h2>Factory Methods</h2>
  * <p>
- * <b>Thread Safety:</b> This class is immutable and thread-safe. All fields are final and set during
- * construction. The response object can be safely shared across threads without synchronization.
- * </p>
- * <p>
- * <b>Usage Examples:</b>
+ * Use the static factory methods instead of the internal builder for common scenarios:
  * </p>
  * <pre>{@code
- * // Success response with data
- * return ApiResponse.success("User retrieved successfully", user);
+ * // HTTP 200 — with payload
+ * return ApiResponse.success("User retrieved", user);
  *
- * // Created response (HTTP 201)
- * return ApiResponse.created("User created successfully", newUser);
+ * // HTTP 200 — without payload
+ * return ApiResponse.success("User deleted");
  *
- * // Success response without data
- * return ApiResponse.success("User deleted successfully");
+ * // HTTP 201 — with payload
+ * return ApiResponse.created("User created", newUser);
  *
- * // Custom status response
- * return ApiResponse.status("Request accepted", HttpStatus.ACCEPTED);
+ * // HTTP 201 — without payload
+ * return ApiResponse.created("Resource created");
+ *
+ * // Custom status — with payload
+ * return ApiResponse.status("Request accepted", data, HttpStatus.ACCEPTED);
+ *
+ * // Error — without payload
+ * return ApiResponse.error("Insufficient funds", HttpStatus.PAYMENT_REQUIRED);
  * }</pre>
+ *
+ * <h2>JSON Output</h2>
  * <p>
- * <b>JSON Serialization:</b> The class uses Jackson's {@code @JsonInclude(NON_NULL)} to exclude
- * null fields from the JSON output, reducing response payload size.
+ * Fields annotated with {@code @JsonInclude(NON_NULL)} are omitted from serialization
+ * when {@code null}, keeping error or no-content responses concise:
+ * </p>
+ * <pre>{@code
+ * // ApiResponse.success("User deleted") →
+ * {
+ *     "status": 200,
+ *     "message": "User deleted",
+ *     "timestamp": "2026-03-03T10:30:45.123Z"
+ * }
+ *
+ * // ApiResponse.success("User retrieved", user) →
+ * {
+ *     "status": 200,
+ *     "message": "User retrieved",
+ *     "content": { "id": 1, "name": "Alice" },
+ *     "timestamp": "2026-03-03T10:30:45.123Z"
+ * }
+ * }</pre>
+ *
+ * <h2>Thread Safety</h2>
+ * <p>
+ * All fields are {@code final} and set once at construction. Instances are immutable
+ * and safe to share across threads without synchronization.
  * </p>
  *
- * @param <T> the type of the response content (can be any Java type or Void for no content)
+ * @param <T> the type of the response content; use {@link Void} for responses without a payload
  * @author Pasindu OG
  * @version 1.4.0
  * @since 1.0.0
  * @see org.springframework.http.ResponseEntity
  * @see org.springframework.http.HttpStatus
+ * @see io.github.og4dev.annotation.AutoResponse
  */
 @SuppressWarnings({"unused"})
 public class ApiResponse<T> {
@@ -64,27 +91,28 @@ public class ApiResponse<T> {
     private final Integer status;
 
     /**
-     * A descriptive message about the response.
+     * A human-readable description of the response outcome.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final String message;
 
     /**
-     * The response content/payload.
+     * The response payload; {@code null} for responses that carry no body content.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T content;
 
     /**
-     * The timestamp when the response was created.
+     * The UTC timestamp at which this response object was created.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Instant timestamp;
 
     /**
-     * Private constructor that builds an ApiResponse from a builder.
+     * Constructs an {@code ApiResponse} from the given builder, auto-generating the
+     * current UTC timestamp.
      *
-     * @param builder the ApiResponseBuilder containing the response data
+     * @param builder the populated builder; must not be {@code null}
      */
     private ApiResponse(ApiResponseBuilder<T> builder) {
         this.status = builder.status;
@@ -94,47 +122,47 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Gets the HTTP status code.
+     * Returns the HTTP status code.
      *
-     * @return the status code
+     * @return the status code, or {@code null} if not set
      */
     public Integer getStatus() {
         return status;
     }
 
     /**
-     * Gets the response message.
+     * Returns the human-readable response message.
      *
-     * @return the message
+     * @return the message, or {@code null} if not set
      */
     public String getMessage() {
         return message;
     }
 
     /**
-     * Gets the response content.
+     * Returns the response content payload.
      *
-     * @return the content
+     * @return the content, or {@code null} for no-content responses
      */
     public T getContent() {
         return content;
     }
 
     /**
-     * Gets the response timestamp.
+     * Returns the UTC timestamp at which this response was created.
      *
-     * @return the timestamp
+     * @return the timestamp; never {@code null}
      */
     public Instant getTimestamp() {
         return timestamp;
     }
 
     /**
-     * Creates a CREATED (201) response with a message.
+     * Creates an HTTP 201 Created response with a message and no content.
      *
      * @param <T>     the type of the response content
-     * @param message the response message
-     * @return a ResponseEntity with CREATED status
+     * @param message the human-readable response message; must not be {@code null}
+     * @return a {@link ResponseEntity} with HTTP 201 status wrapping an {@code ApiResponse}
      */
     public static <T> ResponseEntity<ApiResponse<T>> created(String message) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -145,12 +173,12 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Creates a CREATED (201) response with a message and content.
+     * Creates an HTTP 201 Created response with a message and a content payload.
      *
      * @param <T>     the type of the response content
-     * @param message the response message
-     * @param content the response content
-     * @return a ResponseEntity with CREATED status
+     * @param message the human-readable response message; must not be {@code null}
+     * @param content the response payload; may be {@code null}
+     * @return a {@link ResponseEntity} with HTTP 201 status wrapping an {@code ApiResponse}
      */
     public static <T> ResponseEntity<ApiResponse<T>> created(String message, T content) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -162,10 +190,10 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Creates a SUCCESS (200) response with only a message.
+     * Creates an HTTP 200 OK response with a message and no content.
      *
-     * @param message the response message
-     * @return a ResponseEntity with OK status
+     * @param message the human-readable response message; must not be {@code null}
+     * @return a {@link ResponseEntity} with HTTP 200 status wrapping an {@code ApiResponse<Void>}
      */
     public static ResponseEntity<ApiResponse<Void>> success(String message) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -176,12 +204,12 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Creates a SUCCESS (200) response with a message and content.
+     * Creates an HTTP 200 OK response with a message and a content payload.
      *
      * @param <T>     the type of the response content
-     * @param message the response message
-     * @param content the response content
-     * @return a ResponseEntity with OK status
+     * @param message the human-readable response message; must not be {@code null}
+     * @param content the response payload; may be {@code null}
+     * @return a {@link ResponseEntity} with HTTP 200 status wrapping an {@code ApiResponse}
      */
     public static <T> ResponseEntity<ApiResponse<T>> success(String message, T content) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -193,11 +221,11 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Creates a response with a custom HTTP status and message only.
+     * Creates a response with a custom HTTP status and a message, carrying no content.
      *
-     * @param message the response message
-     * @param status  the HTTP status
-     * @return a ResponseEntity with the specified status
+     * @param message the human-readable response message; must not be {@code null}
+     * @param status  the HTTP status to use; must not be {@code null}
+     * @return a {@link ResponseEntity} with the specified status wrapping an {@code ApiResponse<Void>}
      */
     public static ResponseEntity<ApiResponse<Void>> status(String message, HttpStatus status) {
         return ResponseEntity.status(status)
@@ -208,13 +236,13 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Creates a response with a custom HTTP status, message, and content.
+     * Creates a response with a custom HTTP status, a message, and a content payload.
      *
      * @param <T>     the type of the response content
-     * @param message the response message
-     * @param content the response content
-     * @param status  the HTTP status
-     * @return a ResponseEntity with the specified status
+     * @param message the human-readable response message; must not be {@code null}
+     * @param content the response payload; may be {@code null}
+     * @param status  the HTTP status to use; must not be {@code null}
+     * @return a {@link ResponseEntity} with the specified status wrapping an {@code ApiResponse}
      */
     public static <T> ResponseEntity<ApiResponse<T>> status(String message, T content, HttpStatus status) {
         return ResponseEntity.status(status)
@@ -226,11 +254,11 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Creates a response with a custom HTTP status and error message only.
+     * Creates an error response with a custom HTTP status and a message, carrying no content.
      *
-     * @param message the error response message
-     * @param status  the HTTP status
-     * @return a ResponseEntity with the specified status
+     * @param message the human-readable error message; must not be {@code null}
+     * @param status  the HTTP error status to use; must not be {@code null}
+     * @return a {@link ResponseEntity} with the specified status wrapping an {@code ApiResponse<Void>}
      */
     public static ResponseEntity<ApiResponse<Void>> error(String message, HttpStatus status) {
         return ResponseEntity.status(status)
@@ -241,13 +269,17 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Creates a response with a custom HTTP status, error message, and content.
+     * Creates an error response with a custom HTTP status, a message, and a content payload.
+     * <p>
+     * Use this overload when you need to include structured error details (e.g., field-level
+     * validation errors) alongside the error message.
+     * </p>
      *
-     * @param <T>     the type of the response content
-     * @param message the error response message
-     * @param content the response content
-     * @param status  the HTTP status
-     * @return a ResponseEntity with the specified status
+     * @param <T>     the type of the error detail content
+     * @param message the human-readable error message; must not be {@code null}
+     * @param content the structured error detail payload; may be {@code null}
+     * @param status  the HTTP error status to use; must not be {@code null}
+     * @return a {@link ResponseEntity} with the specified status wrapping an {@code ApiResponse}
      */
     public static <T> ResponseEntity<ApiResponse<T>> error(String message, T content, HttpStatus status) {
         return ResponseEntity.status(status)
@@ -259,7 +291,11 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Builder class for constructing {@link ApiResponse} instances.
+     * Builder for constructing {@link ApiResponse} instances with a fluent API.
+     * <p>
+     * Prefer the static factory methods ({@link #success}, {@link #created}, {@link #status},
+     * {@link #error}) over this builder for common use cases.
+     * </p>
      *
      * @param <T> the type of the response content
      */
@@ -270,7 +306,7 @@ public class ApiResponse<T> {
         private T content;
 
         /**
-         * Default constructor for creating an empty builder.
+         * Creates an empty builder. All fields are {@code null} until explicitly set.
          */
         public ApiResponseBuilder() {
             // Default constructor
@@ -279,8 +315,8 @@ public class ApiResponse<T> {
         /**
          * Sets the HTTP status code.
          *
-         * @param status the status code
-         * @return this builder instance
+         * @param status the HTTP status code value (e.g., 200, 201, 404)
+         * @return this builder instance for chaining
          */
         public ApiResponseBuilder<T> status(Integer status) {
             this.status = status;
@@ -288,10 +324,10 @@ public class ApiResponse<T> {
         }
 
         /**
-         * Sets the response message.
+         * Sets the human-readable response message.
          *
-         * @param message the message
-         * @return this builder instance
+         * @param message the response message
+         * @return this builder instance for chaining
          */
         public ApiResponseBuilder<T> message(String message) {
             this.message = message;
@@ -299,10 +335,10 @@ public class ApiResponse<T> {
         }
 
         /**
-         * Sets the response content.
+         * Sets the response content payload.
          *
-         * @param content the content
-         * @return this builder instance
+         * @param content the content payload; may be {@code null}
+         * @return this builder instance for chaining
          */
         public ApiResponseBuilder<T> content(T content) {
             this.content = content;
@@ -310,9 +346,13 @@ public class ApiResponse<T> {
         }
 
         /**
-         * Builds the {@link ApiResponse} instance.
+         * Builds and returns the {@link ApiResponse} instance.
+         * <p>
+         * The {@code timestamp} field is auto-generated to the current UTC instant at
+         * the moment this method is called.
+         * </p>
          *
-         * @return a new ApiResponse instance
+         * @return a new, fully populated {@link ApiResponse}; never {@code null}
          */
         public ApiResponse<T> build() {
             return new ApiResponse<>(this);

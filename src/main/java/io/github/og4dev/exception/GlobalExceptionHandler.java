@@ -18,9 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Global exception handler for Spring Boot REST APIs with comprehensive error coverage.
@@ -31,7 +29,7 @@ import java.util.UUID;
  * trace IDs for debugging and request correlation.
  * </p>
  * <p>
- * <b>Supported Exception Types (10 handlers):</b>
+ * <b>Built-in Supported Exception Types (10 handlers):</b>
  * </p>
  * <ol>
  *   <li><b>General Exceptions</b> - Catches all unhandled exceptions (HTTP 500)</li>
@@ -45,6 +43,14 @@ import java.util.UUID;
  *   <li><b>Null Pointer Exceptions</b> - NullPointerException handling (HTTP 500)</li>
  *   <li><b>Custom API Exceptions</b> - Domain-specific business logic errors (custom status)</li>
  * </ol>
+ * <p>
+ * <b>Extensible Exception Handling via {@link ApiExceptionTranslator}:</b>
+ * Register one or more {@link ApiExceptionTranslator} beans in the application context to handle
+ * third-party or framework exceptions that cannot extend {@link ApiException}. Each translator
+ * is automatically discovered and invoked when its target exception type is thrown, producing
+ * a consistent RFC 9457 ProblemDetail response without any additional {@code @ExceptionHandler}
+ * methods.
+ * </p>
  * <p>
  * <b>Error Response Format (RFC 9457 ProblemDetail):</b>
  * </p>
@@ -79,7 +85,8 @@ import java.util.UUID;
  * @since 1.0.0
  * @see org.springframework.web.bind.annotation.RestControllerAdvice
  * @see org.springframework.http.ProblemDetail
- * @see io.github.og4dev.exception.ApiException
+ * @see ApiException
+ * @see ApiExceptionTranslator
  */
 @ConditionalOnProperty(
         prefix = "api-response",
@@ -92,17 +99,35 @@ import java.util.UUID;
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    private final List<ApiExceptionTranslator<?>> translators;
     /**
-     * Default constructor for Spring bean instantiation.
+     * Constructs a new {@code GlobalExceptionHandler} with an optional list of custom
+     * {@link ApiExceptionTranslator} beans.
+     * <p>
+     * The provided translators are stored and consulted by the general
+     * {@link #handleAllExceptions(Exception)} handler before falling back to the default
+     * HTTP 500 response, allowing third-party exceptions to be mapped to meaningful
+     * RFC 9457 ProblemDetail responses without additional {@code @ExceptionHandler} methods.
+     * </p>
+     *
+     * @param translators an optional list of {@link ApiExceptionTranslator} beans injected
+     *                    by Spring; may be {@code null} if no translators are registered,
+     *                    in which case an empty list is used
      */
-    public GlobalExceptionHandler() {
-        // Default constructor for Spring bean instantiation
+    public GlobalExceptionHandler(List<ApiExceptionTranslator<?>> translators) {
+        this.translators = translators != null ? translators : Collections.emptyList();
     }
 
     /**
-     * Retrieves the trace ID from MDC or generates a new one if not present.
+     * Returns the current trace ID from SLF4J MDC, generating and storing a new UUID
+     * if none is present.
+     * <p>
+     * This ensures every error response carries a trace ID regardless of whether a
+     * {@link io.github.og4dev.filter.TraceIdFilter} is registered, so logs and responses
+     * are always correlatable.
+     * </p>
      *
-     * @return the trace ID
+     * @return the existing or newly generated trace ID string; never {@code null}
      */
     private String getOrGenerateTraceId() {
         String traceId = MDC.get("traceId");
@@ -114,10 +139,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles all unhandled exceptions.
+     * Handles all unhandled exceptions and dispatches to registered {@link ApiExceptionTranslator}
+     * beans before falling back to a generic HTTP 500 response.
+     * <p>
+     * Processing order:
+     * </p>
+     * <ol>
+     *   <li>Logs the exception at {@code ERROR} level with the trace ID, source class, and line number.</li>
+     *   <li>Iterates registered {@link ApiExceptionTranslator} beans and checks whether any translator's
+     *       {@link ApiExceptionTranslator#getTargetException()} is assignable from the thrown exception type.</li>
+     *   <li>On a match, logs the translation at {@code WARN} level (exception type, translator class name,
+     *       and translated message), then returns a ProblemDetail built from the translator's status and message.</li>
+     *   <li>If no translator matches, returns a generic HTTP 500 ProblemDetail response.</li>
+     * </ol>
      *
-     * @param ex the exception
-     * @return ProblemDetail response with 500 status
+     * @param ex the unhandled exception
+     * @return a {@link ProblemDetail} response — translated by a matching {@link ApiExceptionTranslator}
+     *         if one is registered, otherwise HTTP 500
      */
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleAllExceptions(Exception ex) {
@@ -129,6 +167,30 @@ public class GlobalExceptionHandler {
         log.error("[TraceID: {}] Error in {}:{} - Message: {}",
                 traceId, className, lineNumber, ex.getMessage());
 
+        if (translators != null) {
+            for (ApiExceptionTranslator<?> translator : translators) {
+                if (translator.getTargetException().isAssignableFrom(ex.getClass())) {
+
+                    @SuppressWarnings("unchecked")
+                    ApiExceptionTranslator<Exception> typedTranslator = (ApiExceptionTranslator<Exception>) translator;
+
+                    log.warn("[TraceID: {}] Translated exception [{}] via {}: {}",
+                            traceId,
+                            ex.getClass().getSimpleName(),
+                            typedTranslator.getClass().getSimpleName(),
+                            typedTranslator.getMessage(ex));
+
+                    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                            typedTranslator.getStatus(),
+                            typedTranslator.getMessage(ex)
+                    );
+                    problemDetail.setProperty("traceId", traceId);
+                    problemDetail.setProperty("timestamp", Instant.now());
+                    return problemDetail;
+                }
+            }
+        }
+
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "Internal Server Error. Please contact technical support");
@@ -138,10 +200,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles validation exceptions from @Valid annotations.
+     * Handles validation failures raised by {@code @Valid} and {@code @Validated} annotations.
+     * <p>
+     * Collects all field-level constraint violations from the binding result. When multiple
+     * violations exist for the same field, their messages are merged with a {@code "; "}
+     * separator. The aggregated map is included in the {@code errors} extension field of the
+     * ProblemDetail response and logged at {@code WARN} level.
+     * </p>
      *
-     * @param ex the validation exception
-     * @return ProblemDetail response with 400 status and field errors
+     * @param ex the validation exception containing one or more field errors
+     * @return a {@link ProblemDetail} with HTTP 400 status and an {@code errors} map
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -162,10 +230,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles method argument type mismatch exceptions.
+     * Handles type conversion failures for method arguments (e.g., passing a non-numeric
+     * string where an {@code Integer} path variable is expected).
+     * <p>
+     * Logs the mismatch details at {@code WARN} level and returns a descriptive message
+     * that includes the rejected value, the parameter name, and the expected type.
+     * </p>
      *
-     * @param ex the type mismatch exception
-     * @return ProblemDetail response with 400 status
+     * @param ex the exception describing the type mismatch
+     * @return a {@link ProblemDetail} with HTTP 400 status
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
@@ -180,10 +253,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles malformed JSON request exceptions.
+     * Handles malformed or unreadable JSON request bodies.
+     * <p>
+     * Triggered when Jackson cannot parse the incoming request body (e.g., missing quotes,
+     * invalid structure, wrong data types). Logs at {@code WARN} level and returns a
+     * generic message that guides the client to check the request body format.
+     * </p>
      *
-     * @param ex the HTTP message not readable exception
-     * @return ProblemDetail response with 400 status
+     * @param ex the exception raised when the HTTP message body cannot be read
+     * @return a {@link ProblemDetail} with HTTP 400 status
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
@@ -196,10 +274,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles missing required request parameter exceptions.
+     * Handles missing required {@code @RequestParam} query parameters.
+     * <p>
+     * Returns a descriptive message that includes the expected parameter name and its
+     * declared type so the client can correct the request.
+     * </p>
      *
-     * @param ex the missing parameter exception
-     * @return ProblemDetail response with 400 status
+     * @param ex the exception carrying the missing parameter name and type
+     * @return a {@link ProblemDetail} with HTTP 400 status
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ProblemDetail handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
@@ -215,10 +297,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles 404 Not Found exceptions.
+     * Handles requests for endpoints or static resources that do not exist.
+     * <p>
+     * Includes the requested resource path in the response message to help clients
+     * identify the incorrect URL. Logs at {@code WARN} level.
+     * </p>
      *
-     * @param ex the no resource found exception
-     * @return ProblemDetail response with 404 status
+     * @param ex the exception carrying the unresolved resource path
+     * @return a {@link ProblemDetail} with HTTP 404 status
      */
     @ExceptionHandler(NoResourceFoundException.class)
     public ProblemDetail handleNoResourceFoundException(NoResourceFoundException ex) {
@@ -233,10 +319,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles HTTP method not supported exceptions.
+     * Handles requests that use an HTTP method not supported by the target endpoint.
+     * <p>
+     * Includes the unsupported method and the list of allowed methods in the response
+     * message so the client can retry with a valid method. Logs at {@code WARN} level.
+     * </p>
      *
-     * @param ex the method not supported exception
-     * @return ProblemDetail response with 405 status
+     * @param ex the exception carrying the unsupported method and the supported method set
+     * @return a {@link ProblemDetail} with HTTP 405 status
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ProblemDetail handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
@@ -252,10 +342,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles unsupported media type exceptions.
+     * Handles requests whose {@code Content-Type} header specifies a media type not
+     * accepted by the target endpoint.
+     * <p>
+     * Includes the received content type and the list of supported types in the response
+     * message. Logs at {@code WARN} level.
+     * </p>
      *
-     * @param ex the media type not supported exception
-     * @return ProblemDetail response with 415 status
+     * @param ex the exception carrying the unsupported content type and the supported set
+     * @return a {@link ProblemDetail} with HTTP 415 status
      */
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ProblemDetail handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
@@ -271,10 +366,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles null pointer exceptions.
+     * Handles {@link NullPointerException} thrown anywhere during request processing.
+     * <p>
+     * Logs the full stack trace at {@code ERROR} level for server-side investigation while
+     * returning a generic, non-leaking message to the client. Stack trace details are
+     * intentionally withheld from the response to prevent information disclosure.
+     * </p>
      *
      * @param ex the null pointer exception
-     * @return ProblemDetail response with 500 status
+     * @return a {@link ProblemDetail} with HTTP 500 status
      */
     @ExceptionHandler(NullPointerException.class)
     public ProblemDetail handleNullPointerExceptions(NullPointerException ex) {
@@ -287,10 +387,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles custom API exceptions.
+     * Handles all {@link ApiException} subclasses representing domain-specific business
+     * logic errors.
+     * <p>
+     * The HTTP status and detail message are taken directly from the exception instance,
+     * giving each subclass full control over the error response. Logs at {@code WARN} level
+     * with the trace ID, message, and status code.
+     * </p>
      *
-     * @param ex the API exception
-     * @return ProblemDetail response with the exception's status code
+     * @param ex the domain exception carrying the status and detail message
+     * @return a {@link ProblemDetail} whose status and {@code detail} field are sourced
+     *         from {@link ApiException#getStatus()} and {@link ApiException#getMessage()}
      */
     @ExceptionHandler(ApiException.class)
     public ProblemDetail handleApiException(ApiException ex) {
