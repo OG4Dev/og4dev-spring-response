@@ -19,79 +19,75 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * Global response interceptor that automatically wraps REST controller outputs into the
- * standardized {@link ApiResponse} format.
+ * Spring {@link ResponseBodyAdvice} implementation that automatically encapsulates REST
+ * controller return values inside a standardized {@link ApiResponse} envelope.
  * <p>
- * This wrapper is conditionally activated <b>only</b> for controllers or specific methods
- * annotated with the {@link AutoResponse @AutoResponse} annotation. It provides a seamless
- * developer experience by eliminating the need to manually return {@code ResponseEntity<ApiResponse<T>>}
- * from every controller method.
+ * This wrapper is activated <b>only</b> for controllers or individual methods annotated
+ * with {@link AutoResponse @AutoResponse}. It intercepts the outgoing response body
+ * before Jackson serializes it, wraps the payload, and sends the resulting
+ * {@link ApiResponse} structure to the client — eliminating manual
+ * {@code ResponseEntity<ApiResponse<T>>} boilerplate.
  * </p>
- * <h2>Core Functionalities:</h2>
+ *
+ * <h2>Core Behaviours</h2>
  * <ul>
- * <li><b>Automatic Encapsulation:</b> Intercepts raw DTOs, Lists, or primitive responses and packages
- * them into the {@code content} field of an {@code ApiResponse}.</li>
- * <li><b>Status Code Preservation:</b> Dynamically reads the current HTTP status of the response
- * (e.g., set via {@code @ResponseStatus(HttpStatus.CREATED)}) and ensures it is accurately
- * reflected in the final {@code ApiResponse}.</li>
- * <li><b>String Payload Compatibility:</b> Safely intercepts raw {@code String} returns and manually
- * serializes them to prevent {@code ClassCastException} when Spring utilizes the {@code StringHttpMessageConverter}.</li>
- * <li><b>Safety Mechanisms:</b> Intelligently skips wrapping if the response is already formatted
- * to prevent double-wrapping errors or interference with standard error handling protocols.</li>
+ *   <li><b>Automatic Encapsulation</b> — Raw DTOs, collections, and primitive values are
+ *       placed in the {@code content} field of an {@link ApiResponse}.</li>
+ *   <li><b>Status Code Preservation</b> — The HTTP status already set on the response
+ *       (e.g., via {@code @ResponseStatus(HttpStatus.CREATED)}) is read and reflected
+ *       in the final {@code ApiResponse.status} field.</li>
+ *   <li><b>Custom Message</b> — The {@link AutoResponse#message()} value at method level
+ *       takes precedence; falls back to the class-level value, then {@code "Success"}.</li>
+ *   <li><b>String Payload Compatibility</b> — Raw {@code String} returns are explicitly
+ *       serialized via the injected {@code ObjectMapper} and the response
+ *       {@code Content-Type} is forced to {@code application/json}, preventing
+ *       {@code ClassCastException} with Spring's {@code StringHttpMessageConverter}.</li>
+ *   <li><b>Double-Wrap Prevention</b> — Already-formatted return types ({@link ApiResponse},
+ *       {@link ResponseEntity}, {@link ProblemDetail}) are skipped entirely.</li>
  * </ul>
  *
  * @author Pasindu OG
  * @version 1.4.0
+ * @since 1.4.0
  * @see AutoResponse
  * @see ApiResponse
- * @see ResponseBodyAdvice
- * @since 1.4.0
+ * @see org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
  */
 @RestControllerAdvice
 @SuppressWarnings("unused")
-public @NullMarked class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
+@NullMarked
+public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
 
     private final ObjectMapper objectMapper;
 
     /**
-     * Constructs a new {@code GlobalResponseWrapper} with the provided {@link ObjectMapper}.
+     * Constructs a {@code GlobalResponseWrapper} with the Jackson {@code ObjectMapper}
+     * used for explicit {@code String} payload serialization.
      *
-     * @param objectMapper The Jackson object mapper used for explicit string serialization.
+     * @param objectMapper the configured Jackson mapper injected by Spring; must not be {@code null}
      */
     public GlobalResponseWrapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     /**
-     * Determines whether the current response should be intercepted and wrapped.
+     * Determines whether this advice should process the current response body.
      * <p>
-     * This method evaluates two main conditions before allowing the response to be wrapped:
+     * Returns {@code true} only when <b>both</b> of the following conditions are met:
      * </p>
      * <ol>
-     * <li><b>Annotation Presence:</b> The target controller class or the specific handler method
-     * must be annotated with {@link AutoResponse}.</li>
-     * <li><b>Type Exclusion:</b> The return type must <b>not</b> be one of the explicitly excluded types.</li>
+     *   <li>The controller class or the specific handler method is annotated with
+     *       {@link AutoResponse}.</li>
+     *   <li>The method's return type is <b>not</b> one of the explicitly excluded types:
+     *       {@link ApiResponse}, {@link ResponseEntity}, or {@link ProblemDetail}.</li>
      * </ol>
-     * <p>
-     * To guarantee application stability and adherence to standard HTTP protocols, this method
-     * specifically <b>excludes</b> the following return types from being wrapped:
-     * </p>
-     * <ul>
-     * <li>{@link ApiResponse} - Prevents recursive double-wrapping (e.g., {@code ApiResponse<ApiResponse<T>>}).</li>
-     * <li>{@link ResponseEntity} - Skips manual responses to respect developer's explicit configurations.</li>
-     * <li>{@link ProblemDetail} - Excludes RFC 9457 error responses generated by exception handlers.</li>
-     * </ul>
-     * <p>
-     * Note: Unlike standard wrappers, raw {@link String} payloads are <b>supported</b> and handled
-     * appropriately during the write phase.
-     * </p>
      *
-     * @param returnType    The return type of the controller method.
-     * @param converterType The selected HTTP message converter.
-     * @return {@code true} if annotated with {@code @AutoResponse} and not an excluded type; {@code false} otherwise.
+     * @param returnType    the return type descriptor of the handler method
+     * @param converterType the message converter selected by Spring MVC
+     * @return {@code true} if the response body should be wrapped; {@code false} otherwise
      */
     @Override
-    public @NullMarked boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         Class<?> type = returnType.getParameterType();
         boolean isExcludedType = ApiResponse.class.isAssignableFrom(type) ||
                 ResponseEntity.class.isAssignableFrom(type) ||
@@ -103,28 +99,30 @@ public @NullMarked class GlobalResponseWrapper implements ResponseBodyAdvice<Obj
     }
 
     /**
-     * Intercepts the response body before it is written to the output stream and encapsulates it
-     * within an {@link ApiResponse}.
+     * Intercepts the outgoing response body and wraps it inside an {@link ApiResponse}.
      * <p>
-     * This method extracts the actual HTTP status code set on the current response (defaulting to 200 OK).
-     * Based on whether the status code represents a success (2xx) or another state, it dynamically
-     * assigns an appropriate message ("Success" or "Processed") to the API response.
+     * The HTTP status code already set on the servlet response is read and encoded in the
+     * {@code ApiResponse.status} field. For 2xx status codes the
+     * {@link AutoResponse#message()} value (method-level first, then class-level) is used
+     * as the message; for all other codes the message is {@code "Processed"}.
      * </p>
      * <p>
-     * <b>Special String Handling:</b> If the intercepted payload is a raw {@code String}, it is
-     * explicitly serialized to a JSON string using the configured {@link ObjectMapper}, and the
-     * response {@code Content-Type} is strictly set to {@code application/json}. This prevents
-     * standard message converter conflicts.
+     * <b>Raw {@code String} handling:</b> if the original body is a {@code String}, the
+     * resulting {@link ApiResponse} is serialized to a JSON string immediately using the
+     * injected {@code ObjectMapper} and the response {@code Content-Type} header is set to
+     * {@code application/json}. This prevents Spring from routing the value through the
+     * {@code StringHttpMessageConverter}, which would cause a {@code ClassCastException}.
+     * If serialization fails, the original string is returned unchanged as a fallback.
      * </p>
      *
-     * @param body                  The raw object returned by the controller method.
-     * @param returnType            The return type of the controller method.
-     * @param selectedContentType   The selected content type for the response.
-     * @param selectedConverterType The selected HTTP message converter.
-     * @param request               The current server HTTP request.
-     * @param response              The current server HTTP response.
-     * @return The newly wrapped {@code ApiResponse} object ready to be serialized, or a pre-serialized
-     * JSON {@code String} if the original payload was a raw string.
+     * @param body                  the value returned by the handler method; may be {@code null}
+     * @param returnType            the return type descriptor of the handler method
+     * @param selectedContentType   the content type selected by content negotiation
+     * @param selectedConverterType the message converter selected by Spring MVC
+     * @param request               the current server-side HTTP request
+     * @param response              the current server-side HTTP response
+     * @return the wrapped {@link ApiResponse} object, or a pre-serialized JSON
+     *         {@code String} when the original body was a raw string
      */
     @Override
     public @Nullable Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
@@ -134,7 +132,16 @@ public @NullMarked class GlobalResponseWrapper implements ResponseBodyAdvice<Obj
             statusCode = serverHttpResponse.getServletResponse().getStatus();
         }
         HttpStatus httpStatus = HttpStatus.valueOf(statusCode);
-        ApiResponse<Object> apiResponse = ApiResponse.status(httpStatus.is2xxSuccessful() ? "Success" : "Processed", body, httpStatus).getBody();
+
+        String responseMessage = "Success";
+        AutoResponse methodAnnotation = returnType.getMethodAnnotation(AutoResponse.class);
+        if (methodAnnotation != null) {
+            responseMessage = methodAnnotation.message();
+        } else {
+            AutoResponse classAnnotation = returnType.getDeclaringClass().getAnnotation(AutoResponse.class);
+            if (classAnnotation != null) responseMessage = classAnnotation.message();
+        }
+        ApiResponse<Object> apiResponse = ApiResponse.status(httpStatus.is2xxSuccessful() ? responseMessage : "Processed", body, httpStatus).getBody();
 
         if (body instanceof String) {
             try {

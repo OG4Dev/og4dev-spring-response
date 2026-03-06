@@ -1,163 +1,94 @@
 /**
- * Field-level annotations for opt-in JSON deserialization security and data processing features.
+ * Opt-in annotations for JSON deserialization security and data quality.
  * <p>
- * This package provides annotations that enable fine-grained control over JSON string field processing
- * in the OG4Dev Spring API Response library. Unlike automatic processing approaches, these annotations
- * follow an <b>opt-in philosophy</b>: fields are preserved as-is by default, and you explicitly choose
- * which fields should be trimmed or validated.
+ * This package provides three annotations that give developers fine-grained, declarative
+ * control over how string fields are processed during Jackson deserialization. All features
+ * follow an <b>opt-in philosophy</b> — no field is ever modified or validated unless an
+ * annotation explicitly requests it.
  * </p>
  *
- * <h2>Philosophy: Opt-in by Default</h2>
- * <p>
- * Version 1.3.0 introduces an opt-in security model that gives developers complete control:
- * </p>
+ * <h2>Available Annotations</h2>
  * <ul>
- *   <li><b>Default Behavior:</b> String fields are preserved exactly as received (no modifications)</li>
- *   <li><b>Explicit Control:</b> Use annotations to enable trimming or XSS validation per field</li>
- *   <li><b>No Surprises:</b> Your data is never modified unless you explicitly request it</li>
- *   <li><b>Production-Ready:</b> Enable security features only where needed</li>
+ *   <li>{@link io.github.og4dev.annotation.AutoResponse} — Enables automatic
+ *       {@link io.github.og4dev.dto.ApiResponse} wrapping for a REST controller class or
+ *       individual request-mapping method.</li>
+ *   <li>{@link io.github.og4dev.annotation.AutoTrim} — Removes leading and trailing
+ *       whitespace from annotated {@code String} fields or all {@code String} fields in an
+ *       annotated class at deserialization time.</li>
+ *   <li>{@link io.github.og4dev.annotation.XssCheck} — Rejects strings that contain HTML
+ *       or XML tags with an HTTP 400 Bad Request error (fail-fast XSS prevention) for
+ *       annotated fields or entire classes.</li>
  * </ul>
  *
- * <h2>Available Annotations:</h2>
- * <ul>
- *   <li>{@link io.github.og4dev.annotation.AutoTrim} - Opt-in automatic whitespace trimming
- *       for specific string fields (e.g., usernames, emails, search queries)</li>
- *   <li>{@link io.github.og4dev.annotation.XssCheck} - Opt-in XSS validation with fail-fast
- *       HTML tag rejection (e.g., user comments, profile fields, user-generated content)</li>
- * </ul>
- *
- * <h2>Default Behavior (No Annotations):</h2>
+ * <h2>Default Behavior</h2>
  * <p>
- * By default, string fields in DTOs are <b>NOT modified</b> during JSON deserialization:
+ * Without any annotation, string fields are passed through exactly as received:
  * </p>
- * <ul>
- *   <li><b>No Trimming:</b> Leading and trailing whitespace is preserved</li>
- *   <li><b>No XSS Validation:</b> HTML tags are allowed (not checked)</li>
- *   <li><b>Null Preservation:</b> Null values remain null (not converted to empty strings)</li>
- * </ul>
  * <pre>{@code
  * public class DefaultDTO {
- *     private String username;  // Preserved as-is: "  john  " → "  john  "
- *     private String comment;   // Preserved as-is: "<b>Hi</b>" → "<b>Hi</b>"
+ *     private String username; // "  john  " stays "  john  "
+ *     private String comment;  // "<b>Hi</b>" stays "<b>Hi</b>"
  * }
  * }</pre>
  *
- * <h2>Opt-in Features:</h2>
- *
- * <h3>1. Automatic Trimming with {@code @AutoTrim}</h3>
- * <p>
- * Apply {@code @AutoTrim} to fields where you want to remove leading/trailing whitespace:
- * </p>
+ * <h2>Field-Level Usage</h2>
  * <pre>{@code
- * import io.github.og4dev.annotation.AutoTrim;
- *
- * public class UserRegistrationDTO {
- *     @AutoTrim
- *     private String username;      // Trimmed: "  john  " → "john"
+ * public class UserDTO {
  *
  *     @AutoTrim
- *     private String email;         // Trimmed: " user@example.com " → "user@example.com"
+ *     private String username;  // "  john  " → "john"
  *
- *     private String password;      // NOT trimmed: "  pass  " → "  pass  "
+ *     @XssCheck
+ *     private String comment;   // "<script>" → 400 Bad Request
+ *
+ *     @AutoTrim
+ *     @XssCheck
+ *     private String bio;       // Trimmed first, then XSS-validated
+ *
+ *     private String role;      // Untouched
  * }
  * }</pre>
  *
- * <h3>2. XSS Validation with {@code @XssCheck}</h3>
- * <p>
- * Apply {@code @XssCheck} to fields where you want to reject HTML tags:
- * </p>
+ * <h2>Class-Level Usage</h2>
  * <pre>{@code
- * import io.github.og4dev.annotation.XssCheck;
- *
- * public class CommentDTO {
- *     @XssCheck
- *     private String content;       // Rejects: "<script>alert()</script>"
- *
- *     @XssCheck
- *     private String authorName;    // Rejects: "<b>John</b>"
- *
- *     private String commentId;     // Allows: "<id-123>" (no validation)
- * }
- * }</pre>
- *
- * <h3>3. Combining Both Annotations</h3>
- * <p>
- * Use both annotations together for fields that need trimming AND XSS validation:
- * </p>
- * <pre>{@code
- * import io.github.og4dev.annotation.AutoTrim;
- * import io.github.og4dev.annotation.XssCheck;
- *
+ * @AutoTrim
+ * @XssCheck
  * public class SecureInputDTO {
- *     @AutoTrim
- *     @XssCheck
- *     private String username;  // First trimmed, then XSS-validated
- *
- *     @XssCheck
- *     private String comment;   // Only XSS-validated (not trimmed)
- *
- *     @AutoTrim
- *     private String email;     // Only trimmed (not XSS-validated)
- *
- *     private String bio;       // Neither (preserved as-is)
+ *     private String firstName; // Trimmed and XSS-validated automatically
+ *     private String lastName;  // Trimmed and XSS-validated automatically
  * }
  * }</pre>
  *
- * <h2>Processing Order:</h2>
+ * <h2>Processing Order</h2>
  * <p>
- * When both annotations are present on a field, processing happens in this order:
+ * When both {@code @AutoTrim} and {@code @XssCheck} are active on the same field,
+ * processing always occurs in this order:
  * </p>
  * <ol>
- *   <li>String is trimmed (if {@code @AutoTrim} is present)</li>
- *   <li>Trimmed string is checked for HTML tags (if {@code @XssCheck} is present)</li>
- *   <li>If HTML tags found, an exception is thrown</li>
+ *   <li>The string value is trimmed.</li>
+ *   <li>The trimmed value is checked for HTML or XML tags.</li>
+ *   <li>If a tag is found, an {@link java.lang.IllegalArgumentException} is thrown,
+ *       which produces an HTTP 400 Bad Request response.</li>
  * </ol>
  *
- * <h2>Migration from v1.2.0:</h2>
+ * <h2>Integration</h2>
  * <p>
- * Version 1.2.0 automatically trimmed and validated all string fields. Version 1.3.0 requires
- * explicit annotations. To maintain the same behavior:
- * </p>
- * <pre>{@code
- * // v1.2.0 (automatic)
- * public class UserDTO {
- *     private String username;  // Was automatically trimmed
- * }
- *
- * // v1.3.0 (opt-in)
- * import io.github.og4dev.annotation.AutoTrim;
- * import io.github.og4dev.annotation.XssCheck;
- *
- * public class UserDTO {
- *     @AutoTrim
- *     @XssCheck
- *     private String username;  // Now explicitly enabled
- * }
- * }</pre>
- *
- * <h2>Integration with Jackson:</h2>
- * <p>
- * These annotations are processed by the {@code AdvancedStringDeserializer} registered in
+ * {@code @AutoTrim} and {@code @XssCheck} are processed by
+ * {@link io.github.og4dev.config.AdvancedStringDeserializer}, which is registered with
+ * Jackson via
  * {@link io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()}.
- * The deserializer uses Jackson's contextual deserialization mechanism
- * ({@link tools.jackson.databind.ValueDeserializer#createContextual}) to detect
- * annotations and create specialized deserializer instances with the appropriate behavior.
- * </p>
- *
- * <h2>Performance:</h2>
- * <p>
- * The annotation detection and deserializer creation happens once per field during Jackson
- * ObjectMapper initialization, not on every request. This ensures optimal runtime performance
- * with negligible overhead (typically &lt;1ms per request).
+ * Annotation detection happens once per field during {@code ObjectMapper} initialization,
+ * not on every request, keeping runtime overhead negligible.
  * </p>
  *
  * @author Pasindu OG
  * @version 1.4.0
+ * @since 1.3.0
+ * @see io.github.og4dev.annotation.AutoResponse
  * @see io.github.og4dev.annotation.AutoTrim
  * @see io.github.og4dev.annotation.XssCheck
  * @see io.github.og4dev.config.ApiResponseAutoConfiguration
- * @since 1.3.0
+ * @see io.github.og4dev.config.AdvancedStringDeserializer
  */
 package io.github.og4dev.annotation;
-
 

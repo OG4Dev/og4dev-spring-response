@@ -12,77 +12,79 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Servlet filter that generates and manages trace IDs for distributed tracing.
+ * {@link OncePerRequestFilter} that generates a unique UUID trace ID for every incoming
+ * HTTP request and propagates it through SLF4J MDC and request attributes.
  * <p>
- * This filter generates a unique UUID for each incoming HTTP request and stores it in both
- * the request attributes and SLF4J's MDC (Mapped Diagnostic Context). This enables automatic
- * trace ID inclusion in all log statements throughout the request lifecycle, facilitating
- * request correlation and debugging across distributed systems.
- * </p>
- * <p>
- * <b>Key Features:</b>
+ * The trace ID is stored under the key {@code "traceId"} in two places:
  * </p>
  * <ul>
- *   <li>Automatic UUID generation for each request</li>
- *   <li>MDC integration for automatic log inclusion</li>
- *   <li>Request attribute storage for programmatic access</li>
- *   <li>Thread-safe with automatic MDC cleanup</li>
- *   <li>Compatible with microservices architectures</li>
+ *   <li><b>SLF4J MDC</b> — automatically appended to every log statement produced during
+ *       the request when the Logback/Log4j pattern includes {@code %X{traceId}}.</li>
+ *   <li><b>Servlet request attributes</b> — accessible programmatically within filters,
+ *       interceptors, and controllers via {@code request.getAttribute("traceId")}.</li>
  * </ul>
  * <p>
- * <b>Usage:</b> Register this filter as a Spring bean with highest precedence:
+ * The MDC entry is always removed in a {@code finally} block after the filter chain
+ * completes, preventing trace ID leakage across requests in shared thread-pool environments.
+ * </p>
+ * <p>
+ * The same trace ID is also embedded in every RFC 9457 ProblemDetail error response
+ * produced by {@link io.github.og4dev.exception.GlobalExceptionHandler}, allowing
+ * client-reported trace IDs to be matched directly against server logs.
+ * </p>
+ *
+ * <h2>Registration</h2>
+ * <p>
+ * This filter is <b>not</b> registered automatically. Register it with highest precedence
+ * so the trace ID is available to all downstream filters and handlers:
  * </p>
  * <pre>{@code
- * @Configuration
- * public class FilterConfig {
- *     @Bean
- *     public FilterRegistrationBean<TraceIdFilter> traceIdFilter() {
- *         FilterRegistrationBean<TraceIdFilter> registration = new FilterRegistrationBean<>();
- *         registration.setFilter(new TraceIdFilter());
- *         registration.addUrlPatterns("/*");
- *         registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
- *         return registration;
- *     }
+ * @Bean
+ * public FilterRegistrationBean<TraceIdFilter> traceIdFilter() {
+ *     FilterRegistrationBean<TraceIdFilter> registration = new FilterRegistrationBean<>();
+ *     registration.setFilter(new TraceIdFilter());
+ *     registration.addUrlPatterns("/*");
+ *     registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+ *     return registration;
  * }
  * }</pre>
- * <p>
- * <b>Logback Configuration:</b> Configure your logger to include the trace ID:
- * </p>
+ *
+ * <h2>Logback Pattern</h2>
  * <pre>{@code
  * <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{36} - %msg%n</pattern>
  * }</pre>
- * <p>
- * <b>MDC Cleanup:</b> The filter automatically clears MDC in the finally block to prevent
- * memory leaks and cross-request contamination.
- * </p>
  *
  * @author Pasindu OG
  * @version 1.4.0
  * @since 1.0.0
  * @see org.springframework.web.filter.OncePerRequestFilter
  * @see org.slf4j.MDC
+ * @see io.github.og4dev.exception.GlobalExceptionHandler
  */
 @SuppressWarnings("unused")
 public class TraceIdFilter extends OncePerRequestFilter {
 
     /**
-     * Default constructor for Spring filter registration.
+     * Default no-arg constructor required for Spring's
+     * {@link org.springframework.web.filter.GenericFilterBean} registration mechanism.
      */
     public TraceIdFilter() {
-        // Default constructor for Spring filter registration
+        // Required by Spring's filter registration mechanism
     }
 
     /**
-     * Generates a trace ID and stores it in request attributes and MDC.
+     * Generates a UUID trace ID, stores it in MDC and request attributes, then delegates
+     * to the rest of the filter chain.
      * <p>
-     * The trace ID is cleared from MDC after the request completes.
+     * MDC is unconditionally cleared in the {@code finally} block to prevent the trace ID
+     * from leaking into subsequent requests handled by the same thread.
      * </p>
      *
-     * @param request the HTTP request
-     * @param response the HTTP response
-     * @param filterChain the filter chain
-     * @throws ServletException if a servlet error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request     the current HTTP servlet request
+     * @param response    the current HTTP servlet response
+     * @param filterChain the remaining filter chain to delegate to
+     * @throws ServletException if a servlet-layer error occurs during processing
+     * @throws IOException      if an I/O error occurs during processing
      */
     @Override
     @NullMarked
