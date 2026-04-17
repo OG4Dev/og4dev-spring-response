@@ -4,142 +4,153 @@ import io.github.og4dev.advice.GlobalResponseWrapper;
 import io.github.og4dev.annotation.AutoResponse;
 import io.github.og4dev.annotation.AutoTrim;
 import io.github.og4dev.annotation.XssCheck;
-import io.github.og4dev.exception.ApiExceptionTranslator;
+import io.github.og4dev.exception.ApiExceptionRegistry;
 import io.github.og4dev.exception.GlobalExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.MapperFeature;
-import tools.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.*;
+import tools.jackson.databind.deser.std.StdScalarDeserializer;
 import tools.jackson.databind.module.SimpleModule;
 
-import java.util.List;
-
 /**
- * Spring Boot autoconfiguration class for the OG4Dev Spring API Response Library.
+ * Autoconfiguration class for the OG4Dev Spring API Response Library.
  * <p>
- * This class is loaded automatically by Spring Boot's autoconfiguration mechanism
- * when the library is on the classpath — no manual {@code @ComponentScan} or
- * {@code @Import} annotation is required. It registers all core library beans and
- * applies a Jackson customizer that enforces strict, secure JSON deserialization.
+ * This configuration is automatically loaded by Spring Boot's autoconfiguration mechanism
+ * when the library is present on the classpath. It registers essential beans required for
+ * the library to function properly, including the comprehensive global exception handler
+ * and the automatic response wrapper.
  * </p>
- *
- * <h2>Beans Registered</h2>
+ * <p>
+ * <b>Zero Configuration Required:</b> Simply adding the library dependency enables all features
+ * automatically. No manual {@code @ComponentScan} or {@code @Import} annotations are needed.
+ * </p>
+ * <h2>What Gets Auto-Configured:</h2>
  * <ul>
- *   <li>{@link GlobalExceptionHandler} — Central RFC 9457 exception handler with
- *       10 built-in handlers and support for {@link ApiExceptionTranslator} beans.</li>
- *   <li>{@link GlobalResponseWrapper} — Opt-in response envelope (activated by
- *       {@link AutoResponse @AutoResponse}); conditionally skipped when the developer
- *       provides their own {@code GlobalResponseWrapper} bean.</li>
- *   <li>{@link JsonMapperBuilderCustomizer} — Applies strict property validation,
- *       case-insensitive enum handling, and the {@link AdvancedStringDeserializer}
- *       for opt-in {@link AutoTrim @AutoTrim} / {@link XssCheck @XssCheck} support.</li>
+ * <li>{@link GlobalExceptionHandler} - Comprehensive exception handling with RFC 9457 ProblemDetail format
+ * <ul>
+ * <li>10 built-in exception handlers covering all common error scenarios</li>
+ * <li>Automatic trace ID generation and logging</li>
+ * <li>Validation error aggregation and formatting</li>
+ * <li>Production-ready error messages</li>
  * </ul>
- *
- * <h2>How Autoconfiguration Works</h2>
+ * </li>
+ * <li>{@link GlobalResponseWrapper} - Automatic wrapping of controller responses (Opt-in via {@code @AutoResponse})</li>
+ * </ul>
+ * <h2>How It Works:</h2>
  * <p>
- * Spring Boot 3.x reads
- * {@code META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports}
- * and loads this class during application context startup.
+ * Spring Boot 3.x+ automatically reads {@code META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports}
+ * and loads this configuration class during application startup.
  * </p>
- *
- * <h2>Disabling Autoconfiguration</h2>
+ * <h2>Disabling Auto-Configuration:</h2>
  * <p>
- * Exclude this class when you need full manual control:
+ * If you need to customize or disable this autoconfiguration, you can exclude it in your main application class:
  * </p>
  * <pre>{@code
  * @SpringBootApplication(exclude = ApiResponseAutoConfiguration.class)
  * public class Application {
- *     public static void main(String[] args) {
- *         SpringApplication.run(Application.class, args);
- *     }
+ * public static void main(String[] args) {
+ * SpringApplication.run(Application.class, args);
+ * }
  * }
  * }</pre>
  * <p>
- * Or via {@code application.properties}:
+ * Or in {@code application.properties}:
  * </p>
  * <pre>
  * spring.autoconfigure.exclude=io.github.og4dev.config.ApiResponseAutoConfiguration
  * </pre>
  *
  * @author Pasindu OG
- * @version 1.4.0
- * @since 1.0.0
+ * @version 1.5.0
  * @see GlobalExceptionHandler
  * @see GlobalResponseWrapper
- * @see AdvancedStringDeserializer
  * @see org.springframework.boot.autoconfigure.AutoConfiguration
+ * @since 1.0.0
  */
 @Configuration
 @SuppressWarnings("unused")
 public class ApiResponseAutoConfiguration {
 
     /**
-     * Default no-arg constructor required by Spring's configuration processing.
+     * Default constructor for ApiResponseAutoConfiguration.
      */
     public ApiResponseAutoConfiguration() {
-        // Required by Spring's @Configuration processing
+        // Default constructor for Spring autoconfiguration
     }
 
     /**
-     * Registers {@link GlobalExceptionHandler} as a Spring bean.
+     * Registers the {@link GlobalExceptionHandler} as a Spring bean for automatic exception handling.
      * <p>
-     * All {@link ApiExceptionTranslator} beans found in the application context are
-     * injected and stored in the handler. They are consulted before the generic HTTP 500
-     * fallback, allowing third-party exceptions to be mapped to meaningful RFC 9457
-     * ProblemDetail responses without any additional {@code @ExceptionHandler} methods.
+     * The handler provides comprehensive centralized exception management using Spring's
+     * {@link org.springframework.web.bind.annotation.RestControllerAdvice} mechanism,
+     * automatically converting various exceptions to RFC 9457 ProblemDetail responses.
      * </p>
      *
-     * @param translators optional list of {@link ApiExceptionTranslator} beans discovered
-     *                    by Spring; {@code null} when none are registered, in which case
-     *                    the handler uses an empty list
-     * @return a fully configured {@link GlobalExceptionHandler} instance
-     * @see ApiExceptionTranslator
+     * @param registry optional registry used to map external exception types
+     * @return A new instance of {@link GlobalExceptionHandler} registered as a Spring bean.
      */
     @Bean
-    public GlobalExceptionHandler apiResponseAdvisor(@Autowired(required = false) List<ApiExceptionTranslator<?>> translators) {
-        return new GlobalExceptionHandler(translators);
+    public GlobalExceptionHandler apiResponseAdvisor(@Autowired(required = false) ApiExceptionRegistry registry) {
+        return new GlobalExceptionHandler(registry);
     }
 
     /**
-     * Registers {@link GlobalResponseWrapper} as a Spring bean for opt-in response
-     * envelope wrapping.
+     * Registers the {@link GlobalResponseWrapper} as a Spring bean for automatic API response wrapping.
      * <p>
-     * When a REST controller class or method is annotated with
-     * {@link AutoResponse @AutoResponse}, this wrapper intercepts the return value and
-     * encapsulates it inside an {@link io.github.og4dev.dto.ApiResponse} before it is
-     * serialized to JSON.
+     * This bean enables the opt-in {@link AutoResponse @AutoResponse} feature. When a REST controller
+     * or method is annotated with {@code @AutoResponse}, this wrapper automatically intercepts the
+     * outgoing payload and encapsulates it within the standardized {@code ApiResponse<T>} structure
+     * before it is written to the HTTP response body.
      * </p>
-     * <p>
-     * This bean is guarded by {@code @ConditionalOnMissingBean}: if the application
-     * defines its own {@code GlobalResponseWrapper} bean, this default registration is
-     * skipped entirely, giving developers full control over wrapping behaviour.
-     * </p>
-     *
-     * <h2>Key Behaviours</h2>
+     * <h2>Key Capabilities:</h2>
      * <ul>
-     *   <li><b>Zero Boilerplate</b> — No manual {@code ResponseEntity<ApiResponse<T>>}
-     *       wrapping required in controllers.</li>
-     *   <li><b>Status Code Preservation</b> — Reads the current HTTP status set via
-     *       {@code @ResponseStatus} and reflects it in the {@code ApiResponse.status}
-     *       field.</li>
-     *   <li><b>Double-Wrap Prevention</b> — Skips wrapping when the return type is
-     *       already {@code ApiResponse}, {@code ResponseEntity}, or {@code ProblemDetail}.
-     *       </li>
-     *   <li><b>String Safety</b> — Raw {@code String} returns are serialized explicitly
-     *       via the injected {@code ObjectMapper} to prevent
-     *       {@code ClassCastException}.</li>
+     * <li><b>Zero Boilerplate:</b> Eliminates the need to manually return {@code ResponseEntity<ApiResponse<T>>}
+     * from every controller method.</li>
+     * <li><b>Status Code Preservation:</b> Intelligently reads and preserves custom HTTP status codes
+     * set via {@code @ResponseStatus} (e.g., 201 Created).</li>
+     * <li><b>Double-Wrap Prevention:</b> Safely skips wrapping if the controller already returns
+     * an {@code ApiResponse} or {@code ResponseEntity}.</li>
+     * <li><b>String Payload Support:</b> Safely intercepts and serializes raw {@code String} returns
+     * using the injected {@link ObjectMapper} to prevent {@code ClassCastException} with Spring's
+     * native message converters.</li>
+     * <li><b>Error Compatibility:</b> Bypasses {@code ProblemDetail} and exception responses to maintain
+     * RFC 9457 compliance managed by {@link GlobalExceptionHandler}.</li>
      * </ul>
+     * <h2>Example Usage:</h2>
+     * <pre>{@code
+     * @RestController
+     * @RequestMapping("/api/users")
+     * @AutoResponse // Enables automatic wrapping for all methods in this controller
+     * public class UserController {
+     * @GetMapping("/{id}")
+     * public UserDto getUser(@PathVariable Long id) {
+     * // Simply return the DTO. It will be sent to the client as:
+     * // { "status": "Success", "content": { "id": 1, "name": "..." }, "timestamp": "..." }
+     * return userService.findById(id);
+     * }
+     * @PostMapping
+     * @ResponseStatus(HttpStatus.CREATED)
+     * public UserDto createUser(@RequestBody UserDto dto) {
+     * // The 201 Created status will be preserved in the final ApiResponse
+     * return userService.create(dto);
+     * }
+     * }
+     * }</pre>
+     * <p>
+     * <b>Note:</b> This bean is conditionally loaded using {@code @ConditionalOnMissingBean}, allowing developers
+     * to easily override the default wrapping behavior by defining their own {@code GlobalResponseWrapper} bean.
+     * </p>
      *
-     * @param objectMapper the Jackson {@code ObjectMapper} injected by Spring, used for
-     *                     explicit {@code String} payload serialization
-     * @return a fully configured {@link GlobalResponseWrapper} instance
-     * @since 1.4.0
+     * @param objectMapper The Jackson object mapper injected by Spring, used by the wrapper for explicit string serialization.
+     * @return A new instance of {@link GlobalResponseWrapper} registered as a Spring bean.
      * @see AutoResponse
      * @see io.github.og4dev.dto.ApiResponse
+     * @since 1.4.0
      */
     @Bean
     @ConditionalOnMissingBean
@@ -148,42 +159,20 @@ public class ApiResponseAutoConfiguration {
     }
 
     /**
-     * Applies a {@link JsonMapperBuilderCustomizer} that configures strict and secure
-     * Jackson JSON deserialization globally.
-     *
-     * <h2>Always-On Features</h2>
-     * <ul>
-     *   <li><b>Unknown property rejection</b> ({@code FAIL_ON_UNKNOWN_PROPERTIES}) —
-     *       prevents mass-assignment attacks by rejecting payloads with unexpected
-     *       fields.</li>
-     *   <li><b>Case-insensitive enums</b> ({@code ACCEPT_CASE_INSENSITIVE_ENUMS}) —
-     *       accepts enum values in any letter case for improved API usability.</li>
-     * </ul>
-     *
-     * <h2>Opt-in Features (Annotation-Driven)</h2>
-     * <ul>
-     *   <li>{@link XssCheck @XssCheck} — Rejects {@code String} values containing HTML
-     *       or XML tags with a 400 Bad Request error.</li>
-     *   <li>{@link AutoTrim @AutoTrim} — Strips leading and trailing whitespace from
-     *       {@code String} values at deserialization time.</li>
-     * </ul>
+     * Configures strict JSON deserialization with opt-in security features via field-level and class-level annotations.
      * <p>
-     * When both annotations are active on the same field, trimming is applied first and
-     * XSS validation is performed on the trimmed value.
+     * This bean customizer enhances Jackson's JSON processing with production-ready security and data quality
+     * features that can be selectively applied to specific fields or entire classes using the
+     * {@link AutoTrim @AutoTrim} and {@link XssCheck @XssCheck} annotations. By default, fields are NOT
+     * trimmed or XSS-validated unless explicitly annotated.
      * </p>
      *
-     * <h2>Null Value Handling</h2>
-     * <p>
-     * {@code null} values pass through unchanged regardless of which annotations are
-     * present on the field.
-     * </p>
-     *
-     * @return a {@link JsonMapperBuilderCustomizer} that registers the strict deserialization
-     *         settings and the {@link AdvancedStringDeserializer}
+     * @return A {@link JsonMapperBuilderCustomizer} that configures strict JSON processing.
+     * @see DeserializationFeature#FAIL_ON_UNKNOWN_PROPERTIES
+     * @see MapperFeature#ACCEPT_CASE_INSENSITIVE_ENUMS
+     * @see io.github.og4dev.annotation.AutoTrim
+     * @see io.github.og4dev.annotation.XssCheck
      * @since 1.1.0
-     * @see AutoTrim
-     * @see XssCheck
-     * @see AdvancedStringDeserializer
      */
     @Bean
     public JsonMapperBuilderCustomizer strictJsonCustomizer() {
@@ -191,7 +180,67 @@ public class ApiResponseAutoConfiguration {
             builder.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
             builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
 
-            builder.addModules(new SimpleModule().addDeserializer(String.class, new AdvancedStringDeserializer()));
+            SimpleModule stringTrimModule = new SimpleModule();
+            stringTrimModule.addDeserializer(String.class, new AdvancedStringDeserializer());
+            builder.addModules(stringTrimModule);
         };
+    }
+
+    /**
+     * A specialized deserializer that applies opt-in string trimming and XSS validation.
+     * Extracted as a private static class to reduce cognitive complexity.
+     */
+    private static class AdvancedStringDeserializer extends StdScalarDeserializer<String> {
+        private final boolean shouldTrim;
+        private final boolean shouldXssCheck;
+
+        public AdvancedStringDeserializer() {
+            super(String.class);
+            this.shouldTrim = false;
+            this.shouldXssCheck = false;
+        }
+
+        public AdvancedStringDeserializer(boolean shouldTrim, boolean shouldXssCheck) {
+            super(String.class);
+            this.shouldTrim = shouldTrim;
+            this.shouldXssCheck = shouldXssCheck;
+        }
+
+        @Override
+        public String deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
+            String value = p.getValueAsString();
+            if (value == null) {
+                return null;
+            }
+
+            String processedValue = shouldTrim ? value.trim() : value;
+
+            if (shouldXssCheck && processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
+                throw new IllegalArgumentException("Security Error: HTML tags or XSS payloads are not allowed in the request.");
+            }
+
+            return processedValue;
+        }
+
+        @Override
+        public ValueDeserializer<?> createContextual(DeserializationContext ct, BeanProperty property) throws JacksonException {
+            if (property == null) {
+                return this;
+            }
+
+            boolean trim = property.getAnnotation(AutoTrim.class) != null;
+            boolean xss = property.getAnnotation(XssCheck.class) != null;
+            if (trim && xss) {
+                return new AdvancedStringDeserializer(true, true);
+            }
+            if (property.getMember() != null) {
+                Class<?> declaringClass = property.getMember().getDeclaringClass();
+                if (declaringClass != null) {
+                    trim = trim || declaringClass.getAnnotation(AutoTrim.class) != null;
+                    xss = xss || declaringClass.getAnnotation(XssCheck.class) != null;
+                }
+            }
+            return new AdvancedStringDeserializer(trim, xss);
+        }
     }
 }

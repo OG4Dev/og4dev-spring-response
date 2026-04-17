@@ -47,7 +47,7 @@ import tools.jackson.databind.ObjectMapper;
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.4.0
  * @see AutoResponse
  * @see ApiResponse
@@ -141,7 +141,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
             AutoResponse classAnnotation = returnType.getDeclaringClass().getAnnotation(AutoResponse.class);
             if (classAnnotation != null) responseMessage = classAnnotation.message();
         }
-        ApiResponse<Object> apiResponse = ApiResponse.status(httpStatus.is2xxSuccessful() ? responseMessage : "Processed", body, httpStatus).getBody();
+        var apiResponse = ApiResponse.status(httpStatus.is2xxSuccessful() ? responseMessage : "Processed", body, httpStatus).getBody();
 
         if (body instanceof String) {
             try {

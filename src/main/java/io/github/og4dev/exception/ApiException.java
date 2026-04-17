@@ -3,23 +3,20 @@ package io.github.og4dev.exception;
 import org.springframework.http.HttpStatus;
 
 /**
- * Abstract base class for domain-specific API exceptions with an associated HTTP status code.
+ * Base abstract exception class for custom API-related business logic exceptions.
  * <p>
- * Extend this class to create typed business logic exceptions that are automatically
- * intercepted by {@link GlobalExceptionHandler} and converted to RFC 9457 ProblemDetail
- * responses without any additional {@code @ExceptionHandler} method.
+ * This class provides a foundation for creating domain-specific exceptions with associated
+ * HTTP status codes. Extend this class to create business logic exceptions that are automatically
+ * handled by {@link io.github.og4dev.exception.GlobalExceptionHandler} and converted to
+ * RFC 9457 ProblemDetail responses.
  * </p>
  * <p>
- * Prefer {@code ApiException} subclasses over implementing {@link ApiExceptionTranslator}
- * when the exception is defined within your own codebase. Use {@link ApiExceptionTranslator}
- * for third-party exceptions that you cannot modify.
+ * <b>Usage Example:</b>
  * </p>
- *
- * <h2>Usage Example</h2>
  * <pre>{@code
- * public class UserNotFoundException extends ApiException {
- *     public UserNotFoundException(Long id) {
- *         super("User not found with ID: " + id, HttpStatus.NOT_FOUND);
+ * public class ResourceNotFoundException extends ApiException {
+ *     public ResourceNotFoundException(String resource, Long id) {
+ *         super(String.format("%s not found with ID: %d", resource, id), HttpStatus.NOT_FOUND);
  *     }
  * }
  *
@@ -29,50 +26,35 @@ import org.springframework.http.HttpStatus;
  *     }
  * }
  * }</pre>
- *
- * <h2>Resulting Error Response</h2>
  * <p>
- * Throwing any {@code ApiException} subclass produces an RFC 9457 ProblemDetail response:
+ * <b>Benefits:</b>
  * </p>
- * <pre>{@code
- * {
- *     "type": "about:blank",
- *     "title": "Not Found",
- *     "status": 404,
- *     "detail": "User not found with ID: 42",
- *     "traceId": "550e8400-e29b-41d4-a716-446655440000",
- *     "timestamp": "2026-03-03T10:30:45.123Z"
- * }
- * }</pre>
- *
- * <h2>Benefits</h2>
  * <ul>
- *   <li>No {@code @ExceptionHandler} boilerplate required.</li>
- *   <li>RFC 9457 ProblemDetail formatting out of the box.</li>
- *   <li>Consistent error responses across all business exceptions.</li>
- *   <li>Automatic {@code WARN}-level logging with trace ID correlation.</li>
+ *   <li>Automatic exception handling - No need to create {@code @ExceptionHandler} methods</li>
+ *   <li>RFC 9457 ProblemDetail formatting - Industry-standard error responses</li>
+ *   <li>Type-safe with compile-time checking</li>
+ *   <li>Clean, readable code - Express business rules clearly</li>
+ *   <li>Consistent error responses - All custom exceptions follow the same format</li>
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
- * @see GlobalExceptionHandler
- * @see ApiExceptionTranslator
+ * @see io.github.og4dev.exception.GlobalExceptionHandler
  * @see org.springframework.http.HttpStatus
  */
 public abstract class ApiException extends RuntimeException {
 
     /**
-     * The HTTP status code to include in the ProblemDetail error response.
+     * The HTTP status code associated with this exception.
      */
     private final HttpStatus status;
 
     /**
-     * Constructs a new {@code ApiException} with a detail message and an HTTP status code.
+     * Constructs a new ApiException with the specified message and status.
      *
-     * @param message the detail message surfaced in the {@code detail} field of the
-     *                ProblemDetail response; must not be {@code null}
-     * @param status  the HTTP status code for the error response; must not be {@code null}
+     * @param message the detail message
+     * @param status the HTTP status code
      */
     protected ApiException(String message, HttpStatus status) {
         super(message);
@@ -80,9 +62,9 @@ public abstract class ApiException extends RuntimeException {
     }
 
     /**
-     * Returns the HTTP status code associated with this exception.
+     * Gets the HTTP status code associated with this exception.
      *
-     * @return the HTTP status; never {@code null}
+     * @return the HTTP status
      */
     public HttpStatus getStatus() {
         return status;

@@ -6,91 +6,116 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Opt-in annotation to enable automatic whitespace trimming for string fields during
- * JSON deserialization.
+ * Annotation to explicitly enable automatic string trimming during JSON deserialization.
  * <p>
- * By default the OG4Dev Spring API Response library does <b>not</b> modify string values.
- * Placing {@code @AutoTrim} on a field or class opts in to automatic removal of leading
- * and trailing whitespace at the deserialization layer, before the value reaches application
- * code, ensuring consistent data quality without manual {@code .trim()} calls.
+ * By default, the OG4Dev Spring API Response library does NOT automatically trim strings.
+ * This annotation allows you to opt-in to automatic trimming for specific fields or entire
+ * classes where removing leading and trailing whitespace is desired for data quality and consistency.
+ * </p>
+ * <p>
+ * <b>Important:</b> When {@code @AutoTrim} is applied, XSS validation (HTML tag detection)
+ * is still performed on the trimmed value to maintain security.
  * </p>
  *
  * <h2>Target Scopes</h2>
  * <ul>
- *   <li><b>Field Level ({@link ElementType#FIELD}):</b> Trims <i>only</i> the annotated
- *       {@code String} field; all other fields in the class are unaffected.</li>
- *   <li><b>Class Level ({@link ElementType#TYPE}):</b> Trims <i>all</i> {@code String}
- *       fields within the annotated class without requiring per-field annotations.</li>
+ * <li><b>Field Level ({@link ElementType#FIELD}):</b> Applies trimming <i>only</i> to the specific annotated String field.</li>
+ * <li><b>Class Level ({@link ElementType#TYPE}):</b> Applies trimming to <i>all</i> String fields within the annotated class globally.</li>
  * </ul>
  *
- * <h2>Example — Field Level</h2>
+ * <h2>Example Usage: Field Level</h2>
  * <pre>{@code
  * public class UserRegistrationDTO {
- *
- *     @AutoTrim
- *     private String username;   // "  john_doe  " → "john_doe"
- *
- *     @AutoTrim
- *     private String email;      // " user@example.com " → "user@example.com"
- *
- *     private String password;   // untouched — "  secret  " → "  secret  "
- * }
- * }</pre>
- *
- * <h2>Example — Class Level</h2>
- * <pre>{@code
  * @AutoTrim
- * public class AddressDTO {
- *     private String street;   // "  123 Main St  " → "123 Main St"
- *     private String city;     // "  London  " → "London"
- *     private String postCode; // "  SW1A 1AA  " → "SW1A 1AA"
+ * private String username;       // Trimmed: "  john_doe  " → "john_doe"
+ *
+ * @AutoTrim
+ * private String email;          // Trimmed: " user@example.com " → "user@example.com"
+ *
+ * private String password;       // NOT trimmed (no annotation)
+ * private String bio;            // NOT trimmed (no annotation)
  * }
  * }</pre>
  *
- * <h2>Combining with {@code @XssCheck}</h2>
+ * <h2>Example Usage: Class Level</h2>
+ * <pre>{@code
+ * @AutoTrim // Automatically applies to ALL String fields in this class!
+ * public class GlobalTrimDTO {
+ * private String firstName;      // Trimmed: "  John  " → "John"
+ * private String lastName;       // Trimmed: " Doe  " → "Doe"
+ * private String address;        // Trimmed: " 123 Main St " → "123 Main St"
+ * }
+ * }</pre>
+ *
+ * <h2>Input/Output Examples (Class Level)</h2>
+ * <pre>{@code
+ * // Request JSON for GlobalTrimDTO
+ * {
+ * "firstName": "\t\nJohn\t\n",
+ * "lastName": "  Doe  ",
+ * "address": " 123 Main St "
+ * }
+ *
+ * // After Deserialization
+ * firstName = "John"                  // ✓ Trimmed (due to class-level @AutoTrim)
+ * lastName  = "Doe"                   // ✓ Trimmed (due to class-level @AutoTrim)
+ * address   = "123 Main St"           // ✓ Trimmed (due to class-level @AutoTrim)
+ * }</pre>
+ *
+ * <h2>XSS Validation Still Active</h2>
  * <p>
- * Both annotations may be applied together. When combined, trimming is applied first
- * and XSS validation is then performed on the trimmed value, ensuring that whitespace
- * padding cannot be used to bypass HTML tag detection:
+ * Even with {@code @AutoTrim}, all string values are still validated for XSS attacks.
+ * The following will still be rejected:
  * </p>
  * <pre>{@code
- * @AutoTrim
+ * {"username": "  <script>alert('XSS')</script>  "}  // Rejected: Contains HTML tags
+ * {"email": "user@example.com<b>test</b>"}          // Rejected: Contains HTML tags
+ * }</pre>
+ *
+ * <h2>Combining with @XssCheck</h2>
+ * <p>
+ * You can combine {@code @AutoTrim} with {@link XssCheck @XssCheck} for both behaviors:
+ * </p>
+ * <pre>{@code
+ * @AutoTrim // Trims all fields
+ * public class SecureDTO {
  * @XssCheck
- * private String comment; // First trimmed, then validated for HTML tags
- * }</pre>
- *
- * <h2>Null Value Handling</h2>
- * <p>
- * {@code null} values pass through unchanged and are never converted to empty strings:
- * </p>
- * <pre>{@code
- * {"name": null}   → name = null  (not "")
- * {"name": ""}     → name = ""
- * {"name": "  "}   → name = ""    (trimmed to empty)
+ * private String cleanInput;  // Both trimmed (from class scope) and XSS-validated
+ * }
  * }</pre>
  *
  * <h2>How It Works</h2>
  * <p>
- * This annotation is detected by the {@code AdvancedStringDeserializer} registered via
+ * This annotation is processed by the {@code AdvancedStringDeserializer} in
  * {@link io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()}.
- * The deserializer inspects each field's annotations — and the annotations on its
- * declaring class — at mapper initialization time (once per field, not per request) and
- * returns a contextual instance with trimming enabled when {@code @AutoTrim} is found.
+ * The deserializer uses {@link tools.jackson.databind.ValueDeserializer#createContextual}
+ * to detect the annotation on either the field itself or its declaring class, creating a
+ * specialized instance that enables trimming.
  * </p>
  *
- * <h2>Performance</h2>
+ * <h2>Null Value Handling</h2>
  * <p>
- * Trimming adds negligible overhead (typically under {@code 0.1 ms} per field) because
- * the contextual deserializer is created once during {@code ObjectMapper} initialization,
- * not on every request.
+ * Null values are preserved and never converted to empty strings:
+ * </p>
+ * <pre>{@code
+ * {"name": null}      → name = null (not "")
+ * {"name": ""}        → name = ""
+ * {"name": "  "}      → name = ""   (trimmed to empty)
+ * }</pre>
+ *
+ * <h2>Performance Considerations</h2>
+ * <p>
+ * The trimming operation is highly optimized and adds negligible overhead (typically {@code <0.1ms}
+ * per field). The deserializer is created once per field during mapper initialization,
+ * not on every request, ensuring optimal runtime performance.
  * </p>
  *
  * @author Pasindu OG
- * @version 1.4.0
- * @since 1.3.0
- * @see XssCheck
+ * @version 1.5.0
  * @see io.github.og4dev.config.ApiResponseAutoConfiguration#strictJsonCustomizer()
- * @see io.github.og4dev.config.AdvancedStringDeserializer
+ * @see io.github.og4dev.annotation.XssCheck
+ * @see tools.jackson.databind.ValueDeserializer#createContextual
+ * @since 1.3.0
  */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

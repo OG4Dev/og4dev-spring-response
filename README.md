@@ -24,7 +24,7 @@
 <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
 </a>
 <a href="https://github.com/OG4Dev/og4dev-spring-response">
-<img src="https://img.shields.io/badge/Version-1.4.0-brightgreen.svg" alt="Version">
+<img src="https://img.shields.io/badge/Version-1.5.0-brightgreen.svg" alt="Version">
 </a>
 </p>
 
@@ -125,6 +125,7 @@ Unlike other response wrapper libraries, this one offers:
 * ✅ **Native Spring Boot 3.x/4.x Auto-Configuration** - No manual setup required
 * ✅ **Zero-Boilerplate @AutoResponse** - Return raw objects, let the library wrap them automatically while preserving your HTTP Status codes. **Supports both Class-level and Method-level granularity.**
 * ✅ **Intelligent String Handling** - Safely wraps raw `String` returns into JSON without throwing `ClassCastException`.
+* ✅ **Dynamic Exception Registry** - Seamlessly map 3rd-party exceptions (SQL, Security) to standard HTTP responses with a simple builder pattern.
 * ✅ **RFC 9457 ProblemDetail Support** - Industry-standard error responses (latest RFC)
 * ✅ **Opt-in Security Features** - Fine-grained control via field and **class-level** annotations (`@XssCheck`, `@AutoTrim`)
 * ✅ **Zero External Dependencies** - Pure Java implementation, won't conflict with your application
@@ -134,29 +135,26 @@ Unlike other response wrapper libraries, this one offers:
 
 ## 🚀 Installation
 
-### Maven (Latest - v1.4.0)
+### Maven (Latest - v1.5.0)
 
 ```xml
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
 </dependency>
-
 ```
 
-### Gradle (Latest - v1.4.0)
+### Gradle (Latest - v1.5.0)
 
 ```gradle
-implementation 'io.github.og4dev:og4dev-spring-response:1.4.0'
-
+implementation 'io.github.og4dev:og4dev-spring-response:1.5.0'
 ```
 
-### Gradle Kotlin DSL (Latest - v1.4.0)
+### Gradle Kotlin DSL (Latest - v1.5.0)
 
 ```kotlin
-implementation("io.github.og4dev:og4dev-spring-response:1.4.0")
-
+implementation("io.github.og4dev:og4dev-spring-response:1.5.0")
 ```
 
 ---
@@ -165,7 +163,7 @@ implementation("io.github.og4dev:og4dev-spring-response:1.4.0")
 
 The library is organized into six main packages:
 
-```
+```text
 io.github.og4dev
 ├── advice/
 │   └── GlobalResponseWrapper.java           # Automatic response wrapper interceptor
@@ -179,10 +177,10 @@ io.github.og4dev
 │   └── ApiResponse.java                     # Generic response wrapper
 ├── exception/
 │   ├── ApiException.java                    # Abstract base for custom exceptions
+│   ├── ApiExceptionRegistry.java            # Dynamic mapping for 3rd-party exceptions
 │   └── GlobalExceptionHandler.java          # RFC 9457 exception handler
 └── filter/
     └── TraceIdFilter.java                   # Request trace ID generation
-
 ```
 
 ## 🎯 Quick Start
@@ -201,10 +199,9 @@ public class UserController {
         return ApiResponse.success("User retrieved successfully", user);
     }
 }
-
 ```
 
-### Method 2: Automatic Wrapping (New in v1.4.0) 🎁
+### Method 2: Automatic Wrapping (New in v1.5.0) 🎁
 
 Tired of typing `ResponseEntity<ApiResponse<T>>`? Use `@AutoResponse`! You can apply it to the whole class, or just specific methods.
 
@@ -232,10 +229,9 @@ public class UserController {
     @GetMapping("/greeting")
     public String greeting() {
         // Raw strings are safely converted to JSON ApiResponse too!
-        return "Hello World"; 
+        return "Hello World";
     }
 }
-
 ```
 
 **Both methods produce the exact same JSON:**
@@ -243,7 +239,6 @@ public class UserController {
 ```json
 {
   "status": 200,
-  // or 201 for POST
   "message": "Success",
   "content": {
     "id": 1,
@@ -251,22 +246,21 @@ public class UserController {
   },
   "timestamp": "2026-02-28T10:30:45.123Z"
 }
-
 ```
 
 ## ⚙️ Auto-Configuration
 
 The library features **Spring Boot Auto-Configuration** for truly zero-config setup!
 
-✅ **GlobalExceptionHandler** - Automatic exception handling
-✅ **GlobalResponseWrapper** - Automatic payload wrapping via `@AutoResponse`
+✅ **GlobalExceptionHandler** - Automatic exception handling  
+✅ **GlobalResponseWrapper** - Automatic payload wrapping via `@AutoResponse`  
 ✅ **Security Customizers** - Jackson configuration for `@AutoTrim` and `@XssCheck`
 
 **No configuration needed!** Just add the dependency.
 
 ## 🎁 Opt-in Automatic Wrapping (@AutoResponse)
 
-Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the library wrap your controller responses automatically.
+Introduced in **v1.5.0**, you can eliminate boilerplate code by letting the library wrap your controller responses automatically.
 
 ### Flexible Granularity:
 
@@ -284,7 +278,7 @@ Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the libr
 
 The library provides fine-grained security and data processing features through field-level annotations. By default, **fields are NOT modified** unless explicitly annotated.
 
-*New in v1.4.0:* You can now apply `@AutoTrim` and `@XssCheck` to **entire classes** to protect all string fields at once!
+*New in v1.5.0:* You can now apply `@AutoTrim` and `@XssCheck` to **entire classes** to protect all string fields at once!
 
 ### 1. Strict Property Validation 🛡️ (Automatic)
 
@@ -297,7 +291,6 @@ Fail-fast HTML tag detection and rejection using regex pattern `(?s).*<\s*[a-zA-
 ```java
 @XssCheck
 private String comment; // Rejects "<script>alert(1)</script>"
-
 ```
 
 ### 3. Opt-in String Trimming with @AutoTrim ✂️
@@ -307,10 +300,9 @@ Automatic whitespace removal for specific fields.
 ```java
 @AutoTrim
 private String username; // "  john_doe  " -> "john_doe"
-
 ```
 
-### 4. Class-Level Protection (New in v1.4.0) 🛡️
+### 4. Class-Level Protection (New in v1.5.0) 🛡️
 
 Apply annotations to the class level to automatically protect **ALL** string fields within that class!
 
@@ -323,14 +315,13 @@ public class SecureRegistrationDTO {
     private String email;
     private String bio;
 }
-
 ```
 
 *(See full Security details in the Javadocs and examples above).*
 
 ## 🛡️ Built-in Exception Handling
 
-The library includes a **production-ready `GlobalExceptionHandler**` that automatically handles 10 common exceptions using Spring Boot's **ProblemDetail (RFC 9457)** standard.
+The library includes a **production-ready `GlobalExceptionHandler`** that automatically handles 10 common exceptions using Spring Boot's **ProblemDetail (RFC 9457)** standard.
 
 * **Automatic Logging:** SLF4J integration for all errors.
 * **Trace ID Consistency:** Logs and responses always have matching trace IDs.
@@ -342,8 +333,29 @@ public class ResourceNotFoundException extends ApiException {
         super(String.format("%s not found with ID: %d", resource, id), HttpStatus.NOT_FOUND);
     }
 }
-
 ```
+
+### 🔄 Dynamic Exception Registry (New in v1.5.0)
+
+Seamlessly map 3rd-party or framework-specific exceptions (like `SQLException`, `MongoException`, or `AuthenticationException`) to standard `ProblemDetail` responses without writing custom `@ExceptionHandler` methods!
+
+Simply define a configuration bean to register your external exceptions:
+
+```java
+@Configuration
+public class ApiExceptionConfig {
+    @Bean
+    public ApiExceptionRegistry apiExceptionRegistry() {
+        return new ApiExceptionRegistry()
+            // Map Database Exceptions
+            .register(SQLException.class, HttpStatus.INTERNAL_SERVER_ERROR, "A database error occurred.")
+            // Map Security Exceptions
+            .register(AuthenticationException.class, HttpStatus.UNAUTHORIZED, "Invalid authentication token.");
+    }
+}
+```
+
+All registered exceptions will automatically be caught by the `GlobalExceptionHandler` and formatted into RFC 9457 compliant JSON responses with trace IDs.
 
 ## 🌍 Real-World Examples
 
@@ -381,7 +393,6 @@ public class ProductController {
         // Returns empty content with 200 OK automatically
     }
 }
-
 ```
 
 ## 📚 API Reference
@@ -390,26 +401,27 @@ public class ProductController {
 
 ## 📈 Version History
 
-### 1.4.0 (February 2026) - Current Release
+### 1.5.0 (April 2026) - **Current Release**
 
 ✨ **New Features & Improvements:**
 
-* **@AutoResponse Annotation & GlobalResponseWrapper**
-* Opt-in automatic response wrapping to eliminate boilerplate code.
-* **Improved Granularity:** Fully supports both Class-level (`ElementType.TYPE`) and Method-level (`ElementType.METHOD`) placement for precision control over which endpoints are wrapped.
-* Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
-* Preserves HTTP status codes from `@ResponseStatus`.
-* Intelligently skips `ResponseEntity`, `ApiResponse`, and `ProblemDetail` to prevent double-wrapping.
-* **Intelligent String Handling:** Uses Spring's `ObjectMapper` to safely serialize raw `String` returns to JSON, avoiding `ClassCastException` with native converters.
+* **Dynamic Exception Registry (`ApiExceptionRegistry`)**
+    * Centralized mapping for 3rd-party exceptions (e.g., SQL, Mongo, Spring Security) without writing custom handlers.
+    * Thread-safe registry preserving insertion order for hierarchy-based exception catching.
 
+* **@AutoResponse Annotation & GlobalResponseWrapper**
+    * Opt-in automatic response wrapping to eliminate boilerplate code.
+    * **Improved Granularity:** Fully supports both Class-level (`ElementType.TYPE`) and Method-level (`ElementType.METHOD`) placement for precision control over which endpoints are wrapped.
+    * Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
+    * Preserves HTTP status codes from `@ResponseStatus`.
+    * Intelligently skips `ResponseEntity`, `ApiResponse`, and `ProblemDetail` to prevent double-wrapping.
+    * **Intelligent String Handling:** Uses Spring's `ObjectMapper` to safely serialize raw `String` returns to JSON, avoiding `ClassCastException` with native converters.
 
 * **Class-Level Security Annotations**
-* `@AutoTrim` and `@XssCheck` can now be applied at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
-
+    * `@AutoTrim` and `@XssCheck` can now be applied at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
 
 * **Documentation**
-* `package-info.java` documentation added for the new `advice` package.
-
+    * `package-info.java` documentation added for the new `advice` package.
 
 
 ### 1.3.0 (February 2026)
