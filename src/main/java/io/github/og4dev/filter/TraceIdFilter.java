@@ -30,7 +30,7 @@ import java.util.UUID;
  *   <li>Compatible with microservices architectures</li>
  * </ul>
  * <p>
- * <b>Usage:</b> Register this filter as a Spring bean with highest precedence:
+ * <b>Usage:</b> Register this filter as a Spring bean with the highest precedence:
  * </p>
  * <pre>{@code
  * @Configuration

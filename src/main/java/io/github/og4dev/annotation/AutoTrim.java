@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Annotation to explicitly enable automatic string trimming during JSON deserialization.
  * <p>
  * By default, the OG4Dev Spring API Response library does NOT automatically trim strings.
- * This annotation allows you to opt-in to automatic trimming for specific fields or entire
+ * This annotation allows you to opt in to automatic trimming for specific fields or entire
  * classes where removing leading and trailing whitespace is desired for data quality and consistency.
  * </p>
  * <p>

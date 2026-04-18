@@ -207,7 +207,7 @@ public class ApiResponseAutoConfiguration {
         }
 
         @Override
-        public String deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
+        public String deserialize(JsonParser p, DeserializationContext text) throws JacksonException {
             String value = p.getValueAsString();
             if (value == null) {
                 return null;

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Annotation to explicitly enable XSS (Cross-Site Scripting) validation for string fields during JSON deserialization.
  * <p>
  * By default, the OG4Dev Spring API Response library does NOT perform XSS validation on strings.
- * This annotation allows you to opt-in to automatic HTML/XML tag detection and rejection for specific fields
+ * This annotation allows you to opt in to automatic HTML/XML tag detection and rejection for specific fields
  * or <b>entire classes</b> where preventing malicious content injection is critical for security.
  * </p>
  * <p>
@@ -94,7 +94,7 @@ import java.lang.annotation.Target;
  * <li><b>Self-closing tags:</b> {@code <br/>}, {@code <input/>}</li>
  * <li><b>Special tags:</b> {@code <!DOCTYPE>}, {@code }, {@code <![CDATA[]]>}</li>
  * <li><b>Tags with attributes:</b> {@code <div class="test">}, {@code <img src="x">}</li>
- * <li><b>Multiline tags:</b> Tags spanning multiple lines (DOTALL mode enabled)</li>
+ * <li><b>Multiline tags:</b> Tags spanning multiple lines (DOT ALL mode enabled)</li>
  * </ul>
  * <p>
  * <b>What is NOT detected (safe to use):</b>

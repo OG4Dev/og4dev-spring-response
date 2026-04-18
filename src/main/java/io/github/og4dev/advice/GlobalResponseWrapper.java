@@ -29,7 +29,7 @@ import tools.jackson.databind.ObjectMapper;
  * {@code ResponseEntity<ApiResponse<T>>} boilerplate.
  * </p>
  *
- * <h2>Core Behaviours</h2>
+ * <h2>Core Behaviors</h2>
  * <ul>
  *   <li><b>Automatic Encapsulation</b> — Raw DTOs, collections, and primitive values are
  *       placed in the {@code content} field of an {@link ApiResponse}.</li>
