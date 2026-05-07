@@ -403,22 +403,22 @@ public class ProductController {
 
 ### 1.5.0 (April 2026) - **Current Release**
 
-✨ **New Features & Improvements:**
+✨ **Highlights & Improvements:**
 
 * **Dynamic Exception Registry (`ApiExceptionRegistry`)**
     * Centralized mapping for 3rd-party exceptions (e.g., SQL, Mongo, Spring Security) without writing custom handlers.
     * Thread-safe registry preserving insertion order for hierarchy-based exception catching.
 
-* **@AutoResponse Annotation & GlobalResponseWrapper**
-    * Opt-in automatic response wrapping to eliminate boilerplate code.
+* **@AutoResponse Annotation & GlobalResponseWrapper** *(introduced in v1.4.0)*
+    * Continued improvements to opt-in automatic response wrapping.
     * **Improved Granularity:** Fully supports both Class-level (`ElementType.TYPE`) and Method-level (`ElementType.METHOD`) placement for precision control over which endpoints are wrapped.
     * Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
     * Preserves HTTP status codes from `@ResponseStatus`.
     * Intelligently skips `ResponseEntity`, `ApiResponse`, and `ProblemDetail` to prevent double-wrapping.
     * **Intelligent String Handling:** Uses Spring's `ObjectMapper` to safely serialize raw `String` returns to JSON, avoiding `ClassCastException` with native converters.
 
-* **Class-Level Security Annotations**
-    * `@AutoTrim` and `@XssCheck` can now be applied at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
+* **Class-Level Support for Existing Security Annotations**
+    * Added support for applying existing `@AutoTrim` and `@XssCheck` annotations at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
 
 * **Documentation**
     * `package-info.java` documentation added for the new `advice` package.
