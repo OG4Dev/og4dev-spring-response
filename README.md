@@ -173,7 +173,7 @@ io.github.og4dev
 │   └── XssCheck.java                        # Opt-in annotation for XSS validation
 ├── config/
 │   └── ApiResponseAutoConfiguration.java    # Spring Boot auto-configuration
-├── dto/
+├─�� dto/
 │   └── ApiResponse.java                     # Generic response wrapper
 ├── exception/
 │   ├── ApiException.java                    # Abstract base for custom exceptions
@@ -278,7 +278,7 @@ Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the libr
 
 The library provides fine-grained security and data processing features through field-level annotations. By default, **fields are NOT modified** unless explicitly annotated.
 
-*New in v1.5.0:* You can now apply `@AutoTrim` and `@XssCheck` to **entire classes** to protect all string fields at once!
+*Introduced in v1.3.0:* You can apply `@AutoTrim` and `@XssCheck` to **entire classes** to protect all string fields at once!
 
 ### 1. Strict Property Validation 🛡️ (Automatic)
 
@@ -302,9 +302,9 @@ Automatic whitespace removal for specific fields.
 private String username; // "  john_doe  " -> "john_doe"
 ```
 
-### 4. Class-Level Protection for `@AutoTrim`/`@XssCheck` (Added in v1.5.0) 🛡️
+### 4. Class-Level Protection for `@AutoTrim`/`@XssCheck` (Added in v1.3.0) 🛡️
 
-Starting in v1.5.0, these annotations can also be applied at the class level to automatically protect **ALL** string fields within that class.
+Starting in v1.3.0, these annotations can also be applied at the class level to automatically protect **ALL** string fields within that class.
 
 ```java
 @AutoTrim
@@ -409,19 +409,19 @@ public class ProductController {
     * Centralized mapping for 3rd-party exceptions (e.g., SQL, Mongo, Spring Security) without writing custom handlers.
     * Thread-safe registry preserving insertion order for hierarchy-based exception catching.
 
-* **@AutoResponse Annotation & GlobalResponseWrapper** *(introduced in v1.4.0)*
-    * Continued improvements to opt-in automatic response wrapping.
-    * **Improved Granularity:** Fully supports both Class-level (`ElementType.TYPE`) and Method-level (`ElementType.METHOD`) placement for precision control over which endpoints are wrapped.
+* **Documentation**
+    * `package-info.java` documentation added for the new `advice` package.
+
+
+### 1.4.0 (March 2026)
+
+* **@AutoResponse Annotation & GlobalResponseWrapper**
+    * Opt-in automatic response wrapping.
+    * **Granularity:** Supports both Class-level (`ElementType.TYPE`) and Method-level (`ElementType.METHOD`) placement.
     * Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
     * Preserves HTTP status codes from `@ResponseStatus`.
     * Intelligently skips `ResponseEntity`, `ApiResponse`, and `ProblemDetail` to prevent double-wrapping.
     * **Intelligent String Handling:** Uses Spring's `ObjectMapper` to safely serialize raw `String` returns to JSON, avoiding `ClassCastException` with native converters.
-
-* **Class-Level Support for Existing Security Annotations**
-    * Added support for applying existing `@AutoTrim` and `@XssCheck` annotations at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
-
-* **Documentation**
-    * `package-info.java` documentation added for the new `advice` package.
 
 
 ### 1.3.0 (February 2026)
@@ -429,6 +429,7 @@ public class ProductController {
 * **Security Philosophy Change:** Complete redesign from automatic to opt-in approach for JSON sanitization.
 * Added **@AutoTrim** annotation for explicit string trimming.
 * Added **@XssCheck** annotation for explicit fail-fast XSS validation.
+* Added **Class-level support** for `@AutoTrim` and `@XssCheck` (`ElementType.TYPE`).
 * Extensive Javadoc and README updates regarding the new security model.
 
 ### 1.2.0 (February 2026)
