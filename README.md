@@ -302,9 +302,9 @@ Automatic whitespace removal for specific fields.
 private String username; // "  john_doe  " -> "john_doe"
 ```
 
-### 4. Class-Level Protection (New in v1.5.0) 🛡️
+### 4. Class-Level Protection for `@AutoTrim`/`@XssCheck` (Added in v1.5.0) 🛡️
 
-Apply annotations to the class level to automatically protect **ALL** string fields within that class!
+Starting in v1.5.0, these annotations can also be applied at the class level to automatically protect **ALL** string fields within that class.
 
 ```java
 @AutoTrim
