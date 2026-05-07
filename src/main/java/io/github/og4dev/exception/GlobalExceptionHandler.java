@@ -3,6 +3,7 @@ package io.github.og4dev.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -34,28 +35,28 @@ import java.util.UUID;
  * <b>Supported Exception Types (10 handlers):</b>
  * </p>
  * <ol>
- *   <li><b>General Exceptions</b> - Catches all unhandled exceptions (HTTP 500)</li>
- *   <li><b>Validation Errors</b> - {@code @Valid} annotation failures (HTTP 400)</li>
- *   <li><b>Type Mismatches</b> - Method argument type conversion errors (HTTP 400)</li>
- *   <li><b>Malformed JSON</b> - Invalid request body format (HTTP 400)</li>
- *   <li><b>Missing Parameters</b> - Required {@code @RequestParam} missing (HTTP 400)</li>
- *   <li><b>404 Not Found</b> - Missing endpoints or resources (HTTP 404)</li>
- *   <li><b>Method Not Allowed</b> - Unsupported HTTP methods (HTTP 405)</li>
- *   <li><b>Unsupported Media Type</b> - Invalid Content-Type headers (HTTP 415)</li>
- *   <li><b>Null Pointer Exceptions</b> - NullPointerException handling (HTTP 500)</li>
- *   <li><b>Custom API Exceptions</b> - Domain-specific business logic errors (custom status)</li>
+ * <li><b>General Exceptions</b> - Catches all unhandled exceptions (HTTP 500)</li>
+ * <li><b>Validation Errors</b> - {@code @Valid} annotation failures (HTTP 400)</li>
+ * <li><b>Type Mismatches</b> - Method argument type conversion errors (HTTP 400)</li>
+ * <li><b>Malformed JSON</b> - Invalid request body format (HTTP 400)</li>
+ * <li><b>Missing Parameters</b> - Required {@code @RequestParam} missing (HTTP 400)</li>
+ * <li><b>404 Not Found</b> - Missing endpoints or resources (HTTP 404)</li>
+ * <li><b>Method Not Allowed</b> - Unsupported HTTP methods (HTTP 405)</li>
+ * <li><b>Unsupported Media Type</b> - Invalid Content-Type headers (HTTP 415)</li>
+ * <li><b>Null Pointer Exceptions</b> - NullPointerException handling (HTTP 500)</li>
+ * <li><b>Custom API Exceptions</b> - Domain-specific business logic errors (custom status)</li>
  * </ol>
  * <p>
  * <b>Error Response Format (RFC 9457 ProblemDetail):</b>
  * </p>
  * <ul>
- *   <li><b>type</b> - URI reference identifying the problem type (defaults to "about:blank")</li>
- *   <li><b>title</b> - Short, human-readable summary of the problem</li>
- *   <li><b>status</b> - HTTP status code</li>
- *   <li><b>detail</b> - Human-readable explanation specific to this occurrence</li>
- *   <li><b>traceId</b> - Unique UUID for request correlation and debugging</li>
- *   <li><b>timestamp</b> - RFC 3339 UTC timestamp</li>
- *   <li><b>errors</b> - Validation field errors (for validation failures only)</li>
+ * <li><b>type</b> - URI reference identifying the problem type (defaults to "about:blank")</li>
+ * <li><b>title</b> - Short, human-readable summary of the problem</li>
+ * <li><b>status</b> - HTTP status code</li>
+ * <li><b>detail</b> - Human-readable explanation specific to this occurrence</li>
+ * <li><b>traceId</b> - Unique UUID for request correlation and debugging</li>
+ * <li><b>timestamp</b> - RFC 3339 UTC timestamp</li>
+ * <li><b>errors</b> - Validation field errors (for validation failures only)</li>
  * </ul>
  * <p>
  * <b>Trace ID Management:</b> All exception handlers ensure consistent trace IDs between logs
@@ -70,12 +71,12 @@ import java.util.UUID;
  * <b>Logging:</b> All exceptions are automatically logged with appropriate severity levels:
  * </p>
  * <ul>
- *   <li><b>ERROR</b> - General exceptions, null pointer exceptions</li>
- *   <li><b>WARN</b> - Validation errors, type mismatches, business logic exceptions, 400/404/405/415 errors</li>
+ * <li><b>ERROR</b> - General exceptions, null pointer exceptions</li>
+ * <li><b>WARN</b> - Validation errors, type mismatches, business logic exceptions, 400/404/405/415 errors</li>
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  * @see org.springframework.web.bind.annotation.RestControllerAdvice
  * @see org.springframework.http.ProblemDetail
@@ -92,11 +93,15 @@ import java.util.UUID;
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    private final ApiExceptionRegistry registry;
+
     /**
-     * Default constructor for Spring bean instantiation.
+     * Constructor for Spring bean instantiation, accepting an optional ApiExceptionRegistry.
+     *
+     * @param registry the optional API exception registry for custom exception mapping
      */
-    public GlobalExceptionHandler() {
-        // Default constructor for Spring bean instantiation
+    public GlobalExceptionHandler(@Autowired(required = false) ApiExceptionRegistry registry) {
+        this.registry = registry;
     }
 
     /**
@@ -114,14 +119,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles all unhandled exceptions.
+     * Handles all unhandled exceptions, logs them with stack trace details,
+     * and dynamically maps them via ApiExceptionRegistry if configured.
      *
      * @param ex the exception
-     * @return ProblemDetail response with 500 status
+     * @return ProblemDetail response with appropriate status
      */
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleAllExceptions(Exception ex) {
         String traceId = getOrGenerateTraceId();
+
         StackTraceElement rootCause = ex.getStackTrace().length > 0 ? ex.getStackTrace()[0] : null;
         String className = (rootCause != null) ? rootCause.getClassName() : "Unknown Class";
         int lineNumber = (rootCause != null) ? rootCause.getLineNumber() : -1;
@@ -129,9 +136,21 @@ public class GlobalExceptionHandler {
         log.error("[TraceID: {}] Error in {}:{} - Message: {}",
                 traceId, className, lineNumber, ex.getMessage());
 
+        // Check if the exception is registered in the ApiExceptionRegistry
+        if (registry != null) {
+            ApiExceptionRegistry.ExceptionRule rule = registry.getRule(ex.getClass());
+            if (rule != null) {
+                ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(rule.getStatus(), rule.getMessage());
+                problemDetail.setProperty("traceId", traceId);
+                problemDetail.setProperty("timestamp", Instant.now());
+                return problemDetail;
+            }
+        }
+
+        // Default Fallback
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Internal Server Error. Please contact technical support");
+                "Internal Server Error. Please contact technical support.");
         problemDetail.setProperty("traceId", traceId);
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
@@ -170,8 +189,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         String traceId = getOrGenerateTraceId();
+
+        // SonarQube Fix: Assigning getRequiredType() to a variable before checking for null
+        Class<?> requiredType = ex.getRequiredType();
+        String expectedType = (requiredType != null) ? requiredType.getSimpleName() : "Unknown";
+
         String errorMessage = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s.",
-                ex.getValue(), ex.getName(), ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "Unknown");
+                ex.getValue(), ex.getName(), expectedType);
+
         log.warn("[TraceID: {}] Type mismatch error: {}", traceId, errorMessage);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
         problemDetail.setProperty("traceId", traceId);

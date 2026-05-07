@@ -30,7 +30,7 @@ import java.util.UUID;
  *   <li>Compatible with microservices architectures</li>
  * </ul>
  * <p>
- * <b>Usage:</b> Register this filter as a Spring bean with highest precedence:
+ * <b>Usage:</b> Register this filter as a Spring bean with the highest precedence:
  * </p>
  * <pre>{@code
  * @Configuration
@@ -57,7 +57,7 @@ import java.util.UUID;
  * </p>
  *
  * @author Pasindu OG
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  * @see org.springframework.web.filter.OncePerRequestFilter
  * @see org.slf4j.MDC
