@@ -94,7 +94,7 @@ import java.lang.annotation.Target;
  * <li><b>Self-closing tags:</b> {@code <br/>}, {@code <input/>}</li>
  * <li><b>Special tags:</b> {@code <!DOCTYPE>}, {@code }, {@code <![CDATA[]]>}</li>
  * <li><b>Tags with attributes:</b> {@code <div class="test">}, {@code <img src="x">}</li>
- * <li><b>Multiline tags:</b> Tags spanning multiple lines (DOT ALL mode enabled)</li>
+ * <li><b>Multiline tags:</b> Tags spanning multiple lines (DOTALL mode enabled)</li>
  * </ul>
  * <p>
  * <b>What is NOT detected (safe to use):</b>

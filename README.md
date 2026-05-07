@@ -21,7 +21,7 @@
 <img src="https://img.shields.io/badge/Java-17+-orange.svg" alt="Java">
 </a>
 <a href="https://spring.io/projects/spring-boot">
-<img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
+<img src="https://img.shields.io/badge/Spring%20Boot-4.0.5-brightgreen.svg" alt="Spring Boot">
 </a>
 <a href="https://github.com/OG4Dev/og4dev-spring-response">
 <img src="https://img.shields.io/badge/Version-1.5.0-brightgreen.svg" alt="Version">
@@ -201,7 +201,7 @@ public class UserController {
 }
 ```
 
-### Method 2: Automatic Wrapping (New in v1.5.0) 🎁
+### Method 2: Automatic Wrapping (New in v1.4.0) 🎁
 
 Tired of typing `ResponseEntity<ApiResponse<T>>`? Use `@AutoResponse`! You can apply it to the whole class, or just specific methods.
 
@@ -260,7 +260,7 @@ The library features **Spring Boot Auto-Configuration** for truly zero-config se
 
 ## 🎁 Opt-in Automatic Wrapping (@AutoResponse)
 
-Introduced in **v1.5.0**, you can eliminate boilerplate code by letting the library wrap your controller responses automatically.
+Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the library wrap your controller responses automatically.
 
 ### Flexible Granularity:
 
@@ -302,9 +302,9 @@ Automatic whitespace removal for specific fields.
 private String username; // "  john_doe  " -> "john_doe"
 ```
 
-### 4. Class-Level Protection (New in v1.5.0) 🛡️
+### 4. Class-Level Protection for `@AutoTrim`/`@XssCheck` (Added in v1.5.0) 🛡️
 
-Apply annotations to the class level to automatically protect **ALL** string fields within that class!
+Starting in v1.5.0, these annotations can also be applied at the class level to automatically protect **ALL** string fields within that class.
 
 ```java
 @AutoTrim
@@ -403,22 +403,22 @@ public class ProductController {
 
 ### 1.5.0 (April 2026) - **Current Release**
 
-✨ **New Features & Improvements:**
+✨ **Highlights & Improvements:**
 
 * **Dynamic Exception Registry (`ApiExceptionRegistry`)**
     * Centralized mapping for 3rd-party exceptions (e.g., SQL, Mongo, Spring Security) without writing custom handlers.
     * Thread-safe registry preserving insertion order for hierarchy-based exception catching.
 
-* **@AutoResponse Annotation & GlobalResponseWrapper**
-    * Opt-in automatic response wrapping to eliminate boilerplate code.
+* **@AutoResponse Annotation & GlobalResponseWrapper** *(introduced in v1.4.0)*
+    * Continued improvements to opt-in automatic response wrapping.
     * **Improved Granularity:** Fully supports both Class-level (`ElementType.TYPE`) and Method-level (`ElementType.METHOD`) placement for precision control over which endpoints are wrapped.
     * Returns raw DTOs from controllers and automatically wraps them in `ApiResponse<T>`.
     * Preserves HTTP status codes from `@ResponseStatus`.
     * Intelligently skips `ResponseEntity`, `ApiResponse`, and `ProblemDetail` to prevent double-wrapping.
     * **Intelligent String Handling:** Uses Spring's `ObjectMapper` to safely serialize raw `String` returns to JSON, avoiding `ClassCastException` with native converters.
 
-* **Class-Level Security Annotations**
-    * `@AutoTrim` and `@XssCheck` can now be applied at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
+* **Class-Level Support for Existing Security Annotations**
+    * Added support for applying existing `@AutoTrim` and `@XssCheck` annotations at the Class level (`ElementType.TYPE`) to automatically protect all String fields within the DTO at once.
 
 * **Documentation**
     * `package-info.java` documentation added for the new `advice` package.
