@@ -21,7 +21,7 @@
 <img src="https://img.shields.io/badge/Java-17+-orange.svg" alt="Java">
 </a>
 <a href="https://spring.io/projects/spring-boot">
-<img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen.svg" alt="Spring Boot">
+<img src="https://img.shields.io/badge/Spring%20Boot-4.0.5-brightgreen.svg" alt="Spring Boot">
 </a>
 <a href="https://github.com/OG4Dev/og4dev-spring-response">
 <img src="https://img.shields.io/badge/Version-1.5.0-brightgreen.svg" alt="Version">
