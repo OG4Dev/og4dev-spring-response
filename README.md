@@ -201,7 +201,7 @@ public class UserController {
 }
 ```
 
-### Method 2: Automatic Wrapping (New in v1.5.0) 🎁
+### Method 2: Automatic Wrapping (New in v1.4.0) 🎁
 
 Tired of typing `ResponseEntity<ApiResponse<T>>`? Use `@AutoResponse`! You can apply it to the whole class, or just specific methods.
 
