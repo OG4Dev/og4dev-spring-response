@@ -260,7 +260,7 @@ The library features **Spring Boot Auto-Configuration** for truly zero-config se
 
 ## 🎁 Opt-in Automatic Wrapping (@AutoResponse)
 
-Introduced in **v1.5.0**, you can eliminate boilerplate code by letting the library wrap your controller responses automatically.
+Introduced in **v1.4.0**, you can eliminate boilerplate code by letting the library wrap your controller responses automatically.
 
 ### Flexible Granularity:
 
