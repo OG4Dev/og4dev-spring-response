@@ -81,7 +81,7 @@ class GlobalExceptionHandlerTest {
 
         ProblemDetail result = handler.handleAllExceptions(new RuntimeException("boom"));
 
-        assertThat(result.getProperties().get("traceId")).isEqualTo("existing-trace-123");
+        assertThat(result.getProperties()).containsEntry("traceId", "existing-trace-123");
     }
 
     @Test
@@ -247,6 +247,6 @@ class GlobalExceptionHandlerTest {
         ApiException apiEx = new ApiException("Conflict", HttpStatus.CONFLICT) {};
         ProblemDetail result = handler.handleApiException(apiEx);
 
-        assertThat(result.getProperties().get("traceId")).isEqualTo("my-trace-id");
+        assertThat(result.getProperties()).containsEntry("traceId", "my-trace-id");
     }
 }

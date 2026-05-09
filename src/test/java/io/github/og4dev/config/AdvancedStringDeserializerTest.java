@@ -4,6 +4,9 @@ import io.github.og4dev.annotation.AutoTrim;
 import io.github.og4dev.annotation.XssCheck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -19,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * {@link ApiResponseAutoConfiguration#strictJsonCustomizer()}.
  * </p>
  */
+@SuppressWarnings("unused")
 class AdvancedStringDeserializerTest {
 
     // -----------------------------------------------------------------------
@@ -124,18 +128,16 @@ class AdvancedStringDeserializerTest {
     // @AutoTrim on field
     // -----------------------------------------------------------------------
 
-    @Test
-    void autoTrimField_trimsLeadingAndTrailingWhitespace() throws Exception {
-        String json = "{\"value\": \"  john_doe  \"}";
+    @ParameterizedTest(name = "AutoTrim input ''{0}'' should become ''{1}''")
+    @CsvSource({
+            "'  john_doe  ', 'john_doe'",
+            "'  hello world  ', 'hello world'",
+            "'exact', 'exact'"
+    })
+    void autoTrimField_trimsCorrectly(String input, String expected) throws Exception {
+        String json = "{\"value\": \"" + input + "\"}";
         AutoTrimFieldDto result = objectMapper.readValue(json, AutoTrimFieldDto.class);
-        assertThat(result.value).isEqualTo("john_doe");
-    }
-
-    @Test
-    void autoTrimField_trimsOnlyWhitespace_leavingContentIntact() throws Exception {
-        String json = "{\"value\": \"  hello world  \"}";
-        AutoTrimFieldDto result = objectMapper.readValue(json, AutoTrimFieldDto.class);
-        assertThat(result.value).isEqualTo("hello world");
+        assertThat(result.value).isEqualTo(expected);
     }
 
     @Test
@@ -143,13 +145,6 @@ class AdvancedStringDeserializerTest {
         String json = "{\"value\": null}";
         AutoTrimFieldDto result = objectMapper.readValue(json, AutoTrimFieldDto.class);
         assertThat(result.value).isNull();
-    }
-
-    @Test
-    void autoTrimField_preservesValueWithNoWhitespace() throws Exception {
-        String json = "{\"value\": \"exact\"}";
-        AutoTrimFieldDto result = objectMapper.readValue(json, AutoTrimFieldDto.class);
-        assertThat(result.value).isEqualTo("exact");
     }
 
     // -----------------------------------------------------------------------
@@ -163,23 +158,17 @@ class AdvancedStringDeserializerTest {
         assertThat(result.value).isEqualTo("clean input");
     }
 
-    @Test
-    void xssCheckField_rejectsScriptTag() {
-        String json = "{\"value\": \"<script>alert(1)</script>\"}";
-        assertThatThrownBy(() -> objectMapper.readValue(json, XssCheckFieldDto.class))
-                .isInstanceOf(Exception.class);
-    }
-
-    @Test
-    void xssCheckField_rejectsHtmlTag() {
-        String json = "{\"value\": \"<b>bold</b>\"}";
-        assertThatThrownBy(() -> objectMapper.readValue(json, XssCheckFieldDto.class))
-                .isInstanceOf(Exception.class);
-    }
-
-    @Test
-    void xssCheckField_rejectsHtmlComment() {
-        String json = "{\"value\": \"<!-- comment -->\"}";
+    @ParameterizedTest(name = "rejects XSS payload: {0}")
+    @ValueSource(strings = {
+            "<script>alert(1)</script>",
+            "<b>bold</b>",
+            "<!-- comment -->",
+            "</script>",
+            "<!DOCTYPE html>",
+            "< script>alert()</ script>"
+    })
+    void xssCheckField_rejectsMaliciousPayloads(String maliciousPayload) {
+        String json = "{\"value\": \"" + maliciousPayload + "\"}";
         assertThatThrownBy(() -> objectMapper.readValue(json, XssCheckFieldDto.class))
                 .isInstanceOf(Exception.class);
     }
@@ -297,36 +286,14 @@ class AdvancedStringDeserializerTest {
     void classTrimFieldXss_allowsHtmlOnPlainField_sinceNoXssCheck() throws Exception {
         // The 'plain' field only has class-level @AutoTrim, no @XssCheck
         // So HTML should pass through (class doesn't have @XssCheck)
-        String json = "{\"secured\": \"clean\", \"plain\": \"safe text\"}";
+        String json = "{\"secured\": \"clean\", \"plain\": \"<b>safe</b>\"}";
         ClassTrimFieldXssDto result = objectMapper.readValue(json, ClassTrimFieldXssDto.class);
-        assertThat(result.plain).isEqualTo("safe text");
+        assertThat(result.plain).isEqualTo("<b>safe</b>");
     }
 
     // -----------------------------------------------------------------------
     // Regex boundary cases for XSS pattern
     // -----------------------------------------------------------------------
-
-    @Test
-    void xssCheck_rejectsClosingTag() {
-        String json = "{\"value\": \"</script>\"}";
-        assertThatThrownBy(() -> objectMapper.readValue(json, XssCheckFieldDto.class))
-                .isInstanceOf(Exception.class);
-    }
-
-    @Test
-    void xssCheck_rejectsDoctypeDeclaration() {
-        String json = "{\"value\": \"<!DOCTYPE html>\"}";
-        assertThatThrownBy(() -> objectMapper.readValue(json, XssCheckFieldDto.class))
-                .isInstanceOf(Exception.class);
-    }
-
-    @Test
-    void xssCheck_rejectsTagWithLeadingWhitespace() {
-        // Pattern: < followed by optional whitespace then letter — should be caught
-        String json = "{\"value\": \"< script>alert()</ script>\"}";
-        assertThatThrownBy(() -> objectMapper.readValue(json, XssCheckFieldDto.class))
-                .isInstanceOf(Exception.class);
-    }
 
     @Test
     void xssCheck_allowsEmptyString() throws Exception {
