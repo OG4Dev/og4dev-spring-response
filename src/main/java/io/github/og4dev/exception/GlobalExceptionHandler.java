@@ -77,10 +77,10 @@ import java.util.UUID;
  *
  * @author Pasindu OG
  * @version 1.5.0
- * @since 1.0.0
  * @see org.springframework.web.bind.annotation.RestControllerAdvice
  * @see org.springframework.http.ProblemDetail
  * @see io.github.og4dev.exception.ApiException
+ * @since 1.0.0
  */
 @ConditionalOnProperty(
         prefix = "api-response",
@@ -89,11 +89,17 @@ import java.util.UUID;
         matchIfMissing = true
 )
 @RestControllerAdvice
-@SuppressWarnings({"unused","java:S1192"})
+@SuppressWarnings({"unused", "java:S1192"})
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    private final ApiExceptionRegistry registry;
+    private ApiExceptionRegistry registry;
+
+    /**
+    * Default constructor for Spring bean instantiation
+    * */
+    public GlobalExceptionHandler() {
+    }
 
     /**
      * Constructor for Spring bean instantiation, accepting an optional ApiExceptionRegistry.
@@ -119,6 +125,24 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Extracts the exact class name and line number of the root cause of the exception.
+     *
+     * @param ex the exception
+     * @return Formatted string with ClassName:LineNumber
+     */
+    private String getErrorLocation(Throwable ex) {
+        Throwable rootCause = ex;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
+        if (rootCause.getStackTrace() != null && rootCause.getStackTrace().length > 0) {
+            StackTraceElement element = rootCause.getStackTrace()[0];
+            return element.getClassName() + ":" + element.getLineNumber();
+        }
+        return "UnknownLocation:-1";
+    }
+
+    /**
      * Handles all unhandled exceptions, logs them with stack trace details,
      * and dynamically maps them via ApiExceptionRegistry if configured.
      *
@@ -133,8 +157,10 @@ public class GlobalExceptionHandler {
         String className = (rootCause != null) ? rootCause.getClassName() : "Unknown Class";
         int lineNumber = (rootCause != null) ? rootCause.getLineNumber() : -1;
 
-        log.error("[TraceID: {}] Error in {}:{} - Message: {}",
-                traceId, className, lineNumber, ex.getMessage());
+        String location = getErrorLocation(ex);
+
+        log.error("[TraceID: {}] Error in {} | Message: {} | Status: {}",
+                traceId, location, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         // Check if the exception is registered in the ApiExceptionRegistry
         if (registry != null) {
@@ -320,7 +346,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ProblemDetail handleApiException(ApiException ex) {
         String traceId = getOrGenerateTraceId();
-        log.warn("[TraceID: {}] Business logic exception: {} | Status: {}", traceId, ex.getMessage(), ex.getStatus());
+        String location = getErrorLocation(ex);
+        log.warn("[TraceID: {}] Business logic exception in {} - Message: {} | Status: {}", traceId, location, ex.getMessage(), ex.getStatus());
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(ex.getStatus(), ex.getMessage());
         problemDetail.setProperty("traceId", traceId);
