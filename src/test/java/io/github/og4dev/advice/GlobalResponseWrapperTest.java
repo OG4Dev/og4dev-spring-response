@@ -4,6 +4,8 @@ import io.github.og4dev.annotation.AutoResponse;
 import io.github.og4dev.dto.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,9 +30,10 @@ import static org.mockito.Mockito.mock;
  *   <li>Non-2xx status code produces "Processed" message</li>
  *   <li>String body serialization path</li>
  * </ul>
- * Changes introduced in v1.5.0: the {@link AutoResponse#message()} attribute is now
+ * Changes introduced in v1.5.0-RC1: the {@link AutoResponse#message()} attribute is now
  * resolved (method-level first, then class-level, then {@code "Success"} default).
  */
+@SuppressWarnings("unused")
 class GlobalResponseWrapperTest {
 
     // -----------------------------------------------------------------------
@@ -119,21 +122,10 @@ class GlobalResponseWrapperTest {
     // supports() — excluded return types
     // -----------------------------------------------------------------------
 
-    @Test
-    void supports_returnsFalse_whenReturnTypeIsApiResponse() throws Exception {
-        MethodParameter returnType = returnTypeOf(NoAnnotationController.class, "returnsApiResponse");
-        assertThat(wrapper.supports(returnType, null)).isFalse();
-    }
-
-    @Test
-    void supports_returnsFalse_whenReturnTypeIsResponseEntity() throws Exception {
-        MethodParameter returnType = returnTypeOf(NoAnnotationController.class, "returnsResponseEntity");
-        assertThat(wrapper.supports(returnType, null)).isFalse();
-    }
-
-    @Test
-    void supports_returnsFalse_whenReturnTypeIsProblemDetail() throws Exception {
-        MethodParameter returnType = returnTypeOf(NoAnnotationController.class, "returnsProblemDetail");
+    @ParameterizedTest
+    @ValueSource(strings = {"returnsApiResponse", "returnsResponseEntity", "returnsProblemDetail"})
+    void supports_returnsFalse_forExcludedReturnTypes(String methodName) throws Exception {
+        MethodParameter returnType = returnTypeOf(NoAnnotationController.class, methodName);
         assertThat(wrapper.supports(returnType, null)).isFalse();
     }
 
@@ -309,9 +301,11 @@ class GlobalResponseWrapperTest {
         assertThat(result).isInstanceOf(String.class);
         String jsonResult = (String) result;
         // Should be a valid JSON string containing the ApiResponse structure
-        assertThat(jsonResult).contains("\"message\"");
-        assertThat(jsonResult).contains("\"status\"");
-        assertThat(jsonResult).contains("Hello World");
+        assertThat(jsonResult).contains(
+                "\"message\"",
+                "\"status\"",
+                "Hello World"
+        );
     }
 
     @Test

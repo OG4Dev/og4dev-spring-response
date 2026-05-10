@@ -6,6 +6,7 @@ import io.github.og4dev.annotation.AutoTrim;
 import io.github.og4dev.annotation.XssCheck;
 import io.github.og4dev.exception.ApiExceptionRegistry;
 import io.github.og4dev.exception.GlobalExceptionHandler;
+import io.github.og4dev.exception.XssValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
@@ -66,7 +67,7 @@ import tools.jackson.databind.module.SimpleModule;
  * </pre>
  *
  * @author Pasindu OG
- * @version 1.5.0
+ * @version 1.5.0-RC1
  * @see GlobalExceptionHandler
  * @see GlobalResponseWrapper
  * @see org.springframework.boot.autoconfigure.AutoConfiguration
@@ -216,7 +217,7 @@ public class ApiResponseAutoConfiguration {
             String processedValue = shouldTrim ? value.trim() : value;
 
             if (shouldXssCheck && processedValue.matches("(?s).*<\\s*[a-zA-Z/!].*")) {
-                throw new IllegalArgumentException("Security Error: HTML tags or XSS payloads are not allowed in the request.");
+                throw new XssValidationException("Security Error: HTML tags or XSS payloads are not allowed in the request.");
             }
 
             return processedValue;

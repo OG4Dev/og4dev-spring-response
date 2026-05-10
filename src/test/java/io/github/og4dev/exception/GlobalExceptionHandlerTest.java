@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for {@link GlobalExceptionHandler} covering changes introduced in v1.5.0:
+ * Unit tests for {@link GlobalExceptionHandler} covering changes introduced in v1.5.0-RC1:
  * <ul>
  *   <li>Constructor accepting an optional {@link ApiExceptionRegistry}</li>
  *   <li>Registry-based exception mapping in {@code handleAllExceptions}</li>
@@ -201,7 +201,7 @@ class GlobalExceptionHandlerTest {
     }
 
     // -----------------------------------------------------------------------
-    // Concrete exception handler — type mismatch (refactored in v1.5.0)
+    // Concrete exception handler — type mismatch (refactored in v1.5.0-RC1)
     // -----------------------------------------------------------------------
 
     @Test
@@ -219,7 +219,7 @@ class GlobalExceptionHandlerTest {
     }
 
     // -----------------------------------------------------------------------
-    // ApiException handler (unchanged in v1.5.0 but verifies registry doesn't interfere)
+    // ApiException handler (unchanged in v1.5.0-RC1 but verifies registry doesn't interfere)
     // -----------------------------------------------------------------------
 
     @Test

@@ -76,7 +76,7 @@ import java.util.UUID;
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.5.0
+ * @version 1.5.0-RC1
  * @see org.springframework.web.bind.annotation.RestControllerAdvice
  * @see org.springframework.http.ProblemDetail
  * @see io.github.og4dev.exception.ApiException

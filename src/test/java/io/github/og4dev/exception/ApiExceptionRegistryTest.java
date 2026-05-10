@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Unit tests for {@link ApiExceptionRegistry} (new in v1.5.0).
+ * Unit tests for {@link ApiExceptionRegistry} (new in v1.5.0-RC1).
  */
 class ApiExceptionRegistryTest {
 

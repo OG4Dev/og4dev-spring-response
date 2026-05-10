@@ -24,7 +24,7 @@
 <img src="https://img.shields.io/badge/Spring%20Boot-4.0.5-brightgreen.svg" alt="Spring Boot">
 </a>
 <a href="https://github.com/OG4Dev/og4dev-spring-response">
-<img src="https://img.shields.io/badge/Version-1.5.0-brightgreen.svg" alt="Version">
+<img src="https://img.shields.io/badge/Version-1.5.0-RC1-brightgreen.svg" alt="Version">
 </a>
 </p>
 
@@ -135,26 +135,26 @@ Unlike other response wrapper libraries, this one offers:
 
 ## 🚀 Installation
 
-### Maven (Latest - v1.5.0)
+### Maven (Latest - v1.5.0-RC1)
 
 ```xml
 <dependency>
     <groupId>io.github.og4dev</groupId>
     <artifactId>og4dev-spring-response</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.0-RC1</version>
 </dependency>
 ```
 
-### Gradle (Latest - v1.5.0)
+### Gradle (Latest - v1.5.0-RC1)
 
 ```gradle
-implementation 'io.github.og4dev:og4dev-spring-response:1.5.0'
+implementation 'io.github.og4dev:og4dev-spring-response:1.5.0-RC1'
 ```
 
-### Gradle Kotlin DSL (Latest - v1.5.0)
+### Gradle Kotlin DSL (Latest - v1.5.0-RC1)
 
 ```kotlin
-implementation("io.github.og4dev:og4dev-spring-response:1.5.0")
+implementation("io.github.og4dev:og4dev-spring-response:1.5.0-RC1")
 ```
 
 ---
@@ -335,7 +335,7 @@ public class ResourceNotFoundException extends ApiException {
 }
 ```
 
-### 🔄 Dynamic Exception Registry (New in v1.5.0)
+### 🔄 Dynamic Exception Registry (New in v1.5.0-RC1)
 
 Seamlessly map 3rd-party or framework-specific exceptions (like `SQLException`, `MongoException`, or `AuthenticationException`) to standard `ProblemDetail` responses without writing custom `@ExceptionHandler` methods!
 
@@ -401,7 +401,7 @@ public class ProductController {
 
 ## 📈 Version History
 
-### 1.5.0 (April 2026) - **Current Release**
+### 1.5.0-RC1 (April 2026) - **Current Release**
 
 ✨ **Highlights & Improvements:**
 

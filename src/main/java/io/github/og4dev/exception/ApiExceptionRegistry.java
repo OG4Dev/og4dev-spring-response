@@ -17,8 +17,8 @@ import java.util.Map;
  * </p>
  *
  * @author Pasindu OG
- * @version 1.5.0
- * @since 1.5.0
+ * @version 1.5.0-RC1
+ * @since 1.5.0-RC1
  */
 public class ApiExceptionRegistry {
 

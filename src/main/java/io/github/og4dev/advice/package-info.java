@@ -22,7 +22,7 @@
  * </p>
  *
  * @author Pasindu OG
- * @version 1.5.0
+ * @version 1.5.0-RC1
  * @since 1.4.0
  * @see io.github.og4dev.advice.GlobalResponseWrapper
  * @see io.github.og4dev.annotation.AutoResponse
