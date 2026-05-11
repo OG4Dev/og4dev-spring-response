@@ -233,11 +233,11 @@ public class GlobalExceptionHandler {
     /**
      * Handles malformed JSON request exceptions.
      *
-     * @param ex the HTTP message not readable exception
+     * @param ex the XSS validation exception
      * @return ProblemDetail response with 400 status
      */
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    @ExceptionHandler(XssValidationException.class)
+    public ProblemDetail handleXssValidationException(XssValidationException ex) {
         String traceId = getOrGenerateTraceId();
         log.warn("[TraceID: {}] Malformed JSON request: {}", traceId, ex.getMessage());
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed JSON request. Please check your request body format.");
