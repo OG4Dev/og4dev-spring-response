@@ -243,7 +243,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(XssValidationException.class)
     public ProblemDetail handleXssValidationException(XssValidationException ex) {
         String traceId = getOrGenerateTraceId();
-        log.warn("[TraceID: {}] XSS validation failed: {}", traceId, ex.getMessage());
+        log.warn("[TraceID: {}] XSS validation failed", traceId);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "XSS validation failed. Invalid content detected.");
         problemDetail.setProperty("traceId", traceId);
         problemDetail.setProperty("timestamp", Instant.now());
@@ -261,19 +261,10 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
         String traceId = getOrGenerateTraceId();
 
-        if (ex == null) {
-            log.warn("[TraceID: {}] Malformed JSON request: Unknown error (exception is null)", traceId);
-            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed JSON request. Please check your request body format.");
-            problemDetail.setProperty("traceId", traceId);
-            problemDetail.setProperty("timestamp", Instant.now());
-            return problemDetail;
-        }
-
         Throwable currentCause = ex;
         while (currentCause != null) {
             if (currentCause instanceof XssValidationException) {
-                String message = currentCause.getMessage() != null ? currentCause.getMessage() : "No details provided";
-                log.warn("[TraceID: {}] XSS validation failed: {}", traceId, message);
+                log.warn("[TraceID: {}] XSS validation failed", traceId);
 
                 ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "XSS validation failed. Invalid content detected.");
                 problemDetail.setProperty("traceId", traceId);
@@ -285,7 +276,9 @@ public class GlobalExceptionHandler {
             currentCause = (nextCause == currentCause) ? null : nextCause;
         }
 
-        String errorMessage = ex.getMessage() != null ? ex.getMessage() : "No details provided";
+        String message = null;
+        if (ex != null) message = ex.getMessage();
+        String errorMessage = message != null ? message : "No details provided";
         log.warn("[TraceID: {}] Malformed JSON request: {}", traceId, errorMessage);
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed JSON request. Please check your request body format.");
