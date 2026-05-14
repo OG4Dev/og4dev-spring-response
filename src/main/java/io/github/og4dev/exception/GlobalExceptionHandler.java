@@ -76,7 +76,7 @@ import java.util.UUID;
  * </ul>
  *
  * @author Pasindu OG
- * @version 1.5.0
+ * @version 1.5.0-RC1
  * @see org.springframework.web.bind.annotation.RestControllerAdvice
  * @see org.springframework.http.ProblemDetail
  * @see io.github.og4dev.exception.ApiException
@@ -96,8 +96,8 @@ public class GlobalExceptionHandler {
     private ApiExceptionRegistry registry;
 
     /**
-    * Default constructor for Spring bean instantiation
-    * */
+     * Default constructor for Spring bean instantiation
+     * */
     public GlobalExceptionHandler() {
     }
 
@@ -192,12 +192,16 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
         String traceId = getOrGenerateTraceId();
         Map<String, String> errorMessage = new HashMap<>();
+
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            assert fieldError.getDefaultMessage() != null;
-            // If multiple errors exist for the same field, merge them
-            errorMessage.merge(fieldError.getField(), fieldError.getDefaultMessage(),
+            String message = fieldError.getDefaultMessage() != null
+                    ? fieldError.getDefaultMessage()
+                    : "Invalid value provided";
+
+            errorMessage.merge(fieldError.getField(), message,
                     (msg1, msg2) -> msg1 + "; " + msg2);
         }
+
         log.warn("[TraceID: {}] Validation error: {}", traceId, errorMessage);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation Failed");
         problemDetail.setProperty("errors", errorMessage);
@@ -231,15 +235,52 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles malformed JSON request exceptions.
+     * Handles XSS validation exceptions.
+     *
+     * @param ex the XSS validation exception
+     * @return ProblemDetail response with 400 status
+     */
+    @ExceptionHandler(XssValidationException.class)
+    public ProblemDetail handleXssValidationException(XssValidationException ex) {
+        String traceId = getOrGenerateTraceId();
+        log.warn("[TraceID: {}] XSS validation failed", traceId);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "XSS validation failed. Invalid content detected.");
+        problemDetail.setProperty("traceId", traceId);
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    /**
+     * Handles malformed JSON and unreadable HTTP message requests.
+     * Checks for wrapped XssValidationException to maintain consistent XSS responses.
      *
      * @param ex the HTTP message not readable exception
      * @return ProblemDetail response with 400 status
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ProblemDetail handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
         String traceId = getOrGenerateTraceId();
-        log.warn("[TraceID: {}] Malformed JSON request: {}", traceId, ex.getMessage());
+
+        Throwable currentCause = ex;
+        while (currentCause != null) {
+            if (currentCause instanceof XssValidationException) {
+                log.warn("[TraceID: {}] XSS validation failed", traceId);
+
+                ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "XSS validation failed. Invalid content detected.");
+                problemDetail.setProperty("traceId", traceId);
+                problemDetail.setProperty("timestamp", Instant.now());
+                return problemDetail;
+            }
+
+            Throwable nextCause = currentCause.getCause();
+            currentCause = (nextCause == currentCause) ? null : nextCause;
+        }
+
+        log.warn("[TraceID: {}] Malformed JSON request", traceId);
+        if (log.isDebugEnabled()) {
+            log.debug("[TraceID: {}] Malformed JSON request details", traceId, ex);
+        }
+
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed JSON request. Please check your request body format.");
         problemDetail.setProperty("traceId", traceId);
         problemDetail.setProperty("timestamp", Instant.now());

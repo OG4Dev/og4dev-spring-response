@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for the {@link AutoResponse} annotation metadata and the {@code message()} attribute
- * added in v1.5.0.
+ * added in v1.5.0-RC1.
  */
 class AutoResponseAnnotationTest {
 
@@ -81,10 +81,14 @@ class AutoResponseAnnotationTest {
 
     static class MethodAnnotatedMethods {
         @AutoResponse
-        public void defaultMessageMethod() {}
+        public void defaultMessageMethod() {
+            // Empty method used for reflection testing
+        }
 
         @AutoResponse(message = "Custom method message")
-        public void customMessageMethod() {}
+        public void customMessageMethod() {
+            // Empty method used for reflection testing
+        }
     }
 
     @Test
@@ -114,7 +118,9 @@ class AutoResponseAnnotationTest {
     }
 
     static class NoAnnotationClass {
-        public void unannotatedMethod() {}
+        public void unannotatedMethod() {
+            // Empty method used for reflection testing
+        }
     }
 
     @Test
@@ -125,7 +131,7 @@ class AutoResponseAnnotationTest {
     }
 
     @Test
-    void autoResponse_messageAttributeIsEmpty_doesNotReturnNull() throws Exception {
+    void autoResponse_messageAttributeIsEmpty_doesNotReturnNull() {
         // Edge case: message() should never be null since it has a default
         AutoResponse annotation = ClassLevelDefault.class.getAnnotation(AutoResponse.class);
         assertThat(annotation.message()).isNotNull();

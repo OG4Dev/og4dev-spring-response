@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Tests for the {@code AdvancedStringDeserializer} (extracted as a private static class in v1.5.0)
+ * Tests for the {@code AdvancedStringDeserializer} (extracted as a private static class in v1.5.0-RC1)
  * inside {@link ApiResponseAutoConfiguration}.
  * <p>
  * The deserializer is tested indirectly through the Jackson ObjectMapper configured by
