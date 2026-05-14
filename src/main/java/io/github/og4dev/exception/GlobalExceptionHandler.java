@@ -276,10 +276,10 @@ public class GlobalExceptionHandler {
             currentCause = (nextCause == currentCause) ? null : nextCause;
         }
 
-        String message = null;
-        if (ex != null) message = ex.getMessage();
-        String errorMessage = message != null ? message : "No details provided";
-        log.warn("[TraceID: {}] Malformed JSON request: {}", traceId, errorMessage);
+        log.warn("[TraceID: {}] Malformed JSON request", traceId);
+        if (log.isDebugEnabled()) {
+            log.debug("[TraceID: {}] Malformed JSON request details", traceId, ex);
+        }
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed JSON request. Please check your request body format.");
         problemDetail.setProperty("traceId", traceId);
